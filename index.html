@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>BizLedger — Business &amp; Finance Management</title>
+  <title>BizLedger — Liquid Gradient Fintech</title>
   
   <!-- PWA & Mobile Web App Manifest -->
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
   <link rel="alternate icon" type="image/png" href="favicon.png" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <meta name="theme-color" content="#0B0D12" />
+  <meta name="theme-color" content="#101827" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="BizLedger" />
   <meta name="application-name" content="BizLedger" />
 
-  <!-- Google Font: Inter (Weights: 400, 500, 600) -->
+  <!-- Google Font: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Chart.js 4.4 via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
@@ -36,30 +36,21 @@
             sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
           },
           colors: {
-            dark: {
-              bg: '#0B0D12',
-              header: '#10141C',
-              card: '#141922',
-              elevated: '#1A202B',
-              border: '#252D39',
-              text: '#F0F2F5',
-              muted: '#929BAA',
-              accent: '#8B7CF6',
-              secondaryAccent: '#66A6D9',
-              income: '#35B37E',
-              expense: '#E56B76'
-            },
-            light: {
-              bg: '#F5F7FA',
-              header: '#FFFFFF',
-              card: '#FFFFFF',
-              elevated: '#F0F2F6',
-              border: '#E5E8EF',
-              text: '#18202D',
-              muted: '#687386',
-              accent: '#6558D9',
-              income: '#169B69',
-              expense: '#D94F60'
+            liquid: {
+              bg: '#101827',
+              surface: '#131E30',
+              card: '#172438',
+              elevated: '#1D2B40',
+              border: '#2A3A50',
+              blue: '#2563EB',
+              cyan: '#06B6D4',
+              teal: '#14B8A6',
+              violet: '#8B5CF6',
+              emerald: '#22C55E',
+              coral: '#F87171',
+              text: '#F8FAFC',
+              muted: '#94A3B8',
+              subtle: '#64748B'
             }
           }
         }
@@ -69,42 +60,37 @@
 
   <style>
     :root {
-      --bg-page: #F5F7FA;
-      --bg-header: #FFFFFF;
-      --bg-card: #FFFFFF;
-      --bg-elevated: #F0F2F6;
-      --border-subtle: #E5E8EF;
-      --border-focus: #CBD5E1;
-      --text-main: #18202D;
-      --text-muted: #687386;
-      --text-subtle: #94A3B8;
-      --accent-primary: #6558D9;
-      --accent-hover: #5345C7;
-      --color-income: #169B69;
-      --color-expense: #D94F60;
-    }
-
-    .dark {
-      --bg-page: #0B0D12;
-      --bg-header: #10141C;
-      --bg-card: #141922;
-      --bg-elevated: #1A202B;
-      --border-subtle: #252D39;
-      --border-focus: #374151;
-      --text-main: #F0F2F5;
-      --text-muted: #929BAA;
-      --text-subtle: #6B7280;
-      --accent-primary: #8B7CF6;
-      --accent-hover: #7A6AE6;
-      --color-income: #35B37E;
-      --color-expense: #E56B76;
+      --bg-primary: #101827;
+      --bg-secondary: #131E30;
+      --bg-card: #172438;
+      --bg-elevated: #1D2B40;
+      --border-subtle: #2A3A50;
+      --border-focus: #06B6D4;
+      
+      --ocean-blue: #2563EB;
+      --cyan: #06B6D4;
+      --teal: #14B8A6;
+      --violet: #8B5CF6;
+      --emerald: #22C55E;
+      --coral: #F87171;
+      
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --text-subtle: #64748B;
+      
+      --gradient-liquid-primary: linear-gradient(120deg, #2563EB 0%, #06B6D4 50%, #14B8A6 100%);
+      --gradient-liquid-secondary: linear-gradient(120deg, #6366F1, #8B5CF6, #C084FC);
+      --gradient-growth: linear-gradient(120deg, #0F766E, #14B8A6, #22C55E);
+      --gradient-coral: linear-gradient(120deg, #DC2626, #EF4444, #F87171);
     }
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: var(--bg-page);
+      background-color: var(--bg-primary);
       color: var(--text-main);
       letter-spacing: -0.011em;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
     /* Tabular numeric alignment */
@@ -112,85 +98,164 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* Subtle custom scrollbar */
+    /* Custom liquid scrollbar */
     ::-webkit-scrollbar {
       width: 5px;
       height: 5px;
     }
     ::-webkit-scrollbar-track {
-      background: transparent;
+      background: #101827;
     }
     ::-webkit-scrollbar-thumb {
-      background: var(--border-subtle);
+      background: #2A3A50;
       border-radius: 9999px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: var(--border-focus);
+      background: #06B6D4;
+    }
+
+    /* Subtle Liquid Background Animations */
+    @keyframes liquidSlow {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, 20px) scale(1.05); }
+    }
+    @keyframes liquidReverse {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-25px, -20px) scale(1.04); }
+    }
+    .animate-liquid-slow {
+      animation: liquidSlow 22s ease-in-out infinite;
+    }
+    .animate-liquid-reverse {
+      animation: liquidReverse 26s ease-in-out infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .animate-liquid-slow, .animate-liquid-reverse {
+        animation: none;
+      }
+    }
+
+    /* Liquid Gradient Text Utility */
+    .text-gradient-liquid {
+      background: var(--gradient-liquid-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .text-gradient-growth {
+      background: var(--gradient-growth);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Card glow & borders */
+    .card-liquid-border {
+      position: relative;
+    }
+    .card-liquid-border::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.4), rgba(37, 99, 235, 0.2), rgba(20, 184, 166, 0.3));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased transition-colors duration-150">
+<body class="flex flex-col antialiased selection:bg-cyan-500/20 selection:text-cyan-200">
 
   <!-- ============================================================
-       APPLICATION HEADER (Linear & Mercury Inspired)
+       AMBIENT LIQUID GRADIENT GRAPHICAL ENVIRONMENT
        ============================================================ -->
-  <header class="sticky top-0 z-40 bg-[var(--bg-header)] border-b border-[var(--border-subtle)] transition-colors">
+  <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+    <!-- Top-left Blue-Cyan-Teal Flowing Orb -->
+    <div class="absolute -top-[20%] -left-[10%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-tr from-blue-600/15 via-cyan-500/10 to-teal-400/5 blur-[130px] animate-liquid-slow"></div>
+    <!-- Mid-right Violet-Cyan Flowing Orb -->
+    <div class="absolute top-[30%] -right-[15%] w-[55vw] h-[55vw] rounded-full bg-gradient-to-bl from-violet-600/12 via-blue-500/8 to-cyan-500/5 blur-[140px] animate-liquid-reverse"></div>
+    <!-- Bottom Emerald-Teal Flowing Orb -->
+    <div class="absolute -bottom-[20%] left-[15%] w-[50vw] h-[50vw] rounded-full bg-gradient-to-r from-teal-500/10 via-emerald-500/8 to-blue-600/5 blur-[130px]"></div>
+    
+    <!-- Abstract Organic Wave Overlay -->
+    <svg class="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="liquidWaveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#2563EB" />
+          <stop offset="50%" stop-color="#06B6D4" />
+          <stop offset="100%" stop-color="#14B8A6" />
+        </linearGradient>
+      </defs>
+      <path d="M0,160 C320,300,520,60,960,180 C1400,300,1600,120,1920,200 L1920,1080 L0,1080 Z" fill="none" stroke="url(#liquidWaveGrad)" stroke-width="1.5" />
+      <path d="M0,420 C400,240,700,520,1200,340 C1600,200,1800,440,1920,380 L1920,1080 L0,1080 Z" fill="none" stroke="url(#liquidWaveGrad)" stroke-width="1" stroke-dasharray="8,8" />
+    </svg>
+  </div>
+
+  <!-- ============================================================
+       APPLICATION HEADER (Liquid Surface Navigation)
+       ============================================================ -->
+  <header class="sticky top-0 z-40 bg-[#101827]/90 backdrop-blur-md border-b border-[#2A3A50] transition-colors">
     <div class="max-w-7xl mx-auto h-14 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
       
       <!-- Brand & Sync Status -->
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-subtle)] flex items-center justify-center p-1.5 flex-shrink-0">
-          <img src="icon.svg" alt="BizLedger" class="w-full h-full object-contain" />
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 via-cyan-500 to-teal-400 p-[1px] shadow-sm flex-shrink-0">
+          <div class="w-full h-full bg-[#131E30] rounded-[7px] flex items-center justify-center p-1.5">
+            <img src="icon.svg" alt="BizLedger" class="w-full h-full object-contain" />
+          </div>
         </div>
         <div class="flex items-center gap-2.5">
-          <span class="text-sm font-semibold text-[var(--text-main)] tracking-tight">
+          <span class="text-sm font-semibold tracking-tight text-white flex items-center gap-1.5">
             BizLedger
+            <span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Liquid</span>
           </span>
-          <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-normal bg-[var(--bg-elevated)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
-            <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-income)]"></span>
+          <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-normal bg-[#1D2B40] text-[#94A3B8] border border-[#2A3A50]">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse"></span>
             <span id="appStatusText">Synced</span>
           </span>
         </div>
       </div>
 
-      <!-- Navigation & Global Controls (Header Right) -->
+      <!-- Header Controls (Right) -->
       <div class="flex items-center gap-2">
         
-        <!-- Live FX Ticker (Clickable to open converter) -->
+        <!-- Live FX Ticker (Opens converter) -->
         <button 
           onclick="openRateModal()" 
-          class="hidden md:flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-main)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-lg transition-colors"
+          class="hidden md:flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono text-[#94A3B8] hover:text-white bg-[#172438] hover:bg-[#1D2B40] border border-[#2A3A50] hover:border-cyan-500/40 rounded-lg transition-all"
           title="Live FX Exchange Rate (Click to open converter)"
         >
+          <span class="text-cyan-400">⚡</span>
           <span id="headerQuickRateDisplay">$1 = ৳122.25</span>
         </button>
 
-        <!-- Primary Display Currency Selector -->
+        <!-- Primary Reporting Currency -->
         <div class="relative">
           <select 
             id="primaryCurrencySelect" 
             onchange="changePrimaryCurrency(this.value)" 
-            class="bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-xs font-medium text-[var(--text-main)] rounded-lg px-2.5 py-1 focus:outline-none focus:border-[var(--accent-primary)] cursor-pointer transition-colors"
+            class="bg-[#172438] border border-[#2A3A50] text-xs font-medium text-white rounded-lg px-2.5 py-1 focus:outline-none focus:border-cyan-400 cursor-pointer transition-colors"
             title="Change primary reporting currency"
           >
           </select>
         </div>
 
-        <!-- Light / Dark Theme Switch -->
+        <!-- Theme Mode Control (Preserved for compatibility) -->
         <button 
           onclick="toggleTheme()" 
           id="themeBtn"
-          class="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-card)] border border-[var(--border-subtle)] flex items-center justify-center text-xs text-[var(--text-main)] transition-colors"
-          title="Toggle theme"
-          aria-label="Toggle theme"
+          class="w-8 h-8 rounded-lg bg-[#172438] hover:bg-[#1D2B40] border border-[#2A3A50] flex items-center justify-center text-xs text-white transition-colors"
+          title="Liquid theme active"
+          aria-label="Theme mode"
         >
           <span id="themeIcon">🌙</span>
         </button>
 
-        <!-- Data Backup & Recovery (Desktop) -->
+        <!-- Backup Action (Desktop) -->
         <button 
           onclick="openBackupModal()" 
-          class="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+          class="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-lg bg-[#172438] hover:bg-[#1D2B40] border border-[#2A3A50] text-[#94A3B8] hover:text-white transition-colors"
           title="Manage data backups and CSV exports"
         >
           Backup
@@ -201,70 +266,77 @@
   </header>
 
   <!-- ============================================================
-       MAIN WORKSPACE CONTAINER
+       MAIN LIQUID WORKSPACE
        ============================================================ -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-7 pb-24 sm:pb-12">
 
     <!-- 1. DASHBOARD INTRODUCTION & ACTION TOOLBAR -->
     <section class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h1 class="text-2xl sm:text-[28px] font-semibold text-[var(--text-main)] tracking-tight">
+        <h1 class="text-2xl sm:text-[28px] font-semibold text-white tracking-tight flex items-center gap-2">
           Overview
+          <span class="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 via-cyan-400 to-teal-400"></span>
         </h1>
-        <p id="dashboardDateDisplay" class="text-xs text-[var(--text-muted)] mt-0.5">
+        <p id="dashboardDateDisplay" class="text-xs text-[#94A3B8] mt-0.5">
           Your financial position at a glance
         </p>
       </div>
 
-      <!-- Quick Action Buttons (Linear & Stripe Style) -->
-      <div class="flex items-center gap-2 flex-wrap">
+      <!-- Action Toolbar (Liquid Gradient Buttons) -->
+      <div class="flex items-center gap-2.5 flex-wrap">
         <button 
           onclick="openTransactionModal('Income')" 
-          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-white bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] rounded-lg transition-colors shadow-xs"
+          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-teal-500 via-emerald-500 to-teal-600 hover:opacity-95 rounded-lg transition-all shadow-sm hover:shadow-teal-500/20"
         >
           <span>+</span> Add Income
         </button>
 
         <button 
           onclick="openTransactionModal('Expense')" 
-          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-[var(--text-main)] bg-[var(--bg-card)] hover:bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-lg transition-colors shadow-xs"
+          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-white bg-[#172438] hover:bg-[#1D2B40] border border-[#2A3A50] hover:border-coral-400/50 rounded-lg transition-all shadow-xs"
         >
           <span>−</span> Add Expense
         </button>
 
         <button 
           onclick="openAccountManagerModal()" 
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-lg transition-colors"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#94A3B8] hover:text-white bg-[#172438] hover:bg-[#1D2B40] border border-[#2A3A50] hover:border-cyan-500/40 rounded-lg transition-all"
         >
           Wallets
         </button>
 
         <button 
           onclick="openRateModal()" 
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-lg transition-colors"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#94A3B8] hover:text-white bg-[#172438] hover:bg-[#1D2B40] border border-[#2A3A50] hover:border-cyan-500/40 rounded-lg transition-all"
         >
           Converter
         </button>
       </div>
     </section>
 
-    <!-- 2. MAIN FINANCIAL OVERVIEW — ASYMMETRIC COMPOSITION (Section 5.C) -->
+    <!-- 2. MAIN FINANCIAL OVERVIEW — SIGNATURE LIQUID BALANCE & METRICS -->
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-5">
       
-      <!-- HERO FINANCIAL ANCHOR (7 Cols on Desktop) -->
-      <div class="lg:col-span-7 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-6 sm:p-7 flex flex-col justify-between transition-colors shadow-xs">
+      <!-- SIGNATURE LIQUID BALANCE CARD (7 Cols on Desktop) -->
+      <div class="lg:col-span-7 rounded-2xl bg-gradient-to-br from-[#172438] via-[#131E30] to-[#172438] border border-[#2A3A50] p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden transition-all shadow-md group card-liquid-border">
         
+        <!-- Subtle Liquid Glow in Card Corner -->
+        <div class="absolute -right-12 -top-12 w-48 h-48 rounded-full bg-gradient-to-br from-blue-500/10 via-cyan-500/10 to-teal-400/5 blur-2xl pointer-events-none group-hover:scale-110 transition-transform duration-700"></div>
+
         <div>
           <!-- Header Row -->
-          <div class="flex items-center justify-between text-xs font-medium text-[var(--text-muted)] mb-3">
-            <span class="uppercase tracking-wider text-[11px]">Total Combined Balance</span>
+          <div class="flex items-center justify-between text-xs font-medium text-[#94A3B8] mb-3 relative z-10">
+            <span class="uppercase tracking-wider text-[11px] font-semibold text-cyan-300/90 flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+              Total Combined Balance
+            </span>
             <div class="flex items-center gap-2">
-              <span id="activeCurrencyBadge" class="font-mono text-[11px] px-2 py-0.5 rounded bg-[var(--bg-elevated)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
+              <span id="activeCurrencyBadge" class="font-mono text-[11px] font-semibold px-2 py-0.5 rounded bg-[#1D2B40] text-cyan-300 border border-[#2A3A50]">
                 BDT
               </span>
               <button 
                 onclick="toggleBalancePrivacy()" 
-                class="text-[var(--text-subtle)] hover:text-[var(--text-main)] transition-colors p-1" 
+                class="text-[#94A3B8] hover:text-white transition-colors p-1" 
                 title="Toggle balance privacy mask"
                 aria-label="Toggle balance privacy"
               >
@@ -274,40 +346,41 @@
           </div>
 
           <!-- Master Amount Display -->
-          <div class="my-2">
-            <div id="combinedCurrentPrimary" class="text-3xl sm:text-4xl font-semibold text-[var(--text-main)] tracking-tight tabular-nums">
+          <div class="my-2 relative z-10">
+            <div id="combinedCurrentPrimary" class="text-3xl sm:text-4xl lg:text-[40px] font-semibold text-white tracking-tight tabular-nums leading-tight">
               0
             </div>
-            <div id="combinedCurrentSecondary" class="text-xs sm:text-sm font-medium text-[var(--text-muted)] font-mono mt-1">
-              ≈ 0 USD
+            <div id="combinedCurrentSecondary" class="text-xs sm:text-sm font-medium text-cyan-200/80 font-mono mt-1 flex items-center gap-1.5">
+              <span>≈</span>
+              <span>0 USD</span>
             </div>
           </div>
         </div>
 
         <!-- Financial Health Matrix (Baseline, Growth, Turnover) -->
-        <div class="pt-5 mt-5 border-t border-[var(--border-subtle)] grid grid-cols-3 gap-3 text-left">
+        <div class="pt-5 mt-5 border-t border-[#2A3A50]/70 grid grid-cols-3 gap-3 text-left relative z-10">
           <div>
-            <div class="text-[11px] font-medium text-[var(--text-muted)]">Initial Capital</div>
-            <div id="combinedInitialPrimary" class="text-sm sm:text-base font-semibold text-[var(--text-main)] tabular-nums mt-0.5">
+            <div class="text-[11px] font-medium text-[#94A3B8]">Initial Capital</div>
+            <div id="combinedInitialPrimary" class="text-sm sm:text-base font-semibold text-white tabular-nums mt-0.5">
               0
             </div>
-            <div class="text-[10px] text-[var(--text-subtle)] mt-0.5">Baseline deposits</div>
+            <div class="text-[10px] text-[#64748B] mt-0.5">Baseline deposits</div>
           </div>
 
           <div>
-            <div class="text-[11px] font-medium text-[var(--text-muted)]">Capital Growth</div>
-            <div id="netGrowthDisplay" class="text-sm sm:text-base font-semibold text-[var(--color-income)] tabular-nums mt-0.5">
+            <div class="text-[11px] font-medium text-[#94A3B8]">Capital Growth</div>
+            <div id="netGrowthDisplay" class="text-sm sm:text-base font-semibold text-gradient-growth tabular-nums mt-0.5">
               +0.0%
             </div>
-            <div class="text-[10px] text-[var(--text-subtle)] mt-0.5">Net equity delta</div>
+            <div class="text-[10px] text-[#64748B] mt-0.5">Net equity delta</div>
           </div>
 
           <div>
-            <div class="text-[11px] font-medium text-[var(--text-muted)]">Turnover Volume</div>
-            <div id="totalTurnoverDisplay" class="text-sm sm:text-base font-semibold text-[var(--text-main)] tabular-nums mt-0.5">
+            <div class="text-[11px] font-medium text-[#94A3B8]">Turnover Volume</div>
+            <div id="totalTurnoverDisplay" class="text-sm sm:text-base font-semibold text-white tabular-nums mt-0.5">
               0
             </div>
-            <div class="text-[10px] text-[var(--text-subtle)] mt-0.5">Cumulative activity</div>
+            <div class="text-[10px] text-[#64748B] mt-0.5">Cumulative activity</div>
           </div>
         </div>
 
@@ -317,55 +390,55 @@
       <div class="lg:col-span-5 flex flex-col justify-between gap-3.5">
         
         <!-- Total Inflow Card -->
-        <div class="rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-4 sm:p-4.5 flex items-center justify-between transition-colors shadow-xs">
+        <div class="rounded-xl bg-[#172438] border border-[#2A3A50] hover:border-teal-500/40 p-4 sm:p-4.5 flex items-center justify-between transition-all shadow-xs group">
           <div>
-            <div class="flex items-center gap-2 text-xs font-medium text-[var(--text-muted)]">
-              <span class="w-2 h-2 rounded-full bg-[var(--color-income)]"></span>
+            <div class="flex items-center gap-2 text-xs font-medium text-[#94A3B8]">
+              <span class="w-2 h-2 rounded-full bg-[#22C55E]"></span>
               <span>Total Income</span>
             </div>
-            <div id="totalIncomePrimary" class="text-xl sm:text-2xl font-semibold text-[var(--color-income)] tracking-tight tabular-nums mt-1">
+            <div id="totalIncomePrimary" class="text-xl sm:text-2xl font-semibold text-[#22C55E] tracking-tight tabular-nums mt-1">
               +0
             </div>
-            <div class="text-[11px] text-[var(--text-subtle)] mt-0.5">All-time recorded revenues</div>
+            <div class="text-[11px] text-[#64748B] mt-0.5">All-time recorded revenues</div>
           </div>
-          <span class="text-xs font-mono font-medium px-2 py-1 rounded-md bg-[#35B37E]/10 text-[#35B37E] border border-[#35B37E]/20">
+          <span class="text-xs font-mono font-medium px-2 py-1 rounded-md bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/20">
             Inflow
           </span>
         </div>
 
         <!-- Total Outflow Card -->
-        <div class="rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-4 sm:p-4.5 flex items-center justify-between transition-colors shadow-xs">
+        <div class="rounded-xl bg-[#172438] border border-[#2A3A50] hover:border-coral-400/40 p-4 sm:p-4.5 flex items-center justify-between transition-all shadow-xs group">
           <div>
-            <div class="flex items-center gap-2 text-xs font-medium text-[var(--text-muted)]">
-              <span class="w-2 h-2 rounded-full bg-[var(--color-expense)]"></span>
+            <div class="flex items-center gap-2 text-xs font-medium text-[#94A3B8]">
+              <span class="w-2 h-2 rounded-full bg-[#F87171]"></span>
               <span>Total Expenses</span>
             </div>
-            <div id="totalExpensePrimary" class="text-xl sm:text-2xl font-semibold text-[var(--color-expense)] tracking-tight tabular-nums mt-1">
+            <div id="totalExpensePrimary" class="text-xl sm:text-2xl font-semibold text-[#F87171] tracking-tight tabular-nums mt-1">
               -0
             </div>
-            <div class="text-[11px] text-[var(--text-subtle)] mt-0.5">All-time recorded expenditures</div>
+            <div class="text-[11px] text-[#64748B] mt-0.5">All-time recorded expenditures</div>
           </div>
-          <span class="text-xs font-mono font-medium px-2 py-1 rounded-md bg-[#E56B76]/10 text-[#E56B76] border border-[#E56B76]/20">
+          <span class="text-xs font-mono font-medium px-2 py-1 rounded-md bg-[#F87171]/10 text-[#F87171] border border-[#F87171]/20">
             Outflow
           </span>
         </div>
 
         <!-- Net Cash Position Card -->
-        <div class="rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-4 sm:p-4.5 flex items-center justify-between transition-colors shadow-xs">
+        <div class="rounded-xl bg-[#172438] border border-[#2A3A50] hover:border-cyan-500/40 p-4 sm:p-4.5 flex items-center justify-between transition-all shadow-xs">
           <div>
-            <div class="flex items-center gap-2 text-xs font-medium text-[var(--text-muted)]">
+            <div class="flex items-center gap-2 text-xs font-medium text-[#94A3B8]">
               <span>Net Cash Flow</span>
-              <span id="netCashFlowBadge" class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[var(--bg-elevated)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
+              <span id="netCashFlowBadge" class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#1D2B40] text-[#94A3B8] border border-[#2A3A50]">
                 Neutral
               </span>
             </div>
-            <div id="netCashFlowDisplay" class="text-lg sm:text-xl font-semibold text-[var(--text-main)] tracking-tight tabular-nums mt-1">
+            <div id="netCashFlowDisplay" class="text-lg sm:text-xl font-semibold text-white tracking-tight tabular-nums mt-1">
               0
             </div>
-            <div class="text-[11px] text-[var(--text-subtle)] mt-0.5">Inflow minus outflow margin</div>
+            <div class="text-[11px] text-[#64748B] mt-0.5">Inflow minus outflow margin</div>
           </div>
           <div class="text-right">
-            <span id="cashFlowRatioLabel" class="text-xs font-mono font-medium text-[var(--text-muted)]">
+            <span id="cashFlowRatioLabel" class="text-xs font-mono font-medium text-cyan-300">
               50% / 50%
             </span>
           </div>
@@ -375,88 +448,90 @@
 
     </section>
 
-    <!-- 3. FINANCIAL ANALYTICS & VISUALIZATION (Section 5.D) -->
+    <!-- 3. LIQUID ANALYTICS & VISUAL TELEMETRY -->
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-5">
       
       <!-- Cash Flow Dynamics Chart (7 Cols) -->
-      <div class="lg:col-span-7 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-colors shadow-xs flex flex-col justify-between">
+      <div class="lg:col-span-7 rounded-2xl bg-[#172438] border border-[#2A3A50] p-5 sm:p-6 transition-all shadow-xs flex flex-col justify-between">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h2 class="text-base font-semibold text-[var(--text-main)]">
-              Cash Flow Telemetry
+            <h2 class="text-base font-semibold text-white flex items-center gap-2">
+              <span>Cash Flow Telemetry</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
             </h2>
-            <p class="text-xs text-[var(--text-muted)] mt-0.5">
+            <p class="text-xs text-[#94A3B8] mt-0.5">
               Income versus expense trends
             </p>
           </div>
-          <div class="flex items-center gap-2 text-xs font-medium text-[var(--text-muted)]">
+          <div class="flex items-center gap-2 text-xs font-medium text-[#94A3B8]">
             <span class="inline-flex items-center gap-1.5">
-              <span class="w-2.5 h-2.5 rounded-sm bg-[var(--color-income)]"></span> Inflow
+              <span class="w-2.5 h-2.5 rounded-sm bg-[#14B8A6]"></span> Inflow
             </span>
             <span class="inline-flex items-center gap-1.5 ml-2">
-              <span class="w-2.5 h-2.5 rounded-sm bg-[var(--color-expense)]"></span> Outflow
+              <span class="w-2.5 h-2.5 rounded-sm bg-[#F87171]"></span> Outflow
             </span>
           </div>
         </div>
 
-        <!-- Chart Container -->
+        <!-- Chart Canvas Container -->
         <div class="relative w-full h-56 sm:h-64 flex items-center justify-center">
           <canvas id="cashFlowChartCanvas"></canvas>
-          <div id="chartEmptyState" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-4 bg-[var(--bg-card)]">
-            <span class="text-2xl mb-1">📈</span>
-            <p class="text-xs font-medium text-[var(--text-main)]">No transaction history yet</p>
-            <p class="text-[11px] text-[var(--text-muted)] mt-0.5 max-w-xs">Record your first income or expense to generate live cash flow telemetry.</p>
+          <div id="chartEmptyState" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-4 bg-[#172438]">
+            <span class="text-2xl mb-1">🌊</span>
+            <p class="text-xs font-medium text-white">No transaction history yet</p>
+            <p class="text-[11px] text-[#94A3B8] mt-0.5 max-w-xs">Record your first income or expense to generate live cash flow telemetry.</p>
           </div>
         </div>
 
-        <!-- Cash Flow Bar Indicator -->
-        <div class="mt-4 pt-3 border-t border-[var(--border-subtle)]">
-          <div class="w-full h-1.5 rounded-full bg-[var(--bg-elevated)] overflow-hidden flex">
-            <div id="cashFlowProgressBar" class="h-full bg-[var(--color-income)] transition-all duration-300" style="width: 50%;"></div>
+        <!-- Liquid Ratio Bar -->
+        <div class="mt-4 pt-3 border-t border-[#2A3A50]">
+          <div class="w-full h-2 rounded-full bg-[#1D2B40] overflow-hidden flex p-[1px]">
+            <div id="cashFlowProgressBar" class="h-full rounded-full bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-400 transition-all duration-300" style="width: 50%;"></div>
           </div>
         </div>
       </div>
 
-      <!-- Asset Allocation by Wallet (5 Cols) -->
-      <div class="lg:col-span-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-colors shadow-xs flex flex-col justify-between">
+      <!-- Asset Allocation Donut (5 Cols) -->
+      <div class="lg:col-span-5 rounded-2xl bg-[#172438] border border-[#2A3A50] p-5 sm:p-6 transition-all shadow-xs flex flex-col justify-between">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h2 class="text-base font-semibold text-[var(--text-main)]">
-              Asset Allocation
+            <h2 class="text-base font-semibold text-white flex items-center gap-2">
+              <span>Asset Allocation</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-violet-400"></span>
             </h2>
-            <p class="text-xs text-[var(--text-muted)] mt-0.5">
+            <p class="text-xs text-[#94A3B8] mt-0.5">
               Capital distribution across reserves
             </p>
           </div>
-          <span class="text-xs font-mono text-[var(--text-muted)]">Live</span>
+          <span class="text-xs font-mono text-cyan-300">Live</span>
         </div>
 
-        <!-- Donut Container -->
+        <!-- Donut Canvas Container -->
         <div class="relative w-full h-56 sm:h-64 flex items-center justify-center">
           <canvas id="walletAllocationChartCanvas"></canvas>
         </div>
 
-        <div class="mt-4 pt-3 border-t border-[var(--border-subtle)] text-center text-xs text-[var(--text-muted)]">
+        <div class="mt-4 pt-3 border-t border-[#2A3A50] text-center text-xs text-[#94A3B8]">
           <span>Proportional reserve balance in primary reporting currency</span>
         </div>
       </div>
 
     </section>
 
-    <!-- 4. WALLETS & ACCOUNTS (Section 5.E) -->
+    <!-- 4. WALLETS & ACCOUNTS -->
     <section class="space-y-3.5">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-base sm:text-lg font-semibold text-[var(--text-main)]">
+          <h2 class="text-base sm:text-lg font-semibold text-white">
             Wallets &amp; Accounts
           </h2>
-          <p class="text-xs text-[var(--text-muted)]">
-            Liquid reserves &amp; multi-currency balances
+          <p class="text-xs text-[#94A3B8]">
+            Multi-currency liquid reserves &amp; banking accounts
           </p>
         </div>
         <button 
           onclick="openAccountManagerModal()" 
-          class="text-xs font-medium text-[var(--accent-primary)] hover:underline inline-flex items-center gap-1"
+          class="text-xs font-medium text-cyan-400 hover:text-cyan-300 hover:underline inline-flex items-center gap-1"
         >
           + Add or Manage
         </button>
@@ -468,16 +543,16 @@
       </div>
     </section>
 
-    <!-- 5. RECENT TRANSACTIONS (Section 5.F) -->
+    <!-- 5. RECENT TRANSACTIONS ACTIVITY -->
     <section class="space-y-3.5">
       
       <!-- Section Header & Filter Toolbar -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h2 class="text-base sm:text-lg font-semibold text-[var(--text-main)]">
+          <h2 class="text-base sm:text-lg font-semibold text-white">
             Transactions
           </h2>
-          <p class="text-xs text-[var(--text-muted)]">
+          <p class="text-xs text-[#94A3B8]">
             Audit trail of business financial movements
           </p>
         </div>
@@ -492,16 +567,16 @@
               id="txSearchInput" 
               oninput="renderTable()" 
               placeholder="Search description..." 
-              class="bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] text-xs text-[var(--text-main)] rounded-lg pl-7 pr-3 py-1.5 focus:outline-none w-40 sm:w-48 transition-colors"
+              class="bg-[#1D2B40] border border-[#2A3A50] focus:border-cyan-400 text-xs text-white rounded-lg pl-7 pr-3 py-1.5 focus:outline-none w-40 sm:w-48 transition-colors"
             />
-            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-[var(--text-muted)] pointer-events-none">🔍</span>
+            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-[#94A3B8] pointer-events-none">🔍</span>
           </div>
 
           <!-- Account Filter -->
           <select 
             id="desktopFilterAccount" 
             onchange="renderTable()" 
-            class="bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-xs text-[var(--text-main)] rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[var(--accent-primary)] cursor-pointer transition-colors"
+            class="bg-[#1D2B40] border border-[#2A3A50] text-xs text-white rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-cyan-400 cursor-pointer transition-colors"
           >
             <option value="ALL">All Wallets</option>
           </select>
@@ -510,7 +585,7 @@
           <select 
             id="desktopFilterType" 
             onchange="renderTable()" 
-            class="bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-xs text-[var(--text-main)] rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[var(--accent-primary)] cursor-pointer transition-colors"
+            class="bg-[#1D2B40] border border-[#2A3A50] text-xs text-white rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-cyan-400 cursor-pointer transition-colors"
           >
             <option value="ALL">All Types</option>
             <option value="Income">Income (+)</option>
@@ -525,7 +600,7 @@
           <!-- Export CSV -->
           <button 
             onclick="exportCsv()" 
-            class="text-xs font-medium px-3 py-1.5 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+            class="text-xs font-medium px-3 py-1.5 rounded-lg bg-[#172438] hover:bg-[#1D2B40] border border-[#2A3A50] text-[#94A3B8] hover:text-white transition-colors"
             title="Download CSV report"
           >
             Export CSV
@@ -534,13 +609,13 @@
       </div>
 
       <!-- Transactions Container: Clean Table on Desktop, Native Cards on Mobile -->
-      <div class="rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] overflow-hidden transition-colors shadow-xs">
+      <div class="rounded-xl bg-[#172438] border border-[#2A3A50] overflow-hidden transition-all shadow-xs">
         
         <!-- Desktop Table View -->
         <div class="hidden sm:block overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="border-b border-[var(--border-subtle)] bg-[var(--bg-elevated)]/60 text-[11px] font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <tr class="border-b border-[#2A3A50] bg-[#131E30]/60 text-[11px] font-medium text-[#94A3B8] uppercase tracking-wider">
                 <th class="py-3 px-4">Date</th>
                 <th class="py-3 px-4">Description</th>
                 <th class="py-3 px-4">Wallet</th>
@@ -549,20 +624,20 @@
                 <th class="py-3 px-4 text-center">Action</th>
               </tr>
             </thead>
-            <tbody id="desktopTableBody" class="divide-y divide-[var(--border-subtle)] text-xs font-normal">
+            <tbody id="desktopTableBody" class="divide-y divide-[#2A3A50] text-xs font-normal">
               <!-- Rendered by renderTable() -->
             </tbody>
           </table>
         </div>
 
         <!-- Mobile List View -->
-        <div id="mobileTransactionList" class="sm:hidden divide-y divide-[var(--border-subtle)]">
+        <div id="mobileTransactionList" class="sm:hidden divide-y divide-[#2A3A50]">
           <!-- Rendered by renderTable() -->
         </div>
 
         <!-- Empty State -->
-        <div id="emptyState" class="hidden py-14 text-center text-xs text-[var(--text-muted)]">
-          <p class="text-sm font-semibold text-[var(--text-main)]">No transactions recorded yet.</p>
+        <div id="emptyState" class="hidden py-14 text-center text-xs text-[#94A3B8]">
+          <p class="text-sm font-semibold text-white">No transactions recorded yet.</p>
           <p class="mt-1">Add your first transaction using the buttons above.</p>
         </div>
 
@@ -575,24 +650,24 @@
   <!-- ============================================================
        MOBILE APP BOTTOM NAVIGATION
        ============================================================ -->
-  <nav class="fixed bottom-0 inset-x-0 h-14 bg-[var(--bg-header)] border-t border-[var(--border-subtle)] z-40 sm:hidden flex items-center justify-around px-2">
-    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center text-[10px] text-[var(--accent-primary)] font-medium">
+  <nav class="fixed bottom-0 inset-x-0 h-14 bg-[#101827]/95 backdrop-blur-md border-t border-[#2A3A50] z-40 sm:hidden flex items-center justify-around px-2">
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center text-[10px] text-cyan-400 font-medium">
       <span class="text-base">📊</span>
       <span>Overview</span>
     </button>
-    <button onclick="openTransactionModal('Income')" class="flex flex-col items-center text-[10px] text-[var(--color-income)] font-medium">
-      <span class="text-base">+</span>
+    <button onclick="openTransactionModal('Income')" class="flex flex-col items-center text-[10px] text-[#22C55E] font-medium">
+      <span class="text-base font-bold">+</span>
       <span>Income</span>
     </button>
-    <button onclick="openTransactionModal('Expense')" class="flex flex-col items-center text-[10px] text-[var(--color-expense)] font-medium">
-      <span class="text-base">−</span>
+    <button onclick="openTransactionModal('Expense')" class="flex flex-col items-center text-[10px] text-[#F87171] font-medium">
+      <span class="text-base font-bold">−</span>
       <span>Expense</span>
     </button>
-    <button onclick="openAccountManagerModal()" class="flex flex-col items-center text-[10px] text-[var(--text-muted)] font-medium">
+    <button onclick="openAccountManagerModal()" class="flex flex-col items-center text-[10px] text-[#94A3B8] font-medium">
       <span class="text-base">💳</span>
       <span>Wallets</span>
     </button>
-    <button onclick="openBackupModal()" class="flex flex-col items-center text-[10px] text-[var(--text-muted)] font-medium">
+    <button onclick="openBackupModal()" class="flex flex-col items-center text-[10px] text-[#94A3B8] font-medium">
       <span class="text-base">⚙️</span>
       <span>Backup</span>
     </button>
@@ -601,33 +676,33 @@
   <!-- ============================================================
        MODAL 1: RECORD / EDIT TRANSACTION
        ============================================================ -->
-  <div id="txModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+  <div id="txModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#172438] border border-[#2A3A50] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 card-liquid-border">
       
-      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)]">
-        <h3 id="modalPrefix" class="text-base font-semibold text-[var(--text-main)]">
-          Record Transaction
+      <div class="flex items-center justify-between pb-3 border-b border-[#2A3A50]">
+        <h3 id="modalPrefix" class="text-base font-semibold text-white flex items-center gap-2">
+          <span>Record Transaction</span>
         </h3>
-        <button onclick="closeTransactionModal()" class="text-[var(--text-muted)] hover:text-[var(--text-main)] text-sm p-1">
+        <button onclick="closeTransactionModal()" class="text-[#94A3B8] hover:text-white text-sm p-1">
           ✕
         </button>
       </div>
 
       <form id="txForm" onsubmit="event.preventDefault();" class="space-y-4">
         <div>
-          <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Description / Note</label>
+          <label class="block text-xs font-medium text-[#94A3B8] mb-1">Description / Note</label>
           <input 
             type="text" 
             id="modalTxDesc" 
             placeholder="e.g., Client Retainer, SaaS Hosting" 
             required 
-            class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] focus:outline-none transition-colors"
+            class="w-full bg-[#1D2B40] border border-[#2A3A50] focus:border-cyan-400 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:outline-none transition-colors"
           />
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Amount</label>
+            <label class="block text-xs font-medium text-[#94A3B8] mb-1">Amount</label>
             <input 
               type="number" 
               id="modalTxAmount" 
@@ -635,15 +710,15 @@
               placeholder="0.00" 
               required 
               oninput="updateModalPreview()"
-              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] tabular-nums focus:outline-none transition-colors"
+              class="w-full bg-[#1D2B40] border border-[#2A3A50] focus:border-cyan-400 rounded-lg px-3 py-2 text-xs sm:text-sm text-white tabular-nums focus:outline-none transition-colors"
             />
           </div>
           <div>
-            <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Currency</label>
+            <label class="block text-xs font-medium text-[#94A3B8] mb-1">Currency</label>
             <select 
               id="modalTxCurrency" 
               onchange="handleModalCurrencyChange()" 
-              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] focus:outline-none cursor-pointer transition-colors"
+              class="w-full bg-[#1D2B40] border border-[#2A3A50] focus:border-cyan-400 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:outline-none cursor-pointer transition-colors"
             >
             </select>
           </div>
@@ -651,28 +726,28 @@
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Wallet / Account</label>
+            <label class="block text-xs font-medium text-[#94A3B8] mb-1">Wallet / Account</label>
             <select 
               id="modalTxAccount" 
-              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] focus:outline-none cursor-pointer transition-colors"
+              class="w-full bg-[#1D2B40] border border-[#2A3A50] focus:border-cyan-400 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:outline-none cursor-pointer transition-colors"
             >
             </select>
           </div>
           <div>
-            <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Date</label>
+            <label class="block text-xs font-medium text-[#94A3B8] mb-1">Date</label>
             <input 
               type="date" 
               id="modalTxDate" 
               required 
-              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] focus:outline-none transition-colors"
+              class="w-full bg-[#1D2B40] border border-[#2A3A50] focus:border-cyan-400 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:outline-none transition-colors"
             />
           </div>
         </div>
 
         <!-- Real-time Conversion Preview -->
-        <div class="p-3 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-xs text-[var(--text-muted)] flex items-center justify-between font-mono">
+        <div class="p-3 rounded-lg bg-[#131E30] border border-[#2A3A50] text-xs text-[#94A3B8] flex items-center justify-between font-mono">
           <span>Converted in primary currency:</span>
-          <span id="modalPreviewPrimary" class="text-[var(--text-main)] font-semibold">0</span>
+          <span id="modalPreviewPrimary" class="text-cyan-300 font-semibold">0</span>
         </div>
 
         <!-- Form Actions -->
@@ -680,14 +755,14 @@
           <button 
             type="button" 
             onclick="closeTransactionModal()" 
-            class="px-4 py-2 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-lg transition-colors"
+            class="px-4 py-2 text-xs font-medium text-[#94A3B8] hover:text-white bg-[#131E30] hover:bg-[#1D2B40] border border-[#2A3A50] rounded-lg transition-colors"
           >
             Cancel
           </button>
           <button 
             type="button" 
             id="saveTxBtn" 
-            class="px-4 py-2 text-xs font-medium text-white bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] rounded-lg transition-colors shadow-xs"
+            class="px-4 py-2 text-xs font-medium text-white bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-400 hover:opacity-95 rounded-lg transition-all shadow-sm"
           >
             Save Transaction
           </button>
@@ -699,14 +774,14 @@
   <!-- ============================================================
        MODAL 2: WALLETS & ACCOUNTS MANAGEMENT
        ============================================================ -->
-  <div id="accountModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+  <div id="accountModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#172438] border border-[#2A3A50] rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col card-liquid-border">
       
-      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)] flex-shrink-0">
-        <h3 class="text-base font-semibold text-[var(--text-main)]">
+      <div class="flex items-center justify-between pb-3 border-b border-[#2A3A50] flex-shrink-0">
+        <h3 class="text-base font-semibold text-white">
           Wallets &amp; Accounts Management
         </h3>
-        <button onclick="closeAccountManagerModal()" class="text-[var(--text-muted)] hover:text-[var(--text-main)] text-sm p-1">
+        <button onclick="closeAccountManagerModal()" class="text-[#94A3B8] hover:text-white text-sm p-1">
           ✕
         </button>
       </div>
@@ -714,25 +789,25 @@
       <div class="overflow-y-auto flex-1 space-y-4 pr-1">
         <!-- Existing Accounts List -->
         <div>
-          <h4 class="text-xs font-medium text-[var(--text-muted)] mb-2 uppercase tracking-wider">Existing Accounts</h4>
+          <h4 class="text-xs font-medium text-[#94A3B8] mb-2 uppercase tracking-wider">Existing Accounts</h4>
           <div id="modalAccountList" class="space-y-2">
             <!-- Rendered by renderAccountModalList() -->
           </div>
         </div>
 
         <!-- Add New Account Form -->
-        <div class="p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] space-y-3">
-          <h4 class="text-xs font-semibold text-[var(--text-main)]">Create New Wallet</h4>
+        <div class="p-4 rounded-xl bg-[#131E30] border border-[#2A3A50] space-y-3">
+          <h4 class="text-xs font-semibold text-white">Create New Wallet</h4>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <input 
               type="text" 
               id="newAccountName" 
               placeholder="Account Name" 
-              class="bg-[var(--bg-card)] border border-[var(--border-subtle)] text-xs rounded-lg px-2.5 py-1.5 text-[var(--text-main)] focus:outline-none"
+              class="bg-[#1D2B40] border border-[#2A3A50] text-xs rounded-lg px-2.5 py-1.5 text-white focus:outline-none"
             />
             <select 
               id="newAccountCurrency" 
-              class="bg-[var(--bg-card)] border border-[var(--border-subtle)] text-xs rounded-lg px-2.5 py-1.5 text-[var(--text-main)] focus:outline-none cursor-pointer"
+              class="bg-[#1D2B40] border border-[#2A3A50] text-xs rounded-lg px-2.5 py-1.5 text-white focus:outline-none cursor-pointer"
             >
             </select>
             <input 
@@ -740,24 +815,24 @@
               id="newAccountInitial" 
               placeholder="Initial Deposit" 
               step="any" 
-              class="bg-[var(--bg-card)] border border-[var(--border-subtle)] text-xs rounded-lg px-2.5 py-1.5 text-[var(--text-main)] tabular-nums focus:outline-none"
+              class="bg-[#1D2B40] border border-[#2A3A50] text-xs rounded-lg px-2.5 py-1.5 text-white tabular-nums focus:outline-none"
             />
           </div>
           <button 
             type="button" 
             onclick="addNewAccountFromModal()" 
-            class="w-full py-2 text-xs font-medium text-white bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] rounded-lg transition-colors shadow-xs"
+            class="w-full py-2 text-xs font-medium text-white bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-400 hover:opacity-95 rounded-lg transition-all shadow-sm"
           >
             Create Wallet
           </button>
         </div>
       </div>
 
-      <div class="pt-3 border-t border-[var(--border-subtle)] flex justify-end flex-shrink-0">
+      <div class="pt-3 border-t border-[#2A3A50] flex justify-end flex-shrink-0">
         <button 
           type="button" 
           onclick="closeAccountManagerModal()" 
-          class="px-4 py-2 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-subtle)]"
+          class="px-4 py-2 text-xs font-medium text-[#94A3B8] hover:text-white bg-[#131E30] rounded-lg border border-[#2A3A50]"
         >
           Done
         </button>
@@ -768,71 +843,71 @@
   <!-- ============================================================
        MODAL 3: CURRENCY CONVERTER & FX RATES
        ============================================================ -->
-  <div id="rateModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+  <div id="rateModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#172438] border border-[#2A3A50] rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 card-liquid-border">
       
-      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)]">
-        <h3 class="text-base font-semibold text-[var(--text-main)]">
+      <div class="flex items-center justify-between pb-3 border-b border-[#2A3A50]">
+        <h3 class="text-base font-semibold text-white">
           Currency Converter
         </h3>
-        <button onclick="closeRateModal()" class="text-[var(--text-muted)] hover:text-[var(--text-main)] text-sm p-1">
+        <button onclick="closeRateModal()" class="text-[#94A3B8] hover:text-white text-sm p-1">
           ✕
         </button>
       </div>
 
       <div class="space-y-3.5">
         <div>
-          <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Amount</label>
+          <label class="block text-xs font-medium text-[#94A3B8] mb-1">Amount</label>
           <input 
             type="number" 
             id="calcAmount" 
             value="1" 
             step="any" 
             oninput="runQuickConverter()" 
-            class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] tabular-nums focus:outline-none"
+            class="w-full bg-[#1D2B40] border border-[#2A3A50] rounded-lg px-3 py-2 text-xs sm:text-sm text-white tabular-nums focus:outline-none"
           />
         </div>
 
         <div class="grid grid-cols-2 gap-2.5">
           <div>
-            <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">From</label>
+            <label class="block text-xs font-medium text-[#94A3B8] mb-1">From</label>
             <select 
               id="calcFromCurrency" 
               onchange="runQuickConverter()" 
-              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-main)] focus:outline-none cursor-pointer"
+              class="w-full bg-[#1D2B40] border border-[#2A3A50] rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none cursor-pointer"
             >
             </select>
           </div>
           <div>
-            <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">To</label>
+            <label class="block text-xs font-medium text-[#94A3B8] mb-1">To</label>
             <select 
               id="calcToCurrency" 
               onchange="runQuickConverter()" 
-              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-main)] focus:outline-none cursor-pointer"
+              class="w-full bg-[#1D2B40] border border-[#2A3A50] rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none cursor-pointer"
             >
             </select>
           </div>
         </div>
 
-        <div class="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-center">
-          <div class="text-xs text-[var(--text-muted)] mb-0.5">Calculated Value</div>
-          <div id="calcResultDisplay" class="text-lg font-semibold text-[var(--text-main)] tabular-nums">
+        <div class="p-3.5 rounded-xl bg-[#131E30] border border-[#2A3A50] text-center">
+          <div class="text-xs text-[#94A3B8] mb-0.5">Calculated Value</div>
+          <div id="calcResultDisplay" class="text-lg font-semibold text-cyan-300 tabular-nums">
             0.00
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs text-[var(--text-muted)] pt-1">
+        <div class="flex items-center justify-between text-xs text-[#94A3B8] pt-1">
           <button 
             type="button" 
             onclick="fetchLiveDailyRates(true)" 
-            class="text-[var(--accent-primary)] hover:underline"
+            class="text-cyan-400 hover:underline"
           >
             ↻ Sync Rates
           </button>
           <button 
             type="button" 
             onclick="closeRateModal()" 
-            class="px-3.5 py-1.5 bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-subtle)]"
+            class="px-3.5 py-1.5 bg-[#131E30] rounded-lg border border-[#2A3A50]"
           >
             Close
           </button>
@@ -844,71 +919,71 @@
   <!-- ============================================================
        MODAL 4: BACKUP & DATA MANAGEMENT
        ============================================================ -->
-  <div id="backupModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+  <div id="backupModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#172438] border border-[#2A3A50] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 card-liquid-border">
       
-      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)]">
-        <h3 class="text-base font-semibold text-[var(--text-main)]">
+      <div class="flex items-center justify-between pb-3 border-b border-[#2A3A50]">
+        <h3 class="text-base font-semibold text-white">
           Data Backup &amp; Storage
         </h3>
-        <button onclick="closeBackupModal()" class="text-[var(--text-muted)] hover:text-[var(--text-main)] text-sm p-1">
+        <button onclick="closeBackupModal()" class="text-[#94A3B8] hover:text-white text-sm p-1">
           ✕
         </button>
       </div>
 
-      <div class="space-y-4 text-xs text-[var(--text-muted)]">
+      <div class="space-y-4 text-xs text-[#94A3B8]">
         <p>
           All transactions, multi-currency accounts, and exchange rates persist permanently in your private browser offline storage.
         </p>
 
         <!-- Download JSON Backup -->
-        <div class="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] flex items-center justify-between gap-3">
+        <div class="p-3.5 rounded-xl bg-[#131E30] border border-[#2A3A50] flex items-center justify-between gap-3">
           <div>
-            <div class="font-medium text-[var(--text-main)]">JSON Data Snapshot</div>
-            <div class="text-[11px] text-[var(--text-muted)] mt-0.5">Export complete structured ledger data.</div>
+            <div class="font-medium text-white">JSON Data Snapshot</div>
+            <div class="text-[11px] text-[#94A3B8] mt-0.5">Export complete structured ledger data.</div>
           </div>
           <button 
             type="button" 
             onclick="downloadJsonBackup()" 
-            class="px-3 py-1.5 text-xs font-medium text-white bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] rounded-lg transition-colors flex-shrink-0 shadow-xs"
+            class="px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-blue-600 to-cyan-500 hover:opacity-95 rounded-lg transition-colors flex-shrink-0 shadow-xs"
           >
             Export JSON
           </button>
         </div>
 
         <!-- Restore JSON Backup -->
-        <div class="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] space-y-2">
-          <div class="font-medium text-[var(--text-main)]">Restore Ledger from File</div>
+        <div class="p-3.5 rounded-xl bg-[#131E30] border border-[#2A3A50] space-y-2">
+          <div class="font-medium text-white">Restore Ledger from File</div>
           <input 
             type="file" 
             id="restoreFileInput" 
             accept=".json" 
             onchange="handleRestoreFile(event)" 
-            class="text-xs text-[var(--text-muted)] block w-full file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-[var(--bg-card)] file:text-[var(--text-main)] cursor-pointer"
+            class="text-xs text-[#94A3B8] block w-full file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-[#1D2B40] file:text-white cursor-pointer"
           />
         </div>
 
         <!-- Export CSV -->
-        <div class="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] flex items-center justify-between gap-3">
+        <div class="p-3.5 rounded-xl bg-[#131E30] border border-[#2A3A50] flex items-center justify-between gap-3">
           <div>
-            <div class="font-medium text-[var(--text-main)]">Spreadsheet Export (CSV)</div>
-            <div class="text-[11px] text-[var(--text-muted)] mt-0.5">Open in Microsoft Excel or Google Sheets.</div>
+            <div class="font-medium text-white">Spreadsheet Export (CSV)</div>
+            <div class="text-[11px] text-[#94A3B8] mt-0.5">Open in Microsoft Excel or Google Sheets.</div>
           </div>
           <button 
             type="button" 
             onclick="exportCsv()" 
-            class="px-3 py-1.5 text-xs font-medium text-[var(--text-main)] bg-[var(--bg-card)] hover:bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-lg transition-colors flex-shrink-0"
+            class="px-3 py-1.5 text-xs font-medium text-white bg-[#1D2B40] hover:bg-[#2A3A50] border border-[#2A3A50] rounded-lg transition-colors flex-shrink-0"
           >
             Export CSV
           </button>
         </div>
       </div>
 
-      <div class="pt-3 border-t border-[var(--border-subtle)] flex justify-end">
+      <div class="pt-3 border-t border-[#2A3A50] flex justify-end">
         <button 
           type="button" 
           onclick="closeBackupModal()" 
-          class="px-4 py-2 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-subtle)]"
+          class="px-4 py-2 text-xs font-medium text-[#94A3B8] hover:text-white bg-[#131E30] rounded-lg border border-[#2A3A50]"
         >
           Close
         </button>
@@ -969,30 +1044,17 @@
     let cashFlowChartInstance = null;
     let allocationChartInstance = null;
 
-    // Theme Management
+    // Single Fixed Design: Permanent Liquid Dark Experience
     function toggleTheme() {
-      const isDark = document.documentElement.classList.contains('dark');
-      if (isDark) {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('bizledger_theme', 'light');
-        document.getElementById('themeIcon').textContent = '☀️';
-      } else {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('bizledger_theme', 'dark');
-        document.getElementById('themeIcon').textContent = '🌙';
-      }
-      renderCharts();
-    }
-
-    // Initialize Theme
-    const savedTheme = localStorage.getItem('bizledger_theme') || 'dark';
-    if (savedTheme === 'light') {
-      document.documentElement.classList.remove('dark');
-      document.getElementById('themeIcon').textContent = '☀️';
-    } else {
+      // Kept for zero-regression backward compatibility
+      showToast('Liquid Gradient Dark Theme Active');
       document.documentElement.classList.add('dark');
+      localStorage.setItem('bizledger_theme', 'dark');
       document.getElementById('themeIcon').textContent = '🌙';
     }
+
+    // Always maintain dark liquid theme
+    document.documentElement.classList.add('dark');
 
     // Privacy Masking Toggle
     function toggleBalancePrivacy() {
@@ -1081,7 +1143,7 @@
       return balMap;
     }
 
-    // Wallets Renderer (Section 5.E: Consistent, Neutral, High Craftsmanship)
+    // Wallets Renderer (Section 6: Liquid Gradient Accent & Smooth Hover)
     function renderWallets() {
       const balMap = calculateAccountBalances();
       const container = document.getElementById('accountCardsContainer');
@@ -1093,28 +1155,32 @@
       accounts.forEach(acc => {
         const b = balMap[acc.id] || { initial: 0, current: 0, currency: acc.currency || 'BDT' };
         const card = document.createElement('div');
-        card.className = 'p-4 sm:p-5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] hover:border-[var(--border-focus)] transition-colors flex flex-col justify-between group shadow-xs';
+        card.className = 'p-4 sm:p-5 rounded-xl bg-[#172438] border border-[#2A3A50] hover:border-cyan-500/50 hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between group shadow-xs relative overflow-hidden';
+        
         card.innerHTML = `
+          <!-- Liquid top line accent -->
+          <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-400 opacity-60 group-hover:opacity-100 transition-opacity"></div>
+          
           <div class="flex items-center justify-between gap-2 mb-3">
             <div class="flex items-center gap-2.5 min-w-0">
-              <span class="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-subtle)] flex items-center justify-center text-sm flex-shrink-0">
+              <span class="w-8 h-8 rounded-lg bg-[#1D2B40] border border-[#2A3A50] flex items-center justify-center text-sm flex-shrink-0 group-hover:border-cyan-500/40 transition-colors">
                 ${escapeHtml(acc.icon || '💳')}
               </span>
-              <span class="text-xs sm:text-sm font-medium text-[var(--text-main)] truncate">
+              <span class="text-xs sm:text-sm font-medium text-white truncate">
                 ${escapeHtml(acc.name)}
               </span>
             </div>
-            <span class="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-[var(--bg-elevated)] text-[var(--text-muted)] border border-[var(--border-subtle)] flex-shrink-0">
+            <span class="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-[#1D2B40] text-cyan-300 border border-[#2A3A50] flex-shrink-0">
               ${escapeHtml(b.currency)}
             </span>
           </div>
           <div>
-            <div class="text-lg sm:text-xl font-semibold text-[var(--text-main)] tabular-nums tracking-tight">
+            <div class="text-lg sm:text-xl font-semibold text-white tabular-nums tracking-tight">
               ${isHidden ? '••••••' : formatCurrency(b.current, b.currency)}
             </div>
-            <div class="text-xs text-[var(--text-muted)] mt-1.5 flex items-center justify-between">
+            <div class="text-xs text-[#94A3B8] mt-1.5 flex items-center justify-between">
               <span>Init: ${isHidden ? '••••••' : formatCurrency(b.initial, b.currency)}</span>
-              <button onclick="openAccountManagerModal()" class="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-[var(--accent-primary)] hover:underline">
+              <button onclick="openAccountManagerModal()" class="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-cyan-400 hover:underline">
                 Manage
               </button>
             </div>
@@ -1150,7 +1216,7 @@
       }
     }
 
-    // Financial Metrics Summary (Section 5.C)
+    // Financial Metrics Summary (Section 5.B, 5.C, 5.D)
     function updateSummary() {
       let initUSD = 0;
       accounts.forEach(acc => {
@@ -1213,22 +1279,22 @@
         const sign = netPrimary >= 0 ? '+' : '';
         elNet.textContent = isHidden ? '••••••' : `${sign}${formatCurrency(netPrimary, primaryCurrency)}`;
         if (netPrimary > 0) {
-          elNet.className = 'text-lg sm:text-xl font-semibold text-[var(--color-income)] tracking-tight tabular-nums mt-1';
+          elNet.className = 'text-lg sm:text-xl font-semibold text-[#22C55E] tracking-tight tabular-nums mt-1';
           if (elNetBadge) {
             elNetBadge.textContent = 'Positive';
-            elNetBadge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#35B37E]/10 text-[#35B37E] border border-[#35B37E]/20';
+            elNetBadge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/20';
           }
         } else if (netPrimary < 0) {
-          elNet.className = 'text-lg sm:text-xl font-semibold text-[var(--color-expense)] tracking-tight tabular-nums mt-1';
+          elNet.className = 'text-lg sm:text-xl font-semibold text-[#F87171] tracking-tight tabular-nums mt-1';
           if (elNetBadge) {
             elNetBadge.textContent = 'Deficit';
-            elNetBadge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#E56B76]/10 text-[#E56B76] border border-[#E56B76]/20';
+            elNetBadge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#F87171]/10 text-[#F87171] border border-[#F87171]/20';
           }
         } else {
-          elNet.className = 'text-lg sm:text-xl font-semibold text-[var(--text-main)] tracking-tight tabular-nums mt-1';
+          elNet.className = 'text-lg sm:text-xl font-semibold text-white tracking-tight tabular-nums mt-1';
           if (elNetBadge) {
             elNetBadge.textContent = 'Neutral';
-            elNetBadge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--bg-elevated)] text-[var(--text-muted)] border border-[var(--border-subtle)]';
+            elNetBadge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#1D2B40] text-[#94A3B8] border border-[#2A3A50]';
           }
         }
       }
@@ -1241,8 +1307,8 @@
           const sign = growthPct >= 0 ? '+' : '';
           elGrowth.textContent = isHidden ? '••••••' : `${sign}${growthPct}%`;
           elGrowth.className = growthPct >= 0 
-            ? 'text-sm sm:text-base font-semibold text-[var(--color-income)] tabular-nums mt-0.5' 
-            : 'text-sm sm:text-base font-semibold text-[var(--color-expense)] tabular-nums mt-0.5';
+            ? 'text-sm sm:text-base font-semibold text-[#22C55E] tabular-nums mt-0.5' 
+            : 'text-sm sm:text-base font-semibold text-[#F87171] tabular-nums mt-0.5';
         } else {
           elGrowth.textContent = '0.0%';
         }
@@ -1254,7 +1320,7 @@
         elTurnover.textContent = isHidden ? '••••••' : formatCurrency(turnoverPrimary, primaryCurrency);
       }
 
-      // Cash Flow Progress Bar
+      // Liquid Cash Flow Ratio Bar
       const bar = document.getElementById('cashFlowProgressBar');
       const ratioLabel = document.getElementById('cashFlowRatioLabel');
       if (bar && ratioLabel) {
@@ -1279,22 +1345,21 @@
         privacyIcon.textContent = isHidden ? '🔒' : '👁️';
       }
 
-      // Render Charts
+      // Render Liquid Charts
       renderCharts();
     }
 
-    // Visual Financial Analytics Charts (Section 5.D)
+    // Liquid Analytics & Visual Telemetry (Section 7)
     function renderCharts() {
       if (typeof Chart === 'undefined') return;
 
-      const isDark = document.documentElement.classList.contains('dark');
-      const textColor = isDark ? '#929BAA' : '#687386';
-      const gridColor = isDark ? 'rgba(37, 45, 57, 0.4)' : 'rgba(229, 232, 239, 0.7)';
-      const incomeColor = isDark ? '#35B37E' : '#169B69';
-      const expenseColor = isDark ? '#E56B76' : '#D94F60';
+      const textColor = '#94A3B8';
+      const gridColor = 'rgba(42, 58, 80, 0.45)';
+      const incomeColor = '#14B8A6';
+      const expenseColor = '#F87171';
       const emptyStateEl = document.getElementById('chartEmptyState');
 
-      // 1. Line/Bar Cash Flow Telemetry
+      // 1. Liquid Cash Flow Dynamics Bar/Line
       const cashFlowCanvas = document.getElementById('cashFlowChartCanvas');
       if (cashFlowCanvas) {
         if (transactions.length === 0) {
@@ -1316,11 +1381,22 @@
             else if (t.type === 'Expense') dateMap[t.date].expense += amtPrim;
           });
 
-          const labels = Object.keys(dateMap).slice(-8); // Last 8 activity dates
+          const labels = Object.keys(dateMap).slice(-8);
           const incomeData = labels.map(d => dateMap[d].income);
           const expenseData = labels.map(d => dateMap[d].expense);
 
           if (cashFlowChartInstance) cashFlowChartInstance.destroy();
+
+          const ctx = cashFlowCanvas.getContext('2d');
+          
+          // Create gradient fills
+          const incomeGrad = ctx.createLinearGradient(0, 0, 0, 200);
+          incomeGrad.addColorStop(0, '#06B6D4');
+          incomeGrad.addColorStop(1, '#14B8A6');
+
+          const expenseGrad = ctx.createLinearGradient(0, 0, 0, 200);
+          expenseGrad.addColorStop(0, '#F87171');
+          expenseGrad.addColorStop(1, '#EF4444');
 
           cashFlowChartInstance = new Chart(cashFlowCanvas, {
             type: 'bar',
@@ -1333,31 +1409,33 @@
                 {
                   label: 'Inflow',
                   data: incomeData,
-                  backgroundColor: incomeColor,
-                  borderRadius: 4,
-                  barThickness: 12
+                  backgroundColor: incomeGrad,
+                  borderRadius: 6,
+                  barThickness: 14
                 },
                 {
                   label: 'Outflow',
                   data: expenseData,
-                  backgroundColor: expenseColor,
-                  borderRadius: 4,
-                  barThickness: 12
+                  backgroundColor: expenseGrad,
+                  borderRadius: 6,
+                  barThickness: 14
                 }
               ]
             },
             options: {
               responsive: true,
               maintainAspectRatio: false,
+              animation: { duration: 600, easing: 'easeOutQuart' },
               plugins: {
                 legend: { display: false },
                 tooltip: {
-                  backgroundColor: isDark ? '#141922' : '#FFFFFF',
-                  titleColor: isDark ? '#F0F2F5' : '#18202D',
+                  backgroundColor: '#172438',
+                  titleColor: '#F8FAFC',
                   bodyColor: textColor,
-                  borderColor: isDark ? '#252D39' : '#E5E8EF',
+                  borderColor: '#2A3A50',
                   borderWidth: 1,
                   padding: 10,
+                  cornerRadius: 8,
                   callbacks: {
                     label: function(ctx) {
                       return ` ${ctx.dataset.label}: ${formatCurrency(ctx.raw, primaryCurrency)}`;
@@ -1384,20 +1462,20 @@
         }
       }
 
-      // 2. Asset Allocation Donut Chart
+      // 2. Liquid Asset Allocation Donut
       const allocCanvas = document.getElementById('walletAllocationChartCanvas');
       if (allocCanvas) {
         const balMap = calculateAccountBalances();
         const labels = [];
         const data = [];
         const palette = [
-          isDark ? '#8B7CF6' : '#6558D9',
-          isDark ? '#66A6D9' : '#3B82F6',
-          isDark ? '#35B37E' : '#169B69',
-          isDark ? '#E56B76' : '#D94F60',
-          '#F59E0B',
-          '#10B981',
-          '#6366F1'
+          '#2563EB', // Ocean blue
+          '#06B6D4', // Cyan
+          '#14B8A6', // Teal
+          '#8B5CF6', // Violet
+          '#22C55E', // Emerald
+          '#F59E0B', // Amber
+          '#6366F1'  // Indigo
         ];
 
         accounts.forEach(a => {
@@ -1419,14 +1497,15 @@
               datasets: [{
                 data: data,
                 backgroundColor: palette.slice(0, data.length),
-                borderWidth: 1,
-                borderColor: isDark ? '#141922' : '#FFFFFF'
+                borderWidth: 2,
+                borderColor: '#172438'
               }]
             },
             options: {
               responsive: true,
               maintainAspectRatio: false,
               cutout: '72%',
+              animation: { duration: 700, easing: 'easeOutQuart' },
               plugins: {
                 legend: {
                   position: 'bottom',
@@ -1438,12 +1517,13 @@
                   }
                 },
                 tooltip: {
-                  backgroundColor: isDark ? '#141922' : '#FFFFFF',
-                  titleColor: isDark ? '#F0F2F5' : '#18202D',
+                  backgroundColor: '#172438',
+                  titleColor: '#F8FAFC',
                   bodyColor: textColor,
-                  borderColor: isDark ? '#252D39' : '#E5E8EF',
+                  borderColor: '#2A3A50',
                   borderWidth: 1,
                   padding: 10,
+                  cornerRadius: 8,
                   callbacks: {
                     label: function(ctx) {
                       return ` ${ctx.label}: ${formatCurrency(ctx.raw, primaryCurrency)}`;
@@ -1457,7 +1537,7 @@
       }
     }
 
-    // Transactions Table & List Renderer (Section 5.F)
+    // Transactions Table & List Renderer (Section 9)
     function renderTable() {
       const typeFilter = document.getElementById('desktopFilterType')?.value || 
                          document.getElementById('mobileFilterType')?.value || 'ALL';
@@ -1488,10 +1568,10 @@
 
         displayed.forEach(t => {
           const isInc = t.type === 'Income';
-          const colorClass = isInc ? 'text-[var(--color-income)]' : 'text-[var(--color-expense)]';
+          const colorClass = isInc ? 'text-[#22C55E]' : 'text-[#F87171]';
           const badgeClass = isInc 
-            ? 'bg-[#35B37E]/10 text-[#35B37E] border border-[#35B37E]/20' 
-            : 'bg-[#E56B76]/10 text-[#E56B76] border border-[#E56B76]/20';
+            ? 'bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/20' 
+            : 'bg-[#F87171]/10 text-[#F87171] border border-[#F87171]/20';
           const sign = isInc ? '+' : '−';
           const acc = accounts.find(a => a.id === t.accountId);
           const accName = acc ? acc.name : 'Wallet';
@@ -1499,21 +1579,21 @@
           const primVal = convertAny(t.usdEquivalent !== undefined ? t.usdEquivalent : convertAny(t.amount, t.currency, 'USD'), 'USD', primaryCurrency);
           const formattedAmount = isHidden ? '••••••' : `${sign} ${formatCurrency(primVal, primaryCurrency)}`;
 
-          // Mobile Item (Clean, tactile, stacked card layout)
+          // Mobile Item (Stacked card item)
           if (mobileList) {
             const item = document.createElement('div');
-            item.className = 'py-3.5 px-4 flex items-center justify-between gap-3 border-b border-[var(--border-subtle)] last:border-b-0 hover:bg-[var(--bg-elevated)]/50 transition-colors';
+            item.className = 'py-3.5 px-4 flex items-center justify-between gap-3 border-b border-[#2A3A50] last:border-b-0 hover:bg-[#1D2B40]/50 transition-colors';
             item.innerHTML = `
               <div class="flex items-center gap-3 min-w-0">
                 <span class="w-8 h-8 rounded-lg ${badgeClass} flex items-center justify-center text-xs font-semibold flex-shrink-0">
                   ${isInc ? '↓' : '↑'}
                 </span>
                 <div class="min-w-0">
-                  <span class="text-xs sm:text-sm font-medium text-[var(--text-main)] block truncate">
+                  <span class="text-xs sm:text-sm font-medium text-white block truncate">
                     ${escapeHtml(t.description)}
                   </span>
-                  <span class="text-[11px] text-[var(--text-muted)] block mt-0.5">
-                    ${t.date} • <span class="text-[var(--text-main)] font-normal">${escapeHtml(accName)}</span>
+                  <span class="text-[11px] text-[#94A3B8] block mt-0.5">
+                    ${t.date} • <span class="text-cyan-300 font-normal">${escapeHtml(accName)}</span>
                   </span>
                 </div>
               </div>
@@ -1521,7 +1601,7 @@
                 <span class="text-xs sm:text-sm font-semibold ${colorClass} tabular-nums block">
                   ${formattedAmount}
                 </span>
-                <button onclick="deleteTx('${t.id}')" class="text-[11px] text-[var(--text-subtle)] hover:text-[#E56B76] transition-colors mt-0.5">
+                <button onclick="deleteTx('${t.id}')" class="text-[11px] text-[#64748B] hover:text-[#F87171] transition-colors mt-0.5">
                   Delete
                 </button>
               </div>
@@ -1529,15 +1609,15 @@
             mobileList.appendChild(item);
           }
 
-          // Desktop Row (Refined table row with hover)
+          // Desktop Row (Refined table row)
           if (desktopList) {
             const row = document.createElement('tr');
-            row.className = 'border-b border-[var(--border-subtle)] last:border-b-0 hover:bg-[var(--bg-elevated)]/50 transition-colors';
+            row.className = 'border-b border-[#2A3A50] last:border-b-0 hover:bg-[#1D2B40]/50 transition-colors';
             row.innerHTML = `
-              <td class="py-3 px-4 text-xs text-[var(--text-muted)] font-mono">${t.date}</td>
-              <td class="py-3 px-4 text-xs font-medium text-[var(--text-main)]">${escapeHtml(t.description)}</td>
-              <td class="py-3 px-4 text-xs text-[var(--text-muted)]">
-                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-main)] font-normal">
+              <td class="py-3 px-4 text-xs text-[#94A3B8] font-mono">${t.date}</td>
+              <td class="py-3 px-4 text-xs font-medium text-white">${escapeHtml(t.description)}</td>
+              <td class="py-3 px-4 text-xs text-[#94A3B8]">
+                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#1D2B40] border border-[#2A3A50] text-cyan-200 font-normal">
                   ${escapeHtml(accName)}
                 </span>
               </td>
@@ -1550,7 +1630,7 @@
                 ${formattedAmount}
               </td>
               <td class="py-3 px-4 text-center">
-                <button onclick="deleteTx('${t.id}')" class="text-xs text-[var(--text-subtle)] hover:text-[#E56B76] transition-colors" title="Delete transaction">
+                <button onclick="deleteTx('${t.id}')" class="text-xs text-[#64748B] hover:text-[#F87171] transition-colors" title="Delete transaction">
                   Delete
                 </button>
               </td>
@@ -1677,13 +1757,13 @@
       list.innerHTML = '';
       accounts.forEach(a => {
         const row = document.createElement('div');
-        row.className = 'p-3 rounded-lg bg-[var(--bg-card)] border border-[var(--border-subtle)] flex items-center justify-between gap-3';
+        row.className = 'p-3 rounded-lg bg-[#131E30] border border-[#2A3A50] flex items-center justify-between gap-3';
         row.innerHTML = `
           <div class="flex items-center gap-2.5 min-w-0">
             <span>${a.icon || '💳'}</span>
             <div>
-              <span class="text-xs font-semibold text-[var(--text-main)] block truncate">${escapeHtml(a.name)}</span>
-              <span class="text-[10px] text-[var(--text-muted)] font-mono">${a.currency}</span>
+              <span class="text-xs font-semibold text-white block truncate">${escapeHtml(a.name)}</span>
+              <span class="text-[10px] text-cyan-300 font-mono">${a.currency}</span>
             </div>
           </div>
           <div class="flex items-center gap-2">
@@ -1692,7 +1772,7 @@
               step="any" 
               value="${a.initialBalance || 0}" 
               onchange="updateAccountBalance('${a.id}', this.value)" 
-              class="w-24 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-xs text-[var(--text-main)] rounded px-2 py-1 tabular-nums focus:outline-none"
+              class="w-24 bg-[#1D2B40] border border-[#2A3A50] text-xs text-white rounded px-2 py-1 tabular-nums focus:outline-none"
               title="Initial balance"
             />
           </div>
@@ -1774,7 +1854,7 @@
         accounts,
         primaryCurrency,
         backupDate: new Date().toISOString(),
-        version: '2.5.0'
+        version: '3.0.0-liquid'
       };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -1838,8 +1918,8 @@
       const container = document.getElementById('toastContainer');
       if (!container) return;
       const toast = document.createElement('div');
-      toast.className = 'px-3.5 py-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border-subtle)] text-xs text-[var(--text-main)] shadow-lg transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto flex items-center gap-2';
-      toast.innerHTML = `<span>ℹ️</span><span>${escapeHtml(msg)}</span>`;
+      toast.className = 'px-3.5 py-2 rounded-lg bg-[#172438] border border-cyan-500/40 text-xs text-white shadow-lg transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto flex items-center gap-2';
+      toast.innerHTML = `<span class="text-cyan-400">🌊</span><span>${escapeHtml(msg)}</span>`;
       container.appendChild(toast);
       
       requestAnimationFrame(() => {
