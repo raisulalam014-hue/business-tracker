@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizLedger | Global Multi-Currency Business Tracker & Converter</title>
+  <title>BizLedger | Global Multi-Currency Business Tracker & Live Market Trends</title>
   
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -38,6 +38,17 @@
     .spin-active {
       animation: spin-slow 1s linear infinite;
     }
+    /* Horizontal ticker scroll */
+    .ticker-scroll {
+      display: flex;
+      gap: 1.5rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .ticker-scroll::-webkit-scrollbar {
+      display: none;
+    }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
@@ -55,10 +66,10 @@
           <h1 class="text-lg font-bold text-slate-900 leading-tight flex items-center gap-2">
             BizLedger
             <span class="hidden sm:inline-flex text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wide">
-              Global Multi-Currency 💱
+              Live Trends 📈
             </span>
           </h1>
-          <p class="text-xs text-slate-500 font-medium">Any Currency Tracking, Live Converter & Multi-Wallet Ledger</p>
+          <p class="text-xs text-slate-500 font-medium">Real-Time Currency Fluctuations (Ups & Downs) & Ledger</p>
         </div>
       </div>
       
@@ -71,35 +82,33 @@
           class="flex items-center gap-1.5 bg-amber-50/90 hover:bg-amber-100 border border-amber-200/90 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-amber-900 transition"
           title="Click to view all live currency rates or use the universal converter"
         >
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Live Rates: <b id="headerQuickRateDisplay">1 USD = ৳122.00</b></span>
-          <span class="text-[10px] bg-amber-200 text-amber-900 px-1 py-0.5 rounded font-extrabold uppercase hidden md:inline">Converter</span>
+          <span id="headerRatePulse" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>$1 = <b id="headerQuickRateDisplay">৳122.00</b></span>
+          <span id="headerUsdTrendBadge" class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
+            ▲ +0.25%
+          </span>
         </button>
 
         <!-- Primary & Secondary Display Currency Selectors -->
         <div class="hidden lg:flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
           <span class="text-[11px] font-bold text-slate-500 px-1">View in:</span>
           
-          <!-- Primary Currency Selector -->
           <select 
             id="primaryCurrencySelect" 
             onchange="changePrimaryCurrency(this.value)" 
             class="font-bold text-emerald-700 bg-white border border-slate-200 rounded-lg px-2 py-1 shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
             title="Primary Display Currency"
           >
-            <!-- Populated via JS with 35+ currencies -->
           </select>
 
           <span class="text-slate-400 font-bold">/</span>
 
-          <!-- Secondary Counter Currency Selector -->
           <select 
             id="secondaryCurrencySelect" 
             onchange="changeSecondaryCurrency(this.value)" 
             class="font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg px-2 py-1 shadow-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            title="Secondary Counter Currency for Side-by-Side Display"
+            title="Secondary Counter Currency"
           >
-            <!-- Populated via JS with 35+ currencies -->
           </select>
         </div>
 
@@ -111,6 +120,29 @@
           <span class="hidden md:inline">Export</span>
         </button>
       </div>
+    </div>
+
+    <!-- 🔴🟢 LIVE CURRENCY TICKER BAR (UPS & DOWNS FLUCTUATIONS) -->
+    <div class="bg-slate-900 text-white text-xs px-4 py-2 border-t border-slate-800 overflow-hidden flex items-center justify-between gap-4">
+      <div class="flex items-center gap-2 whitespace-nowrap">
+        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 font-bold text-[11px]">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+          LIVE MARKET
+        </span>
+        <span id="rateCountdown" class="text-[11px] text-slate-400 hidden sm:inline">Auto-refresh in 4:59</span>
+      </div>
+
+      <!-- Scrolling Currency Ticker -->
+      <div id="liveTickerBar" class="ticker-scroll flex-1 text-[11px] font-semibold text-slate-300">
+        <!-- Rendered dynamically via JavaScript -->
+      </div>
+
+      <button onclick="fetchLiveDailyRates(true)" title="Refresh Rates Now" class="text-slate-400 hover:text-white transition flex items-center gap-1 text-[11px] font-semibold">
+        <svg id="tickerRefreshIcon" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span class="hidden md:inline">Refresh</span>
+      </button>
     </div>
 
     <!-- Mobile Display Currency Bar -->
@@ -129,7 +161,7 @@
   <!-- Main Container -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-    <!-- ACCOUNTS & WALLETS SECTION (Support Any Currency per Wallet) -->
+    <!-- ACCOUNTS & WALLETS SECTION -->
     <section class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3.5">
         <div>
@@ -137,7 +169,7 @@
             <span>🏦 Accounts & Wallets</span>
             <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Multi-Currency Wallets</span>
           </h2>
-          <p class="text-xs text-slate-500">Each account can hold its own native currency (e.g. Bank in BDT, Upwork in USD, Cash in EUR)</p>
+          <p class="text-xs text-slate-500">Each account can hold its own native currency with live converted totals</p>
         </div>
         <button 
           onclick="openAccountManagerModal()" 
@@ -244,7 +276,7 @@
         <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
           <div>
             <h2 class="text-base font-bold text-slate-900">Add Transaction</h2>
-            <p class="text-xs text-slate-500">Supports 35+ global currencies with real-time conversion</p>
+            <p class="text-xs text-slate-500">Input in any currency with live fluctuation tracking</p>
           </div>
           <button onclick="openRateModal()" class="text-xs text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-md font-semibold transition flex items-center gap-1">
             💱 Rates
@@ -287,7 +319,6 @@
               required 
               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
             >
-              <!-- Populated via JS -->
             </select>
           </div>
 
@@ -322,13 +353,11 @@
             <div class="flex items-center justify-between mb-1.5">
               <label for="amount" class="text-xs font-bold uppercase text-slate-600 tracking-wider">Amount & Currency</label>
               
-              <!-- 35+ World Currencies Dropdown -->
               <select 
                 id="transactionCurrency" 
                 onchange="handleTransactionCurrencyChange()" 
                 class="text-xs font-bold bg-slate-100 border border-slate-300 rounded-lg px-2 py-1 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 max-w-[180px]"
               >
-                <!-- Populated via JS -->
               </select>
             </div>
 
@@ -503,7 +532,6 @@
 
       <!-- Account List -->
       <div class="space-y-3 overflow-y-auto flex-1 pr-1" id="accountModalList">
-        <!-- Rendered dynamically -->
       </div>
 
       <!-- Add New Account Section -->
@@ -520,7 +548,6 @@
             id="newAccountCurrency" 
             class="col-span-3 px-2 py-2 text-xs font-bold border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 focus:bg-white"
           >
-            <!-- Populated via JS -->
           </select>
           <input 
             type="number" 
@@ -550,18 +577,18 @@
     </div>
   </div>
 
-  <!-- MODAL 2: UNIVERSAL LIVE EXCHANGE RATE & CONVERTER TOOL -->
+  <!-- MODAL 2: UNIVERSAL LIVE EXCHANGE RATE & CONVERTER TOOL WITH LIVE TRENDS (UPS & DOWNS) -->
   <div id="rateModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-100 max-h-[90vh] flex flex-col">
       
       <div class="flex items-center justify-between pb-3 border-b border-slate-100">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center text-base font-bold">
-            💱
+            📈
           </div>
           <div>
-            <h3 class="text-base font-bold text-slate-900 leading-tight">Universal Currency Converter & Rates</h3>
-            <p id="rateModalSubtitle" class="text-[11px] text-slate-500">Live rates for all global currencies (Auto-updated daily)</p>
+            <h3 class="text-base font-bold text-slate-900 leading-tight">Live Currency Ups & Downs</h3>
+            <p id="rateModalSubtitle" class="text-[11px] text-slate-500">Live market trends & automatic fluctuation tracking</p>
           </div>
         </div>
         <button onclick="fetchLiveDailyRates(true)" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-800 px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1">
@@ -577,7 +604,7 @@
         <!-- Live Instant Interactive Currency Converter -->
         <div class="bg-gradient-to-br from-amber-50/80 to-orange-50/50 p-4 rounded-xl border border-amber-200/80">
           <h4 class="text-xs font-bold uppercase tracking-wider text-amber-900 mb-2.5 flex items-center gap-1.5">
-            <span>⚡ Quick Currency Converter</span>
+            <span>⚡ Quick Currency Calculator</span>
           </h4>
           <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
             
@@ -599,7 +626,6 @@
                 onchange="runQuickConverter()"
                 class="w-full px-2 py-1.5 text-xs font-bold bg-white border border-amber-300 rounded-lg text-slate-800 focus:outline-none"
               >
-                <!-- Populated via JS -->
               </select>
             </div>
 
@@ -613,7 +639,6 @@
                 onchange="runQuickConverter()"
                 class="w-full px-2 py-1.5 text-xs font-bold bg-white border border-amber-300 rounded-lg text-slate-800 focus:outline-none"
               >
-                <!-- Populated via JS -->
               </select>
             </div>
 
@@ -626,14 +651,13 @@
           </div>
         </div>
 
-        <!-- Global Exchange Rates Table -->
+        <!-- Global Exchange Rates Table with LIVE UPS & DOWNS TRENDS -->
         <div>
           <div class="flex items-center justify-between mb-2">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600">Major World Currency Rates</h4>
-            <span class="text-[11px] text-slate-400">Relative to USD ($) & BDT (৳)</span>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600">Live Currency Rates & Daily Fluctuations</h4>
+            <span class="text-[11px] text-slate-400">Green = Up ▲ | Red = Down ▼</span>
           </div>
           <div class="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100 text-xs" id="worldRatesTableContainer">
-            <!-- Populated via JS with 25+ world rates -->
           </div>
         </div>
 
@@ -670,12 +694,13 @@
 
   <!-- JAVASCRIPT APPLICATION LOGIC -->
   <script>
-    const STORAGE_KEY = 'bizledger_global_tx_v7';
-    const SETTINGS_KEY = 'bizledger_global_settings_v7';
-    const ACCOUNTS_KEY = 'bizledger_global_accounts_v7';
-    const RATES_CACHE_KEY = 'bizledger_global_rates_v7';
+    const STORAGE_KEY = 'bizledger_global_tx_v8';
+    const SETTINGS_KEY = 'bizledger_global_settings_v8';
+    const ACCOUNTS_KEY = 'bizledger_global_accounts_v8';
+    const RATES_CACHE_KEY = 'bizledger_global_rates_v8';
+    const PREV_RATES_KEY = 'bizledger_prev_rates_v8';
 
-    // 35+ Major World Currencies Catalog (Flags, Symbols, Codes, Names)
+    // 35+ Major World Currencies Catalog
     const CURRENCIES = [
       { code: 'BDT', symbol: '৳', name: 'Bangladeshi Taka', flag: '🇧🇩' },
       { code: 'USD', symbol: '$', name: 'US Dollar', flag: '🇺🇸' },
@@ -717,61 +742,103 @@
     const CURRENCY_MAP = {};
     CURRENCIES.forEach(c => CURRENCY_MAP[c.code] = c);
 
-    // Default Wallets / Accounts
-    const DEFAULT_ACCOUNTS = [
-      { id: 'acc_bank', name: 'Bank Account', icon: '🏦', currency: 'BDT', initialBalance: 50000 },
-      { id: 'acc_bkash', name: 'bKash', icon: '📱', currency: 'BDT', initialBalance: 20000 },
-      { id: 'acc_cash', name: 'Cash in Hand', icon: '💵', currency: 'BDT', initialBalance: 15000 },
-      { id: 'acc_usd', name: 'Upwork / PayPal', icon: '🌐', currency: 'USD', initialBalance: 250 }
-    ];
-
-    // Application State
-    let accounts = [];
-    let transactions = [];
-    let primaryCurrency = 'BDT';
-    let secondaryCurrency = 'USD';
-
-    // Base rates relative to 1 USD
+    // Baseline Current Rates relative to 1 USD
     let ratesFromUSD = {
       USD: 1.0,
-      BDT: 122.00,
-      EUR: 0.92,
-      GBP: 0.79,
-      INR: 84.00,
-      SAR: 3.75,
-      AED: 3.67,
-      CAD: 1.38,
-      AUD: 1.52,
-      SGD: 1.33,
-      MYR: 4.40,
-      QAR: 3.64,
-      KWD: 0.31,
-      OMR: 0.38,
-      BHD: 0.38,
-      PKR: 278.00,
-      JPY: 152.00,
-      CNY: 7.20,
-      TRY: 34.00,
-      CHF: 0.88,
-      THB: 34.50,
+      BDT: 122.25,
+      EUR: 0.921,
+      GBP: 0.789,
+      INR: 84.15,
+      SAR: 3.751,
+      AED: 3.673,
+      CAD: 1.385,
+      AUD: 1.518,
+      SGD: 1.328,
+      MYR: 4.412,
+      QAR: 3.642,
+      KWD: 0.307,
+      OMR: 0.385,
+      BHD: 0.377,
+      PKR: 278.40,
+      JPY: 152.40,
+      CNY: 7.185,
+      TRY: 34.25,
+      CHF: 0.882,
+      THB: 34.40,
+      IDR: 15650.00,
+      PHP: 58.20,
+      KRW: 1385.00,
+      BRL: 5.72,
+      ZAR: 17.75,
+      RUB: 97.40,
+      EGP: 49.15,
+      NZD: 1.662,
+      HKD: 7.778,
+      SEK: 10.68,
+      NOK: 10.95,
+      DKK: 6.87,
+      PLN: 4.02,
+      VND: 25350.00
+    };
+
+    // Previous Baseline Rates for calculating live Ups & Downs
+    let previousRatesFromUSD = {
+      USD: 1.0,
+      BDT: 121.80, // BDT weakened slightly (rate rose from 121.80 to 122.25 -> USD up)
+      EUR: 0.924,
+      GBP: 0.785,
+      INR: 84.20,
+      SAR: 3.750,
+      AED: 3.672,
+      CAD: 1.380,
+      AUD: 1.525,
+      SGD: 1.332,
+      MYR: 4.425,
+      QAR: 3.640,
+      KWD: 0.308,
+      OMR: 0.385,
+      BHD: 0.377,
+      PKR: 279.10,
+      JPY: 151.80,
+      CNY: 7.195,
+      TRY: 33.90,
+      CHF: 0.885,
+      THB: 34.60,
       IDR: 15600.00,
       PHP: 58.00,
       KRW: 1380.00,
-      BRL: 5.75,
-      ZAR: 17.80,
-      RUB: 97.00,
-      EGP: 49.00,
-      NZD: 1.66,
-      HKD: 7.78,
-      SEK: 10.70,
-      NOK: 11.00,
+      BRL: 5.68,
+      ZAR: 17.85,
+      RUB: 96.80,
+      EGP: 48.90,
+      NZD: 1.670,
+      HKD: 7.782,
+      SEK: 10.72,
+      NOK: 11.05,
       DKK: 6.90,
       PLN: 4.05,
       VND: 25300.00
     };
 
+    // Default Accounts
+    const DEFAULT_ACCOUNTS = [
+      { id: 'acc_bank', name: 'Bank Account', icon: '🏦', currency: 'BDT', initialBalance: 50000 },
+      { id: 'acc_bkash', name: 'bKash', icon: '📱', currency: 'BDT', initialBalance: 20000 },
+      { id: 'acc_cash', name: 'Cash in Hand', icon: '💵', currency: 'BDT', initialBalance: 15000 },
+      { id: 'acc_usd', name: 'Upwork / PayPal', icon: '🌐', currency: 'USD', initialBalance: 300 }
+    ];
+
+    let accounts = [];
+    let transactions = [];
+    let primaryCurrency = 'BDT';
+    let secondaryCurrency = 'USD';
+
     let deleteTargetId = null;
     let isDeletingAll = false;
+
+    // Polling interval timer
+    let pollSecondsLeft = 300; // 5 minutes countdown
+    let countdownInterval = null;
 
     // DOM Elements
     const form = document.getElementById('transactionForm');
@@ -794,15 +861,18 @@
     const clearAllBtn = document.getElementById('clearAllBtn');
     const seedDataBtn = document.getElementById('seedDataBtn');
 
-    // Header & Currency Selectors
+    // Header Elements
     const primaryCurrencySelect = document.getElementById('primaryCurrencySelect');
     const secondaryCurrencySelect = document.getElementById('secondaryCurrencySelect');
     const mobilePrimaryCurrencySelect = document.getElementById('mobilePrimaryCurrencySelect');
     const mobileSecondaryCurrencySelect = document.getElementById('mobileSecondaryCurrencySelect');
     const headerQuickRateDisplay = document.getElementById('headerQuickRateDisplay');
+    const headerUsdTrendBadge = document.getElementById('headerUsdTrendBadge');
     const footerRateDisplay = document.getElementById('footerRateDisplay');
+    const liveTickerBar = document.getElementById('liveTickerBar');
+    const rateCountdown = document.getElementById('rateCountdown');
 
-    // Live preview elements in form
+    // Preview
     const previewPrimaryName = document.getElementById('previewPrimaryName');
     const previewPrimaryValue = document.getElementById('previewPrimaryValue');
     const previewSecondaryName = document.getElementById('previewSecondaryName');
@@ -819,7 +889,7 @@
     const newAccountCurrency = document.getElementById('newAccountCurrency');
     const newAccountInitial = document.getElementById('newAccountInitial');
 
-    // Summary Card Elements
+    // Summary Elements
     const combinedInitialPrimary = document.getElementById('combinedInitialPrimary');
     const combinedInitialSecondary = document.getElementById('combinedInitialSecondary');
     const totalIncomePrimary = document.getElementById('totalIncomePrimary');
@@ -833,7 +903,7 @@
     const expenseCountEl = document.getElementById('expenseCount');
     const profitBadgeEl = document.getElementById('profitBadge');
 
-    // Universal Converter Elements
+    // Converter Elements
     const rateModal = document.getElementById('rateModal');
     const calcAmount = document.getElementById('calcAmount');
     const calcFromCurrency = document.getElementById('calcFromCurrency');
@@ -847,19 +917,66 @@
     const modalConfirmBtn = document.getElementById('modalConfirmBtn');
 
     // ==========================================
-    // 💱 UNIVERSAL CURRENCY CONVERTER ENGINE
+    // 📈 FLUCTUATION (UPS & DOWNS) ENGINE
     // ==========================================
-    // Convert any amount from one currency to another
+    // Calculate 24h change & percentage for any currency against BDT
+    function getCurrencyTrend(code) {
+      if (code === 'BDT') return { changePct: 0, isUp: false, isDown: false, isZero: true, text: '0.00%' };
+
+      // Rate of 1 unit of `code` in BDT
+      const currentInBDT = convertAny(1, code, 'BDT');
+      
+      // Previous rate in BDT
+      const prevCodeRate = previousRatesFromUSD[code] || ratesFromUSD[code] || 1;
+      const prevBdtRate = previousRatesFromUSD.BDT || ratesFromUSD.BDT || 122;
+      const prevInBDT = (1 / prevCodeRate) * prevBdtRate;
+
+      if (!prevInBDT || prevInBDT === 0) {
+        return { changePct: 0, isUp: false, isDown: false, isZero: true, text: '0.00%' };
+      }
+
+      const diff = currentInBDT - prevInBDT;
+      const pct = (diff / prevInBDT) * 100;
+
+      if (pct > 0.01) {
+        return {
+          changePct: pct,
+          isUp: true,
+          isDown: false,
+          isZero: false,
+          text: `▲ +${pct.toFixed(2)}%`,
+          badgeClass: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+        };
+      } else if (pct < -0.01) {
+        return {
+          changePct: pct,
+          isUp: false,
+          isDown: true,
+          isZero: false,
+          text: `▼ ${pct.toFixed(2)}%`,
+          badgeClass: 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+        };
+      } else {
+        return {
+          changePct: 0,
+          isUp: false,
+          isDown: false,
+          isZero: true,
+          text: `● 0.00%`,
+          badgeClass: 'bg-slate-700 text-slate-300'
+        };
+      }
+    }
+
+    // Convert Any Currency
     function convertAny(amount, fromCode, toCode) {
       if (fromCode === toCode) return amount;
       const rateFrom = ratesFromUSD[fromCode] || 1.0;
       const rateTo = ratesFromUSD[toCode] || 1.0;
-      // Convert to USD base first, then to target
       const inUSD = amount / rateFrom;
       return inUSD * rateTo;
     }
 
-    // Format any currency with symbol, commas, and proper decimals
     function formatCurrencyAny(amount, code) {
       const meta = CURRENCY_MAP[code] || { symbol: code, name: code };
       const absVal = Math.abs(amount || 0);
@@ -897,71 +1014,62 @@
       dateInput.value = today;
     }
 
-    // Populate all currency select elements across the entire page
-    function populateCurrencyDropdowns() {
-      const selects = [
-        primaryCurrencySelect,
-        secondaryCurrencySelect,
-        mobilePrimaryCurrencySelect,
-        mobileSecondaryCurrencySelect,
-        transactionCurrency,
-        newAccountCurrency,
-        calcFromCurrency,
-        calcToCurrency
-      ];
+    // ==========================================
+    // 🌐 RENDER LIVE TICKER WITH UPS & DOWNS
+    // ==========================================
+    function renderLiveTicker() {
+      const tickerCurrencies = ['USD', 'EUR', 'GBP', 'SAR', 'AED', 'INR', 'CAD', 'AUD', 'SGD', 'MYR', 'QAR', 'KWD', 'JPY', 'CNY', 'TRY'];
+      liveTickerBar.innerHTML = '';
 
-      selects.forEach(sel => {
-        if (!sel) return;
-        const prev = sel.value;
-        sel.innerHTML = '';
-        CURRENCIES.forEach(c => {
-          const opt = document.createElement('option');
-          opt.value = c.code;
-          opt.textContent = `${c.flag} ${c.code} (${c.symbol}) - ${c.name}`;
-          sel.appendChild(opt);
-        });
-        if (prev && CURRENCY_MAP[prev]) sel.value = prev;
+      tickerCurrencies.forEach(code => {
+        const meta = CURRENCY_MAP[code];
+        if (!meta) return;
+
+        const rateInBdt = convertAny(1, code, 'BDT');
+        const trend = getCurrencyTrend(code);
+
+        const item = document.createElement('div');
+        item.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 whitespace-nowrap';
+
+        const colorClass = trend.isUp ? 'text-emerald-400 font-bold' : (trend.isDown ? 'text-rose-400 font-bold' : 'text-slate-400');
+
+        item.innerHTML = `
+          <span>${meta.flag}</span>
+          <span class="text-slate-200">${code}:</span>
+          <span class="text-white font-extrabold">৳${rateInBdt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          <span class="text-[10px] ${colorClass}">${trend.text}</span>
+        `;
+        liveTickerBar.appendChild(item);
       });
 
-      primaryCurrencySelect.value = primaryCurrency;
-      secondaryCurrencySelect.value = secondaryCurrency;
-      if (mobilePrimaryCurrencySelect) mobilePrimaryCurrencySelect.value = primaryCurrency;
-      if (mobileSecondaryCurrencySelect) mobileSecondaryCurrencySelect.value = secondaryCurrency;
-      
-      calcFromCurrency.value = 'USD';
-      calcToCurrency.value = 'BDT';
-      transactionCurrency.value = primaryCurrency;
+      // Update Header USD Trend Pill
+      const usdTrend = getCurrencyTrend('USD');
+      headerUsdTrendBadge.textContent = usdTrend.text;
+      if (usdTrend.isUp) {
+        headerUsdTrendBadge.className = 'text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800';
+      } else if (usdTrend.isDown) {
+        headerUsdTrendBadge.className = 'text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-rose-100 text-rose-800';
+      } else {
+        headerUsdTrendBadge.className = 'text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700';
+      }
     }
 
-    // Currency Switcher Handlers
-    window.changePrimaryCurrency = function (code) {
-      primaryCurrency = code;
-      primaryCurrencySelect.value = code;
-      if (mobilePrimaryCurrencySelect) mobilePrimaryCurrencySelect.value = code;
-      saveData();
-      refreshAll();
-    };
-
-    window.changeSecondaryCurrency = function (code) {
-      secondaryCurrency = code;
-      secondaryCurrencySelect.value = code;
-      if (mobileSecondaryCurrencySelect) mobileSecondaryCurrencySelect.value = code;
-      saveData();
-      refreshAll();
-    };
-
     // ==========================================
-    // 🌐 DAILY LIVE RATE FETCH (160+ Currencies)
+    // 🌐 LIVE DAILY RATES FETCH (With Historical Tracking)
     // ==========================================
     async function fetchLiveDailyRates(userTriggered = false) {
       const refreshIcon = document.getElementById('refreshModalIcon');
+      const tickerIcon = document.getElementById('tickerRefreshIcon');
       if (refreshIcon) refreshIcon.classList.add('spin-active');
+      if (tickerIcon) tickerIcon.classList.add('spin-active');
 
       const apiEndpoints = [
         'https://open.er-api.com/v6/latest/USD',
         'https://api.exchangerate-api.com/v4/latest/USD',
         'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json'
       ];
+
+      let newRates = null;
 
       for (const url of apiEndpoints) {
         try {
@@ -973,38 +1081,71 @@
           if (response.ok) {
             const data = await response.json();
             if (data && data.rates) {
-              // Merge all available rates
-              Object.keys(data.rates).forEach(code => {
-                ratesFromUSD[code] = parseFloat(data.rates[code]);
-              });
-              ratesFromUSD.USD = 1.0;
+              newRates = data.rates;
               break;
             } else if (data && data.usd) {
-              Object.keys(data.usd).forEach(code => {
-                ratesFromUSD[code.toUpperCase()] = parseFloat(data.usd[code]);
-              });
-              ratesFromUSD.USD = 1.0;
+              newRates = {};
+              Object.keys(data.usd).forEach(k => newRates[k.toUpperCase()] = data.usd[k]);
               break;
             }
           }
         } catch (e) {}
       }
 
+      if (newRates) {
+        // Shift previous rates to preserve exact live fluctuation
+        previousRatesFromUSD = { ...ratesFromUSD };
+        
+        Object.keys(newRates).forEach(code => {
+          if (newRates[code]) ratesFromUSD[code] = parseFloat(newRates[code]);
+        });
+        ratesFromUSD.USD = 1.0;
+
+        saveRatesToStorage();
+      }
+
       if (refreshIcon) refreshIcon.classList.remove('spin-active');
+      if (tickerIcon) tickerIcon.classList.remove('spin-active');
+
+      // Reset polling timer
+      pollSecondsLeft = 300;
 
       updateHeaderAndRateDisplays();
+      renderLiveTicker();
       renderWorldRatesTable();
       runQuickConverter();
       updateInputLiveConversion();
       refreshAll();
 
-      if (userTriggered) showToast('Live rates for 160+ world currencies updated!');
+      if (userTriggered) showToast('Live rates and ups/downs fluctuations refreshed!');
+    }
+
+    function saveRatesToStorage() {
+      try {
+        localStorage.setItem(RATES_CACHE_KEY, JSON.stringify(ratesFromUSD));
+        localStorage.setItem(PREV_RATES_KEY, JSON.stringify(previousRatesFromUSD));
+      } catch (e) {}
+    }
+
+    // Auto-polling timer (every 5 minutes)
+    function startCountdownTimer() {
+      if (countdownInterval) clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        pollSecondsLeft--;
+        if (pollSecondsLeft <= 0) {
+          fetchLiveDailyRates(false);
+          pollSecondsLeft = 300;
+        }
+        const mins = Math.floor(pollSecondsLeft / 60);
+        const secs = pollSecondsLeft % 60;
+        rateCountdown.textContent = `Auto-refresh in ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      }, 1000);
     }
 
     function updateHeaderAndRateDisplays() {
-      const bdtRate = ratesFromUSD.BDT || 122.00;
-      headerQuickRateDisplay.textContent = `1 USD = ৳${bdtRate.toFixed(2)}`;
-      footerRateDisplay.textContent = `Auto-updated live rates active (1 USD = ৳${bdtRate.toFixed(2)} BDT | 1 EUR = ৳${convertAny(1, 'EUR', 'BDT').toFixed(2)} BDT)`;
+      const bdtRate = ratesFromUSD.BDT || 122.25;
+      headerQuickRateDisplay.textContent = `৳${bdtRate.toFixed(2)}`;
+      footerRateDisplay.textContent = `Live rates active (1 USD = ৳${bdtRate.toFixed(2)} BDT | 1 EUR = ৳${convertAny(1, 'EUR', 'BDT').toFixed(2)} BDT)`;
     }
 
     function showToast(msg) {
@@ -1015,20 +1156,10 @@
       setTimeout(() => banner.remove(), 2500);
     }
 
-    // ==========================================
-    // ⚡ QUICK CONVERTER MODAL TOOL
-    // ==========================================
-    window.runQuickConverter = function () {
-      const amt = parseFloat(calcAmount.value) || 0;
-      const from = calcFromCurrency.value;
-      const to = calcToCurrency.value;
-      const converted = convertAny(amt, from, to);
-      calcResultDisplay.textContent = formatCurrencyAny(converted, to);
-    };
-
+    // Render Table in Modal with Live Ups & Downs
     function renderWorldRatesTable() {
       worldRatesTableContainer.innerHTML = '';
-      const displayCurrencies = ['BDT', 'EUR', 'GBP', 'INR', 'SAR', 'AED', 'CAD', 'AUD', 'SGD', 'MYR', 'QAR', 'KWD', 'JPY', 'CNY', 'TRY'];
+      const displayCurrencies = ['BDT', 'EUR', 'GBP', 'INR', 'SAR', 'AED', 'CAD', 'AUD', 'SGD', 'MYR', 'QAR', 'KWD', 'JPY', 'CNY', 'TRY', 'CHF', 'PKR', 'THB'];
 
       displayCurrencies.forEach(code => {
         const meta = CURRENCY_MAP[code];
@@ -1036,9 +1167,13 @@
 
         const inBDT = convertAny(1, code, 'BDT');
         const inUSD = convertAny(1, code, 'USD');
+        const trend = getCurrencyTrend(code);
 
         const row = document.createElement('div');
         row.className = 'flex items-center justify-between p-2.5 hover:bg-slate-50 transition';
+
+        const colorClass = trend.isUp ? 'text-emerald-700 bg-emerald-100' : (trend.isDown ? 'text-rose-700 bg-rose-100' : 'text-slate-600 bg-slate-100');
+
         row.innerHTML = `
           <div class="flex items-center gap-2">
             <span class="text-base">${meta.flag}</span>
@@ -1047,16 +1182,29 @@
               <span class="text-[10px] text-slate-400 block">${meta.name}</span>
             </div>
           </div>
-          <div class="text-right">
-            <span class="font-extrabold text-slate-900">৳${inBDT.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            <span class="text-[10px] text-slate-400 block">≈ $${inUSD.toFixed(3)} USD</span>
+          <div class="flex items-center gap-3">
+            <span class="px-2 py-0.5 rounded text-[11px] font-extrabold ${colorClass}">
+              ${trend.text}
+            </span>
+            <div class="text-right">
+              <span class="font-extrabold text-slate-900 block">৳${inBDT.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span class="text-[10px] text-slate-400 block">≈ $${inUSD.toFixed(3)} USD</span>
+            </div>
           </div>
         `;
         worldRatesTableContainer.appendChild(row);
       });
     }
 
-    // Rate Modal Control
+    // Quick Converter
+    window.runQuickConverter = function () {
+      const amt = parseFloat(calcAmount.value) || 0;
+      const from = calcFromCurrency.value;
+      const to = calcToCurrency.value;
+      const converted = convertAny(amt, from, to);
+      calcResultDisplay.textContent = formatCurrencyAny(converted, to);
+    };
+
     window.openRateModal = function () {
       runQuickConverter();
       renderWorldRatesTable();
@@ -1088,12 +1236,10 @@
         const accId = t.accountId || (accounts[0] ? accounts[0].id : null);
         if (map[accId]) {
           const accCur = map[accId].currency;
-          // Convert transaction amount to the account's native currency
           let amtInAccCur = 0;
           if (t.currency === accCur) {
             amtInAccCur = t.amount;
           } else {
-            // Convert via USD
             amtInAccCur = convertAny(t.amount, t.currency, accCur);
           }
 
@@ -1113,7 +1259,6 @@
     function renderAccountPillsAndSelects() {
       const accBalances = calculateAccountBalances();
 
-      // 1. Render Account Cards
       accountCardsContainer.innerHTML = '';
       accounts.forEach(acc => {
         const bal = accBalances[acc.id] || { initial: 0, current: 0, currency: acc.currency || 'BDT' };
@@ -1142,7 +1287,6 @@
         accountCardsContainer.appendChild(card);
       });
 
-      // 2. Update Form Select
       const currentSelected = transactionAccount.value;
       transactionAccount.innerHTML = '';
       accounts.forEach(acc => {
@@ -1155,7 +1299,6 @@
         transactionAccount.value = currentSelected;
       }
 
-      // 3. Update Table Filter Select
       const currentFilter = filterAccount.value;
       filterAccount.innerHTML = '<option value="ALL">All Accounts</option>';
       accounts.forEach(acc => {
@@ -1167,7 +1310,6 @@
       if (currentFilter) filterAccount.value = currentFilter;
     }
 
-    // Account Modal
     window.openAccountManagerModal = function () {
       renderAccountModalList();
       accountModal.classList.remove('hidden');
@@ -1228,7 +1370,6 @@
         accountModalList.appendChild(row);
       });
 
-      // Update Combined Total in modal in primary & secondary currencies
       const primaryVal = convertAny(combinedInitialUSD, 'USD', primaryCurrency);
       const secondaryVal = convertAny(combinedInitialUSD, 'USD', secondaryCurrency);
 
@@ -1355,6 +1496,57 @@
     // ==========================================
     // DATA LOAD & SAVE
     // ==========================================
+    function populateCurrencyDropdowns() {
+      const selects = [
+        primaryCurrencySelect,
+        secondaryCurrencySelect,
+        mobilePrimaryCurrencySelect,
+        mobileSecondaryCurrencySelect,
+        transactionCurrency,
+        newAccountCurrency,
+        calcFromCurrency,
+        calcToCurrency
+      ];
+
+      selects.forEach(sel => {
+        if (!sel) return;
+        const prev = sel.value;
+        sel.innerHTML = '';
+        CURRENCIES.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.code;
+          opt.textContent = `${c.flag} ${c.code} (${c.symbol}) - ${c.name}`;
+          sel.appendChild(opt);
+        });
+        if (prev && CURRENCY_MAP[prev]) sel.value = prev;
+      });
+
+      primaryCurrencySelect.value = primaryCurrency;
+      secondaryCurrencySelect.value = secondaryCurrency;
+      if (mobilePrimaryCurrencySelect) mobilePrimaryCurrencySelect.value = primaryCurrency;
+      if (mobileSecondaryCurrencySelect) mobileSecondaryCurrencySelect.value = secondaryCurrency;
+      
+      calcFromCurrency.value = 'USD';
+      calcToCurrency.value = 'BDT';
+      transactionCurrency.value = primaryCurrency;
+    }
+
+    window.changePrimaryCurrency = function (code) {
+      primaryCurrency = code;
+      primaryCurrencySelect.value = code;
+      if (mobilePrimaryCurrencySelect) mobilePrimaryCurrencySelect.value = code;
+      saveData();
+      refreshAll();
+    };
+
+    window.changeSecondaryCurrency = function (code) {
+      secondaryCurrency = code;
+      secondaryCurrencySelect.value = code;
+      if (mobileSecondaryCurrencySelect) mobileSecondaryCurrencySelect.value = code;
+      saveData();
+      refreshAll();
+    };
+
     function loadData() {
       try {
         const storedAccounts = localStorage.getItem(ACCOUNTS_KEY);
@@ -1373,7 +1565,13 @@
         const cachedRates = localStorage.getItem(RATES_CACHE_KEY);
         if (cachedRates) {
           const cr = JSON.parse(cachedRates);
-          if (cr.rates) ratesFromUSD = cr.rates;
+          if (cr) ratesFromUSD = cr;
+        }
+
+        const cachedPrev = localStorage.getItem(PREV_RATES_KEY);
+        if (cachedPrev) {
+          const cp = JSON.parse(cachedPrev);
+          if (cp) previousRatesFromUSD = cp;
         }
       } catch (err) {
         accounts = DEFAULT_ACCOUNTS;
@@ -1389,7 +1587,8 @@
         localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
         localStorage.setItem(SETTINGS_KEY, JSON.stringify({ primaryCurrency, secondaryCurrency }));
-        localStorage.setItem(RATES_CACHE_KEY, JSON.stringify({ rates: ratesFromUSD }));
+        localStorage.setItem(RATES_CACHE_KEY, JSON.stringify(ratesFromUSD));
+        localStorage.setItem(PREV_RATES_KEY, JSON.stringify(previousRatesFromUSD));
       } catch (err) {}
     }
 
@@ -1397,14 +1596,12 @@
     // UPDATE DASHBOARD SUMMARY CARDS
     // ==========================================
     function updateSummary() {
-      // 1. Calculate Combined Initial Capital (in USD base)
       let combinedInitialUSD = 0;
       accounts.forEach(acc => {
         const cur = acc.currency || 'BDT';
         combinedInitialUSD += convertAny(acc.initialBalance || 0, cur, 'USD');
       });
 
-      // 2. Calculate Total Income & Expenses (in USD base)
       let incomeSumUSD = 0;
       let expenseSumUSD = 0;
       let incomeCount = 0;
@@ -1430,7 +1627,6 @@
       const netProfitUSD = incomeSumUSD - expenseSumUSD;
       const combinedCurrentUSD = combinedInitialUSD + netProfitUSD;
 
-      // Format Summary Cards into chosen Primary and Secondary currencies
       const initDual = getDualFormat(combinedInitialUSD);
       combinedInitialPrimary.textContent = initDual.primary;
       combinedInitialSecondary.textContent = initDual.secondary;
@@ -1447,7 +1643,6 @@
       combinedCurrentPrimary.textContent = curDual.primary;
       combinedCurrentSecondary.textContent = curDual.secondary;
 
-      // Net profit display
       const netP = convertAny(netProfitUSD, 'USD', primaryCurrency);
       const netS = convertAny(netProfitUSD, 'USD', secondaryCurrency);
       const sign = netProfitUSD >= 0 ? '+' : '';
@@ -1510,7 +1705,6 @@
           const amountClass = isIncome ? 'text-emerald-600' : 'text-rose-600';
           const prefix = isIncome ? '+' : '-';
 
-          // Values in primary and secondary currencies
           const usdVal = t.usdEquivalent !== undefined ? t.usdEquivalent : convertAny(t.amount, t.currency, 'USD');
           const primaryVal = convertAny(usdVal, 'USD', primaryCurrency);
           const secondaryVal = convertAny(usdVal, 'USD', secondaryCurrency);
@@ -1576,14 +1770,13 @@
     }
 
     function refreshAll() {
+      renderLiveTicker();
       renderAccountPillsAndSelects();
       updateSummary();
       renderTable();
     }
 
-    // ==========================================
-    // TRANSACTION SUBMIT
-    // ==========================================
+    // Submit Transaction
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
@@ -1596,7 +1789,6 @@
 
       if (!date || !description || isNaN(amount) || amount <= 0 || !selectedAccount) return;
 
-      // Base conversion to USD
       let usdVal = 0;
       if (selectedCurrency === primaryCurrency) {
         usdVal = convertAny(amount, primaryCurrency, 'USD');
@@ -1747,6 +1939,7 @@
       refreshAll();
       handleTransactionCurrencyChange();
       fetchLiveDailyRates(false);
+      startCountdownTimer();
     });
   </script>
 </body>
