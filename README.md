@@ -33,3 +33,4 @@ A modern, responsive, single-page web application for tracking daily business in
 
 ## 📄 License
 MIT License
+
