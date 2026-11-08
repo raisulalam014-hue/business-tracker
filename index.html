@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>BizLedger — Business & Finance Tracker</title>
+  <title>BizLedger — Business &amp; Finance Management</title>
   
   <!-- PWA & Mobile Web App Manifest -->
   <link rel="manifest" href="manifest.json" />
@@ -17,10 +17,13 @@
   <meta name="apple-mobile-web-app-title" content="BizLedger" />
   <meta name="application-name" content="BizLedger" />
 
-  <!-- Google Font: Inter -->
+  <!-- Google Font: Inter (Weights: 400, 500, 600) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Chart.js 4.4 via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -37,34 +40,26 @@
               bg: '#0B0D12',
               header: '#10141C',
               card: '#141922',
-              elevated: '#191F2A',
-              border: '#252C38',
+              elevated: '#1A202B',
+              border: '#252D39',
               text: '#F0F2F5',
               muted: '#929BAA',
-              subtle: '#6B7280',
+              accent: '#8B7CF6',
+              secondaryAccent: '#66A6D9',
+              income: '#35B37E',
+              expense: '#E56B76'
             },
             light: {
-              bg: '#F8F9FA',
+              bg: '#F5F7FA',
               header: '#FFFFFF',
               card: '#FFFFFF',
-              elevated: '#F1F3F5',
-              border: '#E2E8F0',
-              text: '#0F172A',
-              muted: '#64748B',
-              subtle: '#94A3B8',
-            },
-            accent: {
-              DEFAULT: '#8B7CF6',
-              hover: '#7A6AE6',
-              light: '#6366F1',
-            },
-            income: {
-              DEFAULT: '#36B37E',
-              light: '#16A34A',
-            },
-            expense: {
-              DEFAULT: '#E56B76',
-              light: '#DC2626',
+              elevated: '#F0F2F6',
+              border: '#E5E8EF',
+              text: '#18202D',
+              muted: '#687386',
+              accent: '#6558D9',
+              income: '#169B69',
+              expense: '#D94F60'
             }
           }
         }
@@ -74,34 +69,34 @@
 
   <style>
     :root {
-      --bg-page: #F8F9FA;
+      --bg-page: #F5F7FA;
       --bg-header: #FFFFFF;
       --bg-card: #FFFFFF;
-      --bg-elevated: #F1F3F5;
-      --border-subtle: #E2E8F0;
+      --bg-elevated: #F0F2F6;
+      --border-subtle: #E5E8EF;
       --border-focus: #CBD5E1;
-      --text-main: #0F172A;
-      --text-muted: #64748B;
+      --text-main: #18202D;
+      --text-muted: #687386;
       --text-subtle: #94A3B8;
-      --accent-primary: #6366F1;
-      --accent-hover: #4F46E5;
-      --color-income: #16A34A;
-      --color-expense: #DC2626;
+      --accent-primary: #6558D9;
+      --accent-hover: #5345C7;
+      --color-income: #169B69;
+      --color-expense: #D94F60;
     }
 
     .dark {
       --bg-page: #0B0D12;
       --bg-header: #10141C;
       --bg-card: #141922;
-      --bg-elevated: #191F2A;
-      --border-subtle: #252C38;
+      --bg-elevated: #1A202B;
+      --border-subtle: #252D39;
       --border-focus: #374151;
       --text-main: #F0F2F5;
       --text-muted: #929BAA;
       --text-subtle: #6B7280;
       --accent-primary: #8B7CF6;
       --accent-hover: #7A6AE6;
-      --color-income: #36B37E;
+      --color-income: #35B37E;
       --color-expense: #E56B76;
     }
 
@@ -112,10 +107,15 @@
       letter-spacing: -0.011em;
     }
 
-    /* Custom understated scrollbars */
+    /* Tabular numeric alignment */
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Subtle custom scrollbar */
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     ::-webkit-scrollbar-track {
       background: transparent;
@@ -127,27 +127,22 @@
     ::-webkit-scrollbar-thumb:hover {
       background: var(--border-focus);
     }
-
-    /* Number tabular alignment for financial precision */
-    .tabular-nums {
-      font-variant-numeric: tabular-nums;
-    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased transition-colors duration-150">
 
   <!-- ============================================================
-       TOP HEADER NAVIGATION (Clean, Linear & Mercury Inspired)
+       APPLICATION HEADER (Linear & Mercury Inspired)
        ============================================================ -->
   <header class="sticky top-0 z-40 bg-[var(--bg-header)] border-b border-[var(--border-subtle)] transition-colors">
-    <div class="max-w-6xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-between gap-3">
+    <div class="max-w-7xl mx-auto h-14 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
       
-      <!-- Brand & Status -->
+      <!-- Brand & Sync Status -->
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-subtle)] flex items-center justify-center p-1.5 flex-shrink-0">
           <img src="icon.svg" alt="BizLedger" class="w-full h-full object-contain" />
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2.5">
           <span class="text-sm font-semibold text-[var(--text-main)] tracking-tight">
             BizLedger
           </span>
@@ -158,42 +153,45 @@
         </div>
       </div>
 
-      <!-- Quick Actions (Header Right) -->
+      <!-- Navigation & Global Controls (Header Right) -->
       <div class="flex items-center gap-2">
         
-        <!-- Live Currency Exchange Shortcut -->
+        <!-- Live FX Ticker (Clickable to open converter) -->
         <button 
           onclick="openRateModal()" 
-          class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-main)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-lg transition-colors"
-          title="Live exchange rates converter"
+          class="hidden md:flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-main)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-lg transition-colors"
+          title="Live FX Exchange Rate (Click to open converter)"
         >
           <span id="headerQuickRateDisplay">$1 = ৳122.25</span>
         </button>
 
-        <!-- Primary Currency Selector -->
-        <select 
-          id="primaryCurrencySelect" 
-          onchange="changePrimaryCurrency(this.value)" 
-          class="bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-xs font-medium text-[var(--text-main)] rounded-lg px-2.5 py-1 focus:outline-none focus:border-[var(--accent-primary)] cursor-pointer transition-colors"
-          title="Select primary display currency"
-        >
-        </select>
+        <!-- Primary Display Currency Selector -->
+        <div class="relative">
+          <select 
+            id="primaryCurrencySelect" 
+            onchange="changePrimaryCurrency(this.value)" 
+            class="bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-xs font-medium text-[var(--text-main)] rounded-lg px-2.5 py-1 focus:outline-none focus:border-[var(--accent-primary)] cursor-pointer transition-colors"
+            title="Change primary reporting currency"
+          >
+          </select>
+        </div>
 
-        <!-- Theme Toggle -->
+        <!-- Light / Dark Theme Switch -->
         <button 
           onclick="toggleTheme()" 
           id="themeBtn"
           class="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-card)] border border-[var(--border-subtle)] flex items-center justify-center text-xs text-[var(--text-main)] transition-colors"
-          title="Toggle light/dark theme"
+          title="Toggle theme"
           aria-label="Toggle theme"
         >
           <span id="themeIcon">🌙</span>
         </button>
 
-        <!-- Backup & Data Modal Trigger (Desktop) -->
+        <!-- Data Backup & Recovery (Desktop) -->
         <button 
           onclick="openBackupModal()" 
-          class="hidden sm:flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+          class="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+          title="Manage data backups and CSV exports"
         >
           Backup
         </button>
@@ -203,22 +201,22 @@
   </header>
 
   <!-- ============================================================
-       MAIN CONTENT CONTAINER
+       MAIN WORKSPACE CONTAINER
        ============================================================ -->
-  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-7 pb-24 sm:pb-12">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-7 pb-24 sm:pb-12">
 
-    <!-- 1. DASHBOARD TOP SECTION: PAGE TITLE & MAIN ACTIONS -->
+    <!-- 1. DASHBOARD INTRODUCTION & ACTION TOOLBAR -->
     <section class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-semibold text-[var(--text-main)] tracking-tight">
+        <h1 class="text-2xl sm:text-[28px] font-semibold text-[var(--text-main)] tracking-tight">
           Overview
         </h1>
         <p id="dashboardDateDisplay" class="text-xs text-[var(--text-muted)] mt-0.5">
-          Financial status &amp; telemetry
+          Your financial position at a glance
         </p>
       </div>
 
-      <!-- Action Buttons (Solid, professional, linear-style) -->
+      <!-- Quick Action Buttons (Linear & Stripe Style) -->
       <div class="flex items-center gap-2 flex-wrap">
         <button 
           onclick="openTransactionModal('Income')" 
@@ -250,97 +248,212 @@
       </div>
     </section>
 
-    <!-- 2. FINANCIAL OVERVIEW: 4 METRIC CARDS -->
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- 2. MAIN FINANCIAL OVERVIEW — ASYMMETRIC COMPOSITION (Section 5.C) -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-5">
       
-      <!-- Card 1: Total Balance -->
-      <div class="p-5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] transition-colors flex flex-col justify-between">
-        <div class="flex items-center justify-between text-xs font-normal text-[var(--text-muted)] mb-2">
-          <span>Total Balance</span>
-          <button 
-            onclick="toggleBalancePrivacy()" 
-            class="text-[var(--text-subtle)] hover:text-[var(--text-main)] transition-colors p-1" 
-            title="Toggle balance privacy mask"
-          >
-            <span id="balancePrivacyIcon">👁️</span>
-          </button>
-        </div>
+      <!-- HERO FINANCIAL ANCHOR (7 Cols on Desktop) -->
+      <div class="lg:col-span-7 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-6 sm:p-7 flex flex-col justify-between transition-colors shadow-xs">
+        
         <div>
-          <div id="combinedCurrentPrimary" class="text-2xl sm:text-[28px] font-semibold text-[var(--text-main)] tracking-tight tabular-nums">
-            0
+          <!-- Header Row -->
+          <div class="flex items-center justify-between text-xs font-medium text-[var(--text-muted)] mb-3">
+            <span class="uppercase tracking-wider text-[11px]">Total Combined Balance</span>
+            <div class="flex items-center gap-2">
+              <span id="activeCurrencyBadge" class="font-mono text-[11px] px-2 py-0.5 rounded bg-[var(--bg-elevated)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
+                BDT
+              </span>
+              <button 
+                onclick="toggleBalancePrivacy()" 
+                class="text-[var(--text-subtle)] hover:text-[var(--text-main)] transition-colors p-1" 
+                title="Toggle balance privacy mask"
+                aria-label="Toggle balance privacy"
+              >
+                <span id="balancePrivacyIcon">👁️</span>
+              </button>
+            </div>
           </div>
-          <div id="combinedCurrentSecondary" class="text-xs text-[var(--text-muted)] mt-1 font-mono">
-            ≈ 0 USD
+
+          <!-- Master Amount Display -->
+          <div class="my-2">
+            <div id="combinedCurrentPrimary" class="text-3xl sm:text-4xl font-semibold text-[var(--text-main)] tracking-tight tabular-nums">
+              0
+            </div>
+            <div id="combinedCurrentSecondary" class="text-xs sm:text-sm font-medium text-[var(--text-muted)] font-mono mt-1">
+              ≈ 0 USD
+            </div>
+          </div>
+        </div>
+
+        <!-- Financial Health Matrix (Baseline, Growth, Turnover) -->
+        <div class="pt-5 mt-5 border-t border-[var(--border-subtle)] grid grid-cols-3 gap-3 text-left">
+          <div>
+            <div class="text-[11px] font-medium text-[var(--text-muted)]">Initial Capital</div>
+            <div id="combinedInitialPrimary" class="text-sm sm:text-base font-semibold text-[var(--text-main)] tabular-nums mt-0.5">
+              0
+            </div>
+            <div class="text-[10px] text-[var(--text-subtle)] mt-0.5">Baseline deposits</div>
+          </div>
+
+          <div>
+            <div class="text-[11px] font-medium text-[var(--text-muted)]">Capital Growth</div>
+            <div id="netGrowthDisplay" class="text-sm sm:text-base font-semibold text-[var(--color-income)] tabular-nums mt-0.5">
+              +0.0%
+            </div>
+            <div class="text-[10px] text-[var(--text-subtle)] mt-0.5">Net equity delta</div>
+          </div>
+
+          <div>
+            <div class="text-[11px] font-medium text-[var(--text-muted)]">Turnover Volume</div>
+            <div id="totalTurnoverDisplay" class="text-sm sm:text-base font-semibold text-[var(--text-main)] tabular-nums mt-0.5">
+              0
+            </div>
+            <div class="text-[10px] text-[var(--text-subtle)] mt-0.5">Cumulative activity</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PERFORMANCE & CASH FLOW MATRIX (5 Cols on Desktop) -->
+      <div class="lg:col-span-5 flex flex-col justify-between gap-3.5">
+        
+        <!-- Total Inflow Card -->
+        <div class="rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-4 sm:p-4.5 flex items-center justify-between transition-colors shadow-xs">
+          <div>
+            <div class="flex items-center gap-2 text-xs font-medium text-[var(--text-muted)]">
+              <span class="w-2 h-2 rounded-full bg-[var(--color-income)]"></span>
+              <span>Total Income</span>
+            </div>
+            <div id="totalIncomePrimary" class="text-xl sm:text-2xl font-semibold text-[var(--color-income)] tracking-tight tabular-nums mt-1">
+              +0
+            </div>
+            <div class="text-[11px] text-[var(--text-subtle)] mt-0.5">All-time recorded revenues</div>
+          </div>
+          <span class="text-xs font-mono font-medium px-2 py-1 rounded-md bg-[#35B37E]/10 text-[#35B37E] border border-[#35B37E]/20">
+            Inflow
+          </span>
+        </div>
+
+        <!-- Total Outflow Card -->
+        <div class="rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-4 sm:p-4.5 flex items-center justify-between transition-colors shadow-xs">
+          <div>
+            <div class="flex items-center gap-2 text-xs font-medium text-[var(--text-muted)]">
+              <span class="w-2 h-2 rounded-full bg-[var(--color-expense)]"></span>
+              <span>Total Expenses</span>
+            </div>
+            <div id="totalExpensePrimary" class="text-xl sm:text-2xl font-semibold text-[var(--color-expense)] tracking-tight tabular-nums mt-1">
+              -0
+            </div>
+            <div class="text-[11px] text-[var(--text-subtle)] mt-0.5">All-time recorded expenditures</div>
+          </div>
+          <span class="text-xs font-mono font-medium px-2 py-1 rounded-md bg-[#E56B76]/10 text-[#E56B76] border border-[#E56B76]/20">
+            Outflow
+          </span>
+        </div>
+
+        <!-- Net Cash Position Card -->
+        <div class="rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-4 sm:p-4.5 flex items-center justify-between transition-colors shadow-xs">
+          <div>
+            <div class="flex items-center gap-2 text-xs font-medium text-[var(--text-muted)]">
+              <span>Net Cash Flow</span>
+              <span id="netCashFlowBadge" class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[var(--bg-elevated)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
+                Neutral
+              </span>
+            </div>
+            <div id="netCashFlowDisplay" class="text-lg sm:text-xl font-semibold text-[var(--text-main)] tracking-tight tabular-nums mt-1">
+              0
+            </div>
+            <div class="text-[11px] text-[var(--text-subtle)] mt-0.5">Inflow minus outflow margin</div>
+          </div>
+          <div class="text-right">
+            <span id="cashFlowRatioLabel" class="text-xs font-mono font-medium text-[var(--text-muted)]">
+              50% / 50%
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- 3. FINANCIAL ANALYTICS & VISUALIZATION (Section 5.D) -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      
+      <!-- Cash Flow Dynamics Chart (7 Cols) -->
+      <div class="lg:col-span-7 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-colors shadow-xs flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-base font-semibold text-[var(--text-main)]">
+              Cash Flow Telemetry
+            </h2>
+            <p class="text-xs text-[var(--text-muted)] mt-0.5">
+              Income versus expense trends
+            </p>
+          </div>
+          <div class="flex items-center gap-2 text-xs font-medium text-[var(--text-muted)]">
+            <span class="inline-flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-sm bg-[var(--color-income)]"></span> Inflow
+            </span>
+            <span class="inline-flex items-center gap-1.5 ml-2">
+              <span class="w-2.5 h-2.5 rounded-sm bg-[var(--color-expense)]"></span> Outflow
+            </span>
+          </div>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="relative w-full h-56 sm:h-64 flex items-center justify-center">
+          <canvas id="cashFlowChartCanvas"></canvas>
+          <div id="chartEmptyState" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-4 bg-[var(--bg-card)]">
+            <span class="text-2xl mb-1">📈</span>
+            <p class="text-xs font-medium text-[var(--text-main)]">No transaction history yet</p>
+            <p class="text-[11px] text-[var(--text-muted)] mt-0.5 max-w-xs">Record your first income or expense to generate live cash flow telemetry.</p>
+          </div>
+        </div>
+
+        <!-- Cash Flow Bar Indicator -->
+        <div class="mt-4 pt-3 border-t border-[var(--border-subtle)]">
+          <div class="w-full h-1.5 rounded-full bg-[var(--bg-elevated)] overflow-hidden flex">
+            <div id="cashFlowProgressBar" class="h-full bg-[var(--color-income)] transition-all duration-300" style="width: 50%;"></div>
           </div>
         </div>
       </div>
 
-      <!-- Card 2: Initial Capital -->
-      <div class="p-5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] transition-colors flex flex-col justify-between">
-        <div class="text-xs font-normal text-[var(--text-muted)] mb-2">
-          Initial Capital
-        </div>
-        <div>
-          <div id="combinedInitialPrimary" class="text-xl sm:text-2xl font-semibold text-[var(--text-main)] tracking-tight tabular-nums">
-            0
+      <!-- Asset Allocation by Wallet (5 Cols) -->
+      <div class="lg:col-span-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 sm:p-6 transition-colors shadow-xs flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-base font-semibold text-[var(--text-main)]">
+              Asset Allocation
+            </h2>
+            <p class="text-xs text-[var(--text-muted)] mt-0.5">
+              Capital distribution across reserves
+            </p>
           </div>
-          <div class="text-xs text-[var(--text-muted)] mt-1">
-            Baseline deposits
-          </div>
+          <span class="text-xs font-mono text-[var(--text-muted)]">Live</span>
         </div>
-      </div>
 
-      <!-- Card 3: Total Income -->
-      <div class="p-5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] transition-colors flex flex-col justify-between">
-        <div class="flex items-center justify-between text-xs font-normal text-[var(--text-muted)] mb-2">
-          <span>Total Income</span>
-          <span class="w-2 h-2 rounded-full bg-[var(--color-income)]"></span>
+        <!-- Donut Container -->
+        <div class="relative w-full h-56 sm:h-64 flex items-center justify-center">
+          <canvas id="walletAllocationChartCanvas"></canvas>
         </div>
-        <div>
-          <div id="totalIncomePrimary" class="text-xl sm:text-2xl font-semibold text-[var(--color-income)] tracking-tight tabular-nums">
-            +0
-          </div>
-          <div class="text-xs text-[var(--text-muted)] mt-1">
-            All-time inflows
-          </div>
-        </div>
-      </div>
 
-      <!-- Card 4: Total Expenses -->
-      <div class="p-5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] transition-colors flex flex-col justify-between">
-        <div class="flex items-center justify-between text-xs font-normal text-[var(--text-muted)] mb-2">
-          <span>Total Expenses</span>
-          <span class="w-2 h-2 rounded-full bg-[var(--color-expense)]"></span>
-        </div>
-        <div>
-          <div id="totalExpensePrimary" class="text-xl sm:text-2xl font-semibold text-[var(--color-expense)] tracking-tight tabular-nums">
-            -0
-          </div>
-          <div class="text-xs text-[var(--text-muted)] mt-1">
-            All-time outflows
-          </div>
+        <div class="mt-4 pt-3 border-t border-[var(--border-subtle)] text-center text-xs text-[var(--text-muted)]">
+          <span>Proportional reserve balance in primary reporting currency</span>
         </div>
       </div>
 
     </section>
 
-    <!-- 3. CASH FLOW TELEMETRY: RESTRAINED PROGRESS BAR -->
-    <section class="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] transition-colors">
-      <div class="flex items-center justify-between text-xs mb-2">
-        <span class="font-medium text-[var(--text-main)]">Cash Flow Ratio</span>
-        <span id="cashFlowRatioLabel" class="text-[var(--text-muted)] font-mono">50% Inflow / 50% Outflow</span>
-      </div>
-      <div class="w-full h-2 rounded-full bg-[var(--bg-elevated)] overflow-hidden flex">
-        <div id="cashFlowProgressBar" class="h-full bg-[var(--color-income)] transition-all duration-300" style="width: 50%;"></div>
-      </div>
-    </section>
-
-    <!-- 4. WALLETS & ACCOUNTS (CONSISTENT DESIGN SYSTEM) -->
-    <section class="space-y-3">
+    <!-- 4. WALLETS & ACCOUNTS (Section 5.E) -->
+    <section class="space-y-3.5">
       <div class="flex items-center justify-between">
-        <h2 class="text-base font-medium text-[var(--text-main)]">
-          Wallets &amp; Accounts
-        </h2>
+        <div>
+          <h2 class="text-base sm:text-lg font-semibold text-[var(--text-main)]">
+            Wallets &amp; Accounts
+          </h2>
+          <p class="text-xs text-[var(--text-muted)]">
+            Liquid reserves &amp; multi-currency balances
+          </p>
+        </div>
         <button 
           onclick="openAccountManagerModal()" 
           class="text-xs font-medium text-[var(--accent-primary)] hover:underline inline-flex items-center gap-1"
@@ -349,21 +462,24 @@
         </button>
       </div>
 
-      <!-- Container: Horizontal scroll on mobile, responsive grid on desktop -->
-      <div id="accountCardsContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
+      <!-- Container: Responsive Grid -->
+      <div id="accountCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Rendered dynamically by renderWallets() -->
       </div>
     </section>
 
-    <!-- 5. TRANSACTIONS SECTION -->
-    <section class="space-y-3">
+    <!-- 5. RECENT TRANSACTIONS (Section 5.F) -->
+    <section class="space-y-3.5">
       
-      <!-- Section Header & Filter Controls -->
+      <!-- Section Header & Filter Toolbar -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h2 class="text-base font-medium text-[var(--text-main)]">
+          <h2 class="text-base sm:text-lg font-semibold text-[var(--text-main)]">
             Transactions
           </h2>
+          <p class="text-xs text-[var(--text-muted)]">
+            Audit trail of business financial movements
+          </p>
         </div>
 
         <!-- Filter & Search Toolbar -->
@@ -375,8 +491,8 @@
               type="text" 
               id="txSearchInput" 
               oninput="renderTable()" 
-              placeholder="Search note..." 
-              class="bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] text-xs text-[var(--text-main)] rounded-lg pl-7 pr-2.5 py-1.5 focus:outline-none w-36 sm:w-44 transition-colors"
+              placeholder="Search description..." 
+              class="bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] text-xs text-[var(--text-main)] rounded-lg pl-7 pr-3 py-1.5 focus:outline-none w-40 sm:w-48 transition-colors"
             />
             <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-[var(--text-muted)] pointer-events-none">🔍</span>
           </div>
@@ -401,7 +517,7 @@
             <option value="Expense">Expense (−)</option>
           </select>
 
-          <!-- Mobile Type Filter (Hidden placeholder to maintain backwards compatibility) -->
+          <!-- Backward compatibility mobile filter placeholder -->
           <select id="mobileFilterType" class="hidden" onchange="renderTable()">
             <option value="ALL">ALL</option>
           </select>
@@ -410,27 +526,27 @@
           <button 
             onclick="exportCsv()" 
             class="text-xs font-medium px-3 py-1.5 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
-            title="Download transactions as CSV file"
+            title="Download CSV report"
           >
             Export CSV
           </button>
         </div>
       </div>
 
-      <!-- Transactions Container: Clean Table on Desktop, Cards on Mobile -->
-      <div class="rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] overflow-hidden transition-colors">
+      <!-- Transactions Container: Clean Table on Desktop, Native Cards on Mobile -->
+      <div class="rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] overflow-hidden transition-colors shadow-xs">
         
         <!-- Desktop Table View -->
         <div class="hidden sm:block overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="border-b border-[var(--border-subtle)] bg-[var(--bg-elevated)] text-[11px] font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                <th class="py-2.5 px-4">Date</th>
-                <th class="py-2.5 px-4">Description</th>
-                <th class="py-2.5 px-4">Wallet</th>
-                <th class="py-2.5 px-4">Type</th>
-                <th class="py-2.5 px-4 text-right">Amount</th>
-                <th class="py-2.5 px-4 text-center">Action</th>
+              <tr class="border-b border-[var(--border-subtle)] bg-[var(--bg-elevated)]/60 text-[11px] font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th class="py-3 px-4">Date</th>
+                <th class="py-3 px-4">Description</th>
+                <th class="py-3 px-4">Wallet</th>
+                <th class="py-3 px-4">Type</th>
+                <th class="py-3 px-4 text-right">Amount</th>
+                <th class="py-3 px-4 text-center">Action</th>
               </tr>
             </thead>
             <tbody id="desktopTableBody" class="divide-y divide-[var(--border-subtle)] text-xs font-normal">
@@ -445,8 +561,8 @@
         </div>
 
         <!-- Empty State -->
-        <div id="emptyState" class="hidden py-12 text-center text-xs text-[var(--text-muted)]">
-          <p class="font-medium text-[var(--text-main)]">No transactions recorded yet.</p>
+        <div id="emptyState" class="hidden py-14 text-center text-xs text-[var(--text-muted)]">
+          <p class="text-sm font-semibold text-[var(--text-main)]">No transactions recorded yet.</p>
           <p class="mt-1">Add your first transaction using the buttons above.</p>
         </div>
 
@@ -457,7 +573,7 @@
   </main>
 
   <!-- ============================================================
-       MOBILE BOTTOM APP BAR
+       MOBILE APP BOTTOM NAVIGATION
        ============================================================ -->
   <nav class="fixed bottom-0 inset-x-0 h-14 bg-[var(--bg-header)] border-t border-[var(--border-subtle)] z-40 sm:hidden flex items-center justify-around px-2">
     <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center text-[10px] text-[var(--accent-primary)] font-medium">
@@ -483,10 +599,10 @@
   </nav>
 
   <!-- ============================================================
-       MODAL 1: ADD / EDIT TRANSACTION
+       MODAL 1: RECORD / EDIT TRANSACTION
        ============================================================ -->
   <div id="txModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-xl space-y-4">
+    <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
       
       <div class="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)]">
         <h3 id="modalPrefix" class="text-base font-semibold text-[var(--text-main)]">
@@ -497,15 +613,15 @@
         </button>
       </div>
 
-      <form id="txForm" onsubmit="event.preventDefault();" class="space-y-3.5">
+      <form id="txForm" onsubmit="event.preventDefault();" class="space-y-4">
         <div>
           <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Description / Note</label>
           <input 
             type="text" 
             id="modalTxDesc" 
-            placeholder="e.g., Client Payment, Cloud Hosting" 
+            placeholder="e.g., Client Retainer, SaaS Hosting" 
             required 
-            class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] focus:outline-none"
+            class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] focus:outline-none transition-colors"
           />
         </div>
 
@@ -519,7 +635,7 @@
               placeholder="0.00" 
               required 
               oninput="updateModalPreview()"
-              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] tabular-nums focus:outline-none"
+              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] tabular-nums focus:outline-none transition-colors"
             />
           </div>
           <div>
@@ -527,7 +643,7 @@
             <select 
               id="modalTxCurrency" 
               onchange="handleModalCurrencyChange()" 
-              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] focus:outline-none cursor-pointer"
+              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] focus:outline-none cursor-pointer transition-colors"
             >
             </select>
           </div>
@@ -538,7 +654,7 @@
             <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Wallet / Account</label>
             <select 
               id="modalTxAccount" 
-              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] focus:outline-none cursor-pointer"
+              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] focus:outline-none cursor-pointer transition-colors"
             >
             </select>
           </div>
@@ -548,19 +664,19 @@
               type="date" 
               id="modalTxDate" 
               required 
-              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] focus:outline-none"
+              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] focus:border-[var(--accent-primary)] rounded-lg px-3 py-2 text-xs sm:text-sm text-[var(--text-main)] focus:outline-none transition-colors"
             />
           </div>
         </div>
 
-        <!-- Equivalent Preview -->
-        <div class="p-2.5 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-xs text-[var(--text-muted)] flex items-center justify-between font-mono">
-          <span>Converted:</span>
-          <span id="modalPreviewPrimary" class="text-[var(--text-main)] font-medium">0</span>
+        <!-- Real-time Conversion Preview -->
+        <div class="p-3 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-xs text-[var(--text-muted)] flex items-center justify-between font-mono">
+          <span>Converted in primary currency:</span>
+          <span id="modalPreviewPrimary" class="text-[var(--text-main)] font-semibold">0</span>
         </div>
 
         <!-- Form Actions -->
-        <div class="flex items-center justify-end gap-2 pt-2">
+        <div class="flex items-center justify-end gap-2.5 pt-2">
           <button 
             type="button" 
             onclick="closeTransactionModal()" 
@@ -581,14 +697,14 @@
   </div>
 
   <!-- ============================================================
-       MODAL 2: MANAGE WALLETS & ACCOUNTS
+       MODAL 2: WALLETS & ACCOUNTS MANAGEMENT
        ============================================================ -->
   <div id="accountModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-xl space-y-4 max-h-[90vh] flex flex-col">
+    <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
       
       <div class="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)] flex-shrink-0">
         <h3 class="text-base font-semibold text-[var(--text-main)]">
-          Wallets &amp; Accounts
+          Wallets &amp; Accounts Management
         </h3>
         <button onclick="closeAccountManagerModal()" class="text-[var(--text-muted)] hover:text-[var(--text-main)] text-sm p-1">
           ✕
@@ -605,9 +721,9 @@
         </div>
 
         <!-- Add New Account Form -->
-        <div class="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] space-y-3">
-          <h4 class="text-xs font-medium text-[var(--text-main)]">Create New Wallet</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <div class="p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] space-y-3">
+          <h4 class="text-xs font-semibold text-[var(--text-main)]">Create New Wallet</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <input 
               type="text" 
               id="newAccountName" 
@@ -622,7 +738,7 @@
             <input 
               type="number" 
               id="newAccountInitial" 
-              placeholder="Initial Balance" 
+              placeholder="Initial Deposit" 
               step="any" 
               class="bg-[var(--bg-card)] border border-[var(--border-subtle)] text-xs rounded-lg px-2.5 py-1.5 text-[var(--text-main)] tabular-nums focus:outline-none"
             />
@@ -630,14 +746,14 @@
           <button 
             type="button" 
             onclick="addNewAccountFromModal()" 
-            class="w-full py-1.5 text-xs font-medium text-white bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] rounded-lg transition-colors"
+            class="w-full py-2 text-xs font-medium text-white bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] rounded-lg transition-colors shadow-xs"
           >
-            Add Account
+            Create Wallet
           </button>
         </div>
       </div>
 
-      <div class="pt-2 border-t border-[var(--border-subtle)] flex justify-end flex-shrink-0">
+      <div class="pt-3 border-t border-[var(--border-subtle)] flex justify-end flex-shrink-0">
         <button 
           type="button" 
           onclick="closeAccountManagerModal()" 
@@ -650,10 +766,10 @@
   </div>
 
   <!-- ============================================================
-       MODAL 3: CURRENCY CONVERTER & LIVE RATES
+       MODAL 3: CURRENCY CONVERTER & FX RATES
        ============================================================ -->
   <div id="rateModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl max-w-sm w-full p-5 sm:p-6 shadow-xl space-y-4">
+    <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
       
       <div class="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)]">
         <h3 class="text-base font-semibold text-[var(--text-main)]">
@@ -664,7 +780,7 @@
         </button>
       </div>
 
-      <div class="space-y-3">
+      <div class="space-y-3.5">
         <div>
           <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Amount</label>
           <input 
@@ -677,13 +793,13 @@
           />
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-2 gap-2.5">
           <div>
             <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">From</label>
             <select 
               id="calcFromCurrency" 
               onchange="runQuickConverter()" 
-              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-main)] focus:outline-none"
+              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-main)] focus:outline-none cursor-pointer"
             >
             </select>
           </div>
@@ -692,15 +808,15 @@
             <select 
               id="calcToCurrency" 
               onchange="runQuickConverter()" 
-              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-main)] focus:outline-none"
+              class="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-main)] focus:outline-none cursor-pointer"
             >
             </select>
           </div>
         </div>
 
-        <div class="p-3 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-center">
-          <div class="text-xs text-[var(--text-muted)] mb-0.5">Calculated Result</div>
-          <div id="calcResultDisplay" class="text-base font-semibold text-[var(--text-main)] tabular-nums">
+        <div class="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-center">
+          <div class="text-xs text-[var(--text-muted)] mb-0.5">Calculated Value</div>
+          <div id="calcResultDisplay" class="text-lg font-semibold text-[var(--text-main)] tabular-nums">
             0.00
           </div>
         </div>
@@ -711,12 +827,12 @@
             onclick="fetchLiveDailyRates(true)" 
             class="text-[var(--accent-primary)] hover:underline"
           >
-            ↻ Sync Rates Now
+            ↻ Sync Rates
           </button>
           <button 
             type="button" 
             onclick="closeRateModal()" 
-            class="px-3 py-1 bg-[var(--bg-elevated)] rounded-md border border-[var(--border-subtle)]"
+            class="px-3.5 py-1.5 bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-subtle)]"
           >
             Close
           </button>
@@ -726,10 +842,10 @@
   </div>
 
   <!-- ============================================================
-       MODAL 4: BACKUP & RESTORE DATA
+       MODAL 4: BACKUP & DATA MANAGEMENT
        ============================================================ -->
   <div id="backupModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-xl space-y-4">
+    <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
       
       <div class="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)]">
         <h3 class="text-base font-semibold text-[var(--text-main)]">
@@ -742,27 +858,27 @@
 
       <div class="space-y-4 text-xs text-[var(--text-muted)]">
         <p>
-          BizLedger persists your transactions, wallets, and rate configurations permanently in your browser's private offline storage.
+          All transactions, multi-currency accounts, and exchange rates persist permanently in your private browser offline storage.
         </p>
 
         <!-- Download JSON Backup -->
-        <div class="p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] flex items-center justify-between">
+        <div class="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] flex items-center justify-between gap-3">
           <div>
-            <div class="font-medium text-[var(--text-main)]">JSON Data Backup</div>
-            <div class="text-[11px] text-[var(--text-muted)]">Download an encrypted complete ledger snapshot.</div>
+            <div class="font-medium text-[var(--text-main)]">JSON Data Snapshot</div>
+            <div class="text-[11px] text-[var(--text-muted)] mt-0.5">Export complete structured ledger data.</div>
           </div>
           <button 
             type="button" 
             onclick="downloadJsonBackup()" 
-            class="px-3 py-1.5 text-xs font-medium text-white bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] rounded-lg transition-colors flex-shrink-0"
+            class="px-3 py-1.5 text-xs font-medium text-white bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] rounded-lg transition-colors flex-shrink-0 shadow-xs"
           >
             Export JSON
           </button>
         </div>
 
         <!-- Restore JSON Backup -->
-        <div class="p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] space-y-2">
-          <div class="font-medium text-[var(--text-main)]">Restore from File</div>
+        <div class="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] space-y-2">
+          <div class="font-medium text-[var(--text-main)]">Restore Ledger from File</div>
           <input 
             type="file" 
             id="restoreFileInput" 
@@ -773,10 +889,10 @@
         </div>
 
         <!-- Export CSV -->
-        <div class="p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] flex items-center justify-between">
+        <div class="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] flex items-center justify-between gap-3">
           <div>
             <div class="font-medium text-[var(--text-main)]">Spreadsheet Export (CSV)</div>
-            <div class="text-[11px] text-[var(--text-muted)]">Open in Excel or Google Sheets.</div>
+            <div class="text-[11px] text-[var(--text-muted)] mt-0.5">Open in Microsoft Excel or Google Sheets.</div>
           </div>
           <button 
             type="button" 
@@ -788,11 +904,11 @@
         </div>
       </div>
 
-      <div class="pt-2 border-t border-[var(--border-subtle)] flex justify-end">
+      <div class="pt-3 border-t border-[var(--border-subtle)] flex justify-end">
         <button 
           type="button" 
           onclick="closeBackupModal()" 
-          class="px-4 py-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-subtle)]"
+          class="px-4 py-2 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] bg-[var(--bg-elevated)] rounded-lg border border-[var(--border-subtle)]"
         >
           Close
         </button>
@@ -804,10 +920,10 @@
   <div id="toastContainer" class="fixed bottom-16 sm:bottom-6 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- ============================================================
-       APPLICATION SCRIPT (Strict Zero-Regression Engine)
+       APPLICATION CORE SCRIPT (Zero-Regression Engine)
        ============================================================ -->
   <script>
-    // 1. World Currencies Definition
+    // 1. World Currencies Definition (35+ World Currencies Supported)
     const CURRENCIES = [
       { code: 'BDT', symbol: '৳', name: 'Bangladeshi Taka', flag: '🇧🇩', defaultRateToUSD: 122.25 },
       { code: 'USD', symbol: '$', name: 'US Dollar', flag: '🇺🇸', defaultRateToUSD: 1.00 },
@@ -836,7 +952,7 @@
       { code: 'PKR', symbol: '₨', name: 'Pakistani Rupee', flag: '🇵🇰', defaultRateToUSD: 277.80 }
     ];
 
-    // Storage Keys (Permanent preservation)
+    // Permanent Storage Keys
     const STORAGE_KEYS = {
       TRANSACTIONS: 'bizledger_data_transactions',
       ACCOUNTS: 'bizledger_data_accounts',
@@ -844,12 +960,14 @@
       RATES: 'bizledger_data_rates'
     };
 
-    // State Variables
+    // Global State
     let transactions = [];
     let accounts = [];
     let primaryCurrency = 'BDT';
     let exchangeRates = {};
     let editingTxId = null;
+    let cashFlowChartInstance = null;
+    let allocationChartInstance = null;
 
     // Theme Management
     function toggleTheme() {
@@ -863,6 +981,7 @@
         localStorage.setItem('bizledger_theme', 'dark');
         document.getElementById('themeIcon').textContent = '🌙';
       }
+      renderCharts();
     }
 
     // Initialize Theme
@@ -875,7 +994,7 @@
       document.getElementById('themeIcon').textContent = '🌙';
     }
 
-    // Toggle Balance Privacy Masking
+    // Privacy Masking Toggle
     function toggleBalancePrivacy() {
       const current = localStorage.getItem('bizledger_balance_hidden') === 'true';
       localStorage.setItem('bizledger_balance_hidden', (!current).toString());
@@ -884,7 +1003,7 @@
       renderTable();
     }
 
-    // Currency Math
+    // Exact Currency Math
     function convertAny(amount, fromCode, toCode) {
       if (fromCode === toCode) return amount;
       const rateFrom = exchangeRates[fromCode] || 1;
@@ -902,7 +1021,7 @@
       return `${curr.symbol}${formattedNum}`;
     }
 
-    // Quiet FX Rate Engine
+    // Live FX Rates Engine
     async function fetchLiveDailyRates(userTriggered = false) {
       const statusText = document.getElementById('appStatusText');
       if (userTriggered && statusText) statusText.textContent = 'Updating...';
@@ -919,12 +1038,12 @@
           localStorage.setItem(STORAGE_KEYS.RATES, JSON.stringify(exchangeRates));
           localStorage.setItem('bizledger_last_rate_sync', Date.now().toString());
           if (statusText) statusText.textContent = 'Synced';
-          if (userTriggered) showToast('Exchange rates successfully refreshed');
+          if (userTriggered) showToast('Live exchange rates updated');
         }
       } catch (err) {
-        console.warn('Network sync offline, using stored exchange rates:', err.message);
+        console.warn('Offline mode: using cached exchange rates', err.message);
         if (statusText) statusText.textContent = 'Offline';
-        if (userTriggered) showToast('Using offline rates');
+        if (userTriggered) showToast('Operating in offline mode');
       }
       updateHeaderRates();
       refreshAll();
@@ -962,7 +1081,7 @@
       return balMap;
     }
 
-    // Wallets Renderer (Linear & Mercury Consistent System)
+    // Wallets Renderer (Section 5.E: Consistent, Neutral, High Craftsmanship)
     function renderWallets() {
       const balMap = calculateAccountBalances();
       const container = document.getElementById('accountCardsContainer');
@@ -974,29 +1093,29 @@
       accounts.forEach(acc => {
         const b = balMap[acc.id] || { initial: 0, current: 0, currency: acc.currency || 'BDT' };
         const card = document.createElement('div');
-        card.className = 'p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] hover:border-[var(--border-focus)] transition-colors flex flex-col justify-between group';
+        card.className = 'p-4 sm:p-5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] hover:border-[var(--border-focus)] transition-colors flex flex-col justify-between group shadow-xs';
         card.innerHTML = `
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <div class="flex items-center gap-2 min-w-0">
-              <span class="w-7 h-7 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-subtle)] flex items-center justify-center text-xs flex-shrink-0">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-subtle)] flex items-center justify-center text-sm flex-shrink-0">
                 ${escapeHtml(acc.icon || '💳')}
               </span>
               <span class="text-xs sm:text-sm font-medium text-[var(--text-main)] truncate">
                 ${escapeHtml(acc.name)}
               </span>
             </div>
-            <span class="text-[11px] font-mono font-medium px-1.5 py-0.5 rounded bg-[var(--bg-elevated)] text-[var(--text-muted)] border border-[var(--border-subtle)] flex-shrink-0">
+            <span class="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-[var(--bg-elevated)] text-[var(--text-muted)] border border-[var(--border-subtle)] flex-shrink-0">
               ${escapeHtml(b.currency)}
             </span>
           </div>
           <div>
-            <div class="text-base sm:text-lg font-semibold text-[var(--text-main)] tabular-nums tracking-tight">
+            <div class="text-lg sm:text-xl font-semibold text-[var(--text-main)] tabular-nums tracking-tight">
               ${isHidden ? '••••••' : formatCurrency(b.current, b.currency)}
             </div>
-            <div class="text-[11px] text-[var(--text-muted)] mt-1 flex items-center justify-between">
+            <div class="text-xs text-[var(--text-muted)] mt-1.5 flex items-center justify-between">
               <span>Init: ${isHidden ? '••••••' : formatCurrency(b.initial, b.currency)}</span>
-              <button onclick="openAccountManagerModal()" class="opacity-0 group-hover:opacity-100 transition-opacity text-[11px] text-[var(--accent-primary)] hover:underline">
-                Edit
+              <button onclick="openAccountManagerModal()" class="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-[var(--accent-primary)] hover:underline">
+                Manage
               </button>
             </div>
           </div>
@@ -1031,7 +1150,7 @@
       }
     }
 
-    // Summary Metrics & Cash Flow Ratio
+    // Financial Metrics Summary (Section 5.C)
     function updateSummary() {
       let initUSD = 0;
       accounts.forEach(acc => {
@@ -1052,32 +1171,87 @@
       const initialPrimary = convertAny(initUSD, 'USD', primaryCurrency);
       const incPrimary = convertAny(incUSD, 'USD', primaryCurrency);
       const expPrimary = convertAny(expUSD, 'USD', primaryCurrency);
+      const netPrimary = convertAny(netUSD, 'USD', primaryCurrency);
+      const turnoverPrimary = incPrimary + expPrimary;
 
       const isHidden = localStorage.getItem('bizledger_balance_hidden') === 'true';
 
+      // Total Combined Balance
       const elCurrPrimary = document.getElementById('combinedCurrentPrimary');
       if (elCurrPrimary) {
         elCurrPrimary.textContent = isHidden ? '••••••' : formatCurrency(currentPrimary, primaryCurrency);
       }
 
+      // Secondary USD
       const elCurrSec = document.getElementById('combinedCurrentSecondary');
       if (elCurrSec) {
         elCurrSec.textContent = isHidden ? '≈ ••••••' : `≈ ${formatCurrency(currentTotalUSD, 'USD')}`;
       }
 
+      // Initial Capital
       const elInitPrim = document.getElementById('combinedInitialPrimary');
       if (elInitPrim) {
         elInitPrim.textContent = isHidden ? '••••••' : formatCurrency(initialPrimary, primaryCurrency);
       }
 
+      // Total Income
       const elInc = document.getElementById('totalIncomePrimary');
       if (elInc) {
         elInc.textContent = isHidden ? '••••••' : `+${formatCurrency(incPrimary, primaryCurrency)}`;
       }
 
+      // Total Expenses
       const elExp = document.getElementById('totalExpensePrimary');
       if (elExp) {
         elExp.textContent = isHidden ? '••••••' : `-${formatCurrency(expPrimary, primaryCurrency)}`;
+      }
+
+      // Net Cash Flow
+      const elNet = document.getElementById('netCashFlowDisplay');
+      const elNetBadge = document.getElementById('netCashFlowBadge');
+      if (elNet) {
+        const sign = netPrimary >= 0 ? '+' : '';
+        elNet.textContent = isHidden ? '••••••' : `${sign}${formatCurrency(netPrimary, primaryCurrency)}`;
+        if (netPrimary > 0) {
+          elNet.className = 'text-lg sm:text-xl font-semibold text-[var(--color-income)] tracking-tight tabular-nums mt-1';
+          if (elNetBadge) {
+            elNetBadge.textContent = 'Positive';
+            elNetBadge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#35B37E]/10 text-[#35B37E] border border-[#35B37E]/20';
+          }
+        } else if (netPrimary < 0) {
+          elNet.className = 'text-lg sm:text-xl font-semibold text-[var(--color-expense)] tracking-tight tabular-nums mt-1';
+          if (elNetBadge) {
+            elNetBadge.textContent = 'Deficit';
+            elNetBadge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#E56B76]/10 text-[#E56B76] border border-[#E56B76]/20';
+          }
+        } else {
+          elNet.className = 'text-lg sm:text-xl font-semibold text-[var(--text-main)] tracking-tight tabular-nums mt-1';
+          if (elNetBadge) {
+            elNetBadge.textContent = 'Neutral';
+            elNetBadge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--bg-elevated)] text-[var(--text-muted)] border border-[var(--border-subtle)]';
+          }
+        }
+      }
+
+      // Capital Growth %
+      const elGrowth = document.getElementById('netGrowthDisplay');
+      if (elGrowth) {
+        if (initUSD > 0) {
+          const growthPct = ((netUSD / initUSD) * 100).toFixed(1);
+          const sign = growthPct >= 0 ? '+' : '';
+          elGrowth.textContent = isHidden ? '••••••' : `${sign}${growthPct}%`;
+          elGrowth.className = growthPct >= 0 
+            ? 'text-sm sm:text-base font-semibold text-[var(--color-income)] tabular-nums mt-0.5' 
+            : 'text-sm sm:text-base font-semibold text-[var(--color-expense)] tabular-nums mt-0.5';
+        } else {
+          elGrowth.textContent = '0.0%';
+        }
+      }
+
+      // Turnover Volume
+      const elTurnover = document.getElementById('totalTurnoverDisplay');
+      if (elTurnover) {
+        elTurnover.textContent = isHidden ? '••••••' : formatCurrency(turnoverPrimary, primaryCurrency);
       }
 
       // Cash Flow Progress Bar
@@ -1095,13 +1269,195 @@
         }
       }
 
+      // Active Currency Badge
+      const currBadge = document.getElementById('activeCurrencyBadge');
+      if (currBadge) currBadge.textContent = primaryCurrency;
+
+      // Privacy Icon
       const privacyIcon = document.getElementById('balancePrivacyIcon');
       if (privacyIcon) {
         privacyIcon.textContent = isHidden ? '🔒' : '👁️';
       }
+
+      // Render Charts
+      renderCharts();
     }
 
-    // Transactions Table & List Renderer
+    // Visual Financial Analytics Charts (Section 5.D)
+    function renderCharts() {
+      if (typeof Chart === 'undefined') return;
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#929BAA' : '#687386';
+      const gridColor = isDark ? 'rgba(37, 45, 57, 0.4)' : 'rgba(229, 232, 239, 0.7)';
+      const incomeColor = isDark ? '#35B37E' : '#169B69';
+      const expenseColor = isDark ? '#E56B76' : '#D94F60';
+      const emptyStateEl = document.getElementById('chartEmptyState');
+
+      // 1. Line/Bar Cash Flow Telemetry
+      const cashFlowCanvas = document.getElementById('cashFlowChartCanvas');
+      if (cashFlowCanvas) {
+        if (transactions.length === 0) {
+          if (emptyStateEl) emptyStateEl.classList.remove('hidden');
+          if (cashFlowChartInstance) {
+            cashFlowChartInstance.destroy();
+            cashFlowChartInstance = null;
+          }
+        } else {
+          if (emptyStateEl) emptyStateEl.classList.add('hidden');
+
+          // Group transactions by date
+          const sortedTx = [...transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
+          const dateMap = {};
+          sortedTx.forEach(t => {
+            if (!dateMap[t.date]) dateMap[t.date] = { income: 0, expense: 0 };
+            const amtPrim = convertAny(t.amount, t.currency, primaryCurrency);
+            if (t.type === 'Income') dateMap[t.date].income += amtPrim;
+            else if (t.type === 'Expense') dateMap[t.date].expense += amtPrim;
+          });
+
+          const labels = Object.keys(dateMap).slice(-8); // Last 8 activity dates
+          const incomeData = labels.map(d => dateMap[d].income);
+          const expenseData = labels.map(d => dateMap[d].expense);
+
+          if (cashFlowChartInstance) cashFlowChartInstance.destroy();
+
+          cashFlowChartInstance = new Chart(cashFlowCanvas, {
+            type: 'bar',
+            data: {
+              labels: labels.map(d => {
+                const parts = d.split('-');
+                return parts.length >= 3 ? `${parts[1]}/${parts[2]}` : d;
+              }),
+              datasets: [
+                {
+                  label: 'Inflow',
+                  data: incomeData,
+                  backgroundColor: incomeColor,
+                  borderRadius: 4,
+                  barThickness: 12
+                },
+                {
+                  label: 'Outflow',
+                  data: expenseData,
+                  backgroundColor: expenseColor,
+                  borderRadius: 4,
+                  barThickness: 12
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  backgroundColor: isDark ? '#141922' : '#FFFFFF',
+                  titleColor: isDark ? '#F0F2F5' : '#18202D',
+                  bodyColor: textColor,
+                  borderColor: isDark ? '#252D39' : '#E5E8EF',
+                  borderWidth: 1,
+                  padding: 10,
+                  callbacks: {
+                    label: function(ctx) {
+                      return ` ${ctx.dataset.label}: ${formatCurrency(ctx.raw, primaryCurrency)}`;
+                    }
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  grid: { display: false },
+                  ticks: { color: textColor, font: { size: 11, family: 'Inter' } }
+                },
+                y: {
+                  grid: { color: gridColor },
+                  ticks: {
+                    color: textColor,
+                    font: { size: 10, family: 'Inter' },
+                    callback: val => Number(val).toLocaleString()
+                  }
+                }
+              }
+            }
+          });
+        }
+      }
+
+      // 2. Asset Allocation Donut Chart
+      const allocCanvas = document.getElementById('walletAllocationChartCanvas');
+      if (allocCanvas) {
+        const balMap = calculateAccountBalances();
+        const labels = [];
+        const data = [];
+        const palette = [
+          isDark ? '#8B7CF6' : '#6558D9',
+          isDark ? '#66A6D9' : '#3B82F6',
+          isDark ? '#35B37E' : '#169B69',
+          isDark ? '#E56B76' : '#D94F60',
+          '#F59E0B',
+          '#10B981',
+          '#6366F1'
+        ];
+
+        accounts.forEach(a => {
+          const b = balMap[a.id] || { current: 0, currency: a.currency };
+          const inPrim = Math.max(0, convertAny(b.current, b.currency, primaryCurrency));
+          if (inPrim > 0) {
+            labels.push(a.name);
+            data.push(inPrim);
+          }
+        });
+
+        if (allocationChartInstance) allocationChartInstance.destroy();
+
+        if (data.length > 0) {
+          allocationChartInstance = new Chart(allocCanvas, {
+            type: 'doughnut',
+            data: {
+              labels: labels,
+              datasets: [{
+                data: data,
+                backgroundColor: palette.slice(0, data.length),
+                borderWidth: 1,
+                borderColor: isDark ? '#141922' : '#FFFFFF'
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              cutout: '72%',
+              plugins: {
+                legend: {
+                  position: 'bottom',
+                  labels: {
+                    color: textColor,
+                    font: { size: 11, family: 'Inter' },
+                    padding: 12,
+                    boxWidth: 8
+                  }
+                },
+                tooltip: {
+                  backgroundColor: isDark ? '#141922' : '#FFFFFF',
+                  titleColor: isDark ? '#F0F2F5' : '#18202D',
+                  bodyColor: textColor,
+                  borderColor: isDark ? '#252D39' : '#E5E8EF',
+                  borderWidth: 1,
+                  padding: 10,
+                  callbacks: {
+                    label: function(ctx) {
+                      return ` ${ctx.label}: ${formatCurrency(ctx.raw, primaryCurrency)}`;
+                    }
+                  }
+                }
+              }
+            }
+          });
+        }
+      }
+    }
+
+    // Transactions Table & List Renderer (Section 5.F)
     function renderTable() {
       const typeFilter = document.getElementById('desktopFilterType')?.value || 
                          document.getElementById('mobileFilterType')?.value || 'ALL';
@@ -1134,7 +1490,7 @@
           const isInc = t.type === 'Income';
           const colorClass = isInc ? 'text-[var(--color-income)]' : 'text-[var(--color-expense)]';
           const badgeClass = isInc 
-            ? 'bg-[#36B37E]/10 text-[#36B37E] border border-[#36B37E]/20' 
+            ? 'bg-[#35B37E]/10 text-[#35B37E] border border-[#35B37E]/20' 
             : 'bg-[#E56B76]/10 text-[#E56B76] border border-[#E56B76]/20';
           const sign = isInc ? '+' : '−';
           const acc = accounts.find(a => a.id === t.accountId);
@@ -1143,13 +1499,13 @@
           const primVal = convertAny(t.usdEquivalent !== undefined ? t.usdEquivalent : convertAny(t.amount, t.currency, 'USD'), 'USD', primaryCurrency);
           const formattedAmount = isHidden ? '••••••' : `${sign} ${formatCurrency(primVal, primaryCurrency)}`;
 
-          // Mobile Item
+          // Mobile Item (Clean, tactile, stacked card layout)
           if (mobileList) {
             const item = document.createElement('div');
-            item.className = 'py-3 px-3.5 flex items-center justify-between gap-3 border-b border-[var(--border-subtle)] last:border-b-0 hover:bg-[var(--bg-elevated)]/50 transition-colors';
+            item.className = 'py-3.5 px-4 flex items-center justify-between gap-3 border-b border-[var(--border-subtle)] last:border-b-0 hover:bg-[var(--bg-elevated)]/50 transition-colors';
             item.innerHTML = `
-              <div class="flex items-center gap-2.5 min-w-0">
-                <span class="w-7 h-7 rounded-lg ${badgeClass} flex items-center justify-center text-xs font-semibold flex-shrink-0">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="w-8 h-8 rounded-lg ${badgeClass} flex items-center justify-center text-xs font-semibold flex-shrink-0">
                   ${isInc ? '↓' : '↑'}
                 </span>
                 <div class="min-w-0">
@@ -1162,7 +1518,7 @@
                 </div>
               </div>
               <div class="text-right flex-shrink-0">
-                <span class="text-xs sm:text-sm font-medium ${colorClass} tabular-nums block">
+                <span class="text-xs sm:text-sm font-semibold ${colorClass} tabular-nums block">
                   ${formattedAmount}
                 </span>
                 <button onclick="deleteTx('${t.id}')" class="text-[11px] text-[var(--text-subtle)] hover:text-[#E56B76] transition-colors mt-0.5">
@@ -1173,27 +1529,27 @@
             mobileList.appendChild(item);
           }
 
-          // Desktop Row
+          // Desktop Row (Refined table row with hover)
           if (desktopList) {
             const row = document.createElement('tr');
             row.className = 'border-b border-[var(--border-subtle)] last:border-b-0 hover:bg-[var(--bg-elevated)]/50 transition-colors';
             row.innerHTML = `
-              <td class="py-2.5 px-4 text-xs text-[var(--text-muted)] font-mono">${t.date}</td>
-              <td class="py-2.5 px-4 text-xs font-medium text-[var(--text-main)]">${escapeHtml(t.description)}</td>
-              <td class="py-2.5 px-4 text-xs text-[var(--text-muted)]">
+              <td class="py-3 px-4 text-xs text-[var(--text-muted)] font-mono">${t.date}</td>
+              <td class="py-3 px-4 text-xs font-medium text-[var(--text-main)]">${escapeHtml(t.description)}</td>
+              <td class="py-3 px-4 text-xs text-[var(--text-muted)]">
                 <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-main)] font-normal">
                   ${escapeHtml(accName)}
                 </span>
               </td>
-              <td class="py-2.5 px-4 text-xs">
+              <td class="py-3 px-4 text-xs">
                 <span class="inline-flex items-center px-2 py-0.5 rounded-md ${badgeClass} font-medium">
                   ${t.type}
                 </span>
               </td>
-              <td class="py-2.5 px-4 text-xs text-right font-medium ${colorClass} tabular-nums">
+              <td class="py-3 px-4 text-xs text-right font-semibold ${colorClass} tabular-nums">
                 ${formattedAmount}
               </td>
-              <td class="py-2.5 px-4 text-center">
+              <td class="py-3 px-4 text-center">
                 <button onclick="deleteTx('${t.id}')" class="text-xs text-[var(--text-subtle)] hover:text-[#E56B76] transition-colors" title="Delete transaction">
                   Delete
                 </button>
@@ -1233,7 +1589,6 @@
       document.getElementById('txModal').classList.remove('hidden');
       document.getElementById('modalTxDesc').focus();
 
-      // Configure save button action
       const saveBtn = document.getElementById('saveTxBtn');
       saveBtn.onclick = () => saveTransaction(type);
     }
@@ -1242,9 +1597,7 @@
       document.getElementById('txModal').classList.add('hidden');
     }
 
-    function updateFormTypeStyling() {
-      // Kept for backward compatibility
-    }
+    function updateFormTypeStyling() {}
 
     function handleModalCurrencyChange() {
       updateModalPreview();
@@ -1292,7 +1645,7 @@
       saveData();
       refreshAll();
       closeTransactionModal();
-      showToast('Transaction recorded successfully');
+      showToast('Transaction saved');
     }
 
     function deleteTx(id) {
@@ -1324,12 +1677,12 @@
       list.innerHTML = '';
       accounts.forEach(a => {
         const row = document.createElement('div');
-        row.className = 'p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--border-subtle)] flex items-center justify-between gap-2';
+        row.className = 'p-3 rounded-lg bg-[var(--bg-card)] border border-[var(--border-subtle)] flex items-center justify-between gap-3';
         row.innerHTML = `
-          <div class="flex items-center gap-2 min-w-0">
+          <div class="flex items-center gap-2.5 min-w-0">
             <span>${a.icon || '💳'}</span>
             <div>
-              <span class="text-xs font-medium text-[var(--text-main)] block truncate">${escapeHtml(a.name)}</span>
+              <span class="text-xs font-semibold text-[var(--text-main)] block truncate">${escapeHtml(a.name)}</span>
               <span class="text-[10px] text-[var(--text-muted)] font-mono">${a.currency}</span>
             </div>
           </div>
@@ -1385,7 +1738,7 @@
       showToast(`Wallet "${name}" created`);
     }
 
-    // Converter Modal
+    // Quick Converter Modal
     function openRateModal() {
       runQuickConverter();
       document.getElementById('rateModal').classList.remove('hidden');
@@ -1421,7 +1774,7 @@
         accounts,
         primaryCurrency,
         backupDate: new Date().toISOString(),
-        version: '2.0.0'
+        version: '2.5.0'
       };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -1430,7 +1783,7 @@
       a.download = `bizledger-backup-${new Date().toISOString().split('T')[0]}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast('JSON backup file created');
+      showToast('JSON snapshot exported');
     }
 
     function handleRestoreFile(event) {
@@ -1447,7 +1800,7 @@
             saveData();
             refreshAll();
             closeBackupModal();
-            showToast('Backup restored successfully');
+            showToast('Ledger restored successfully');
           } else {
             showToast('Invalid backup file structure');
           }
@@ -1499,7 +1852,7 @@
       }, 3000);
     }
 
-    // Storage Persistence
+    // Storage Persistence & Hydration
     function loadData() {
       // Rates
       const storedRates = localStorage.getItem(STORAGE_KEYS.RATES);
@@ -1594,22 +1947,21 @@
       renderTable();
     }
 
-    // Set Live Date
     function setFormattedDate() {
       const el = document.getElementById('dashboardDateDisplay');
       if (el) {
         const now = new Date();
         const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
-        el.textContent = `Financial status & telemetry • ${now.toLocaleDateString('en-US', options)}`;
+        el.textContent = `Your financial position at a glance • ${now.toLocaleDateString('en-US', options)}`;
       }
     }
 
-    // Service Worker Registration
+    // PWA Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
 
-    // Initialization
+    // Application Bootstrap
     document.addEventListener('DOMContentLoaded', () => {
       loadData();
       setFormattedDate();
