@@ -2,9 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
   <title>BizLedger | Global Multi-Currency Business Tracker & Live Market Trends</title>
   
+  <!-- PWA & Mobile Web App Manifest -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="alternate icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="theme-color" content="#059669" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="BizLedger" />
+  <meta name="application-name" content="BizLedger" />
+
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
@@ -16,6 +28,7 @@
   <style>
     body {
       font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
     ::-webkit-scrollbar {
       height: 6px;
@@ -51,47 +64,73 @@
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white pb-20 md:pb-6">
+
+  <!-- Android PWA Install Top Alert (Visible when installable or clicked) -->
+  <div id="pwaBanner" class="bg-gradient-to-r from-emerald-700 to-teal-800 text-white px-3.5 py-2 text-xs flex items-center justify-between gap-2 shadow-md hidden">
+    <div class="flex items-center gap-2">
+      <img src="icon.svg" class="w-6 h-6 rounded-md shadow-xs" alt="Logo" />
+      <div>
+        <span class="font-bold">Install BizLedger App:</span>
+        <span class="text-emerald-100 hidden sm:inline">Add to your home screen for fast 1-tap access!</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-1.5">
+      <button onclick="triggerPwaInstall()" class="bg-white text-emerald-800 font-extrabold px-3 py-1 rounded-lg text-xs hover:bg-emerald-50 active:scale-95 transition shadow-xs">
+        Install Now
+      </button>
+      <button onclick="dismissPwaBanner()" class="text-emerald-200 hover:text-white p-1 text-sm font-bold">&times;</button>
+    </div>
+  </div>
 
   <!-- Header -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
       
-      <!-- Brand Logo -->
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
-          <span class="text-lg font-extrabold">🌐</span>
-        </div>
+      <!-- Brand Logo & Name -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <img src="icon.svg" alt="BizLedger Logo" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl shadow-md shadow-emerald-500/20 object-contain" />
         <div>
-          <h1 class="text-lg font-bold text-slate-900 leading-tight flex items-center gap-2">
+          <h1 class="text-base sm:text-lg font-extrabold text-slate-900 leading-tight flex items-center gap-1.5 sm:gap-2">
             BizLedger
-            <span class="hidden sm:inline-flex text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wide">
-              Permanent Storage 🛡️
+            <span class="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wide">
+              App
             </span>
           </h1>
-          <p class="text-xs text-slate-500 font-medium">Real-Time Currency Fluctuations (Ups & Downs) & Ledger</p>
+          <p class="hidden sm:block text-xs text-slate-500 font-medium">Real-Time Currency Fluctuations (Ups & Downs) & Ledger</p>
         </div>
       </div>
       
       <!-- Top Action Controls -->
-      <div class="flex items-center gap-2 sm:gap-3">
+      <div class="flex items-center gap-1.5 sm:gap-3">
         
-        <!-- Live Exchange Rate & Converter Modal Button -->
+        <!-- Live Exchange Rate Button -->
         <button 
           onclick="openRateModal()" 
-          class="flex items-center gap-1.5 bg-amber-50/90 hover:bg-amber-100 border border-amber-200/90 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-amber-900 transition"
-          title="Click to view all live currency rates or use the universal converter"
+          class="flex items-center gap-1 sm:gap-1.5 bg-amber-50/90 hover:bg-amber-100 border border-amber-200/90 rounded-xl px-2 sm:px-2.5 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold text-amber-900 transition"
+          title="Click to view live rates or converter"
         >
-          <span id="headerRatePulse" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="headerRatePulse" class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>$1 = <b id="headerQuickRateDisplay">৳122.25</b></span>
-          <span id="headerUsdTrendBadge" class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
+          <span id="headerUsdTrendBadge" class="text-[9px] sm:text-[10px] font-extrabold px-1 sm:px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
             ▲ +0.25%
           </span>
         </button>
 
-        <!-- Primary & Secondary Display Currency Selectors -->
+        <!-- PWA Install Button (Mobile & Desktop) -->
+        <button 
+          onclick="triggerPwaInstall()" 
+          id="headerInstallBtn"
+          class="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-bold shadow-xs transition"
+          title="Install app on your phone or PC"
+        >
+          <span>📲</span>
+          <span class="hidden sm:inline">Install</span>
+        </button>
+
+        <!-- Primary & Secondary Display Currency Selectors (Desktop) -->
         <div class="hidden lg:flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
-          <span class="text-[11px] font-bold text-slate-500 px-1">View in:</span>
+          <span class="text-[11px] font-bold text-slate-500 px-1">View:</span>
           
           <select 
             id="primaryCurrencySelect" 
@@ -113,16 +152,16 @@
         </div>
 
         <!-- Backup & Restore Data Button -->
-        <button onclick="openBackupModal()" title="Backup or Restore your data" class="text-xs font-semibold px-2.5 sm:px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition flex items-center gap-1.5">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <button onclick="openBackupModal()" title="Backup or Restore your data" class="text-xs font-semibold px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
           </svg>
-          <span class="hidden sm:inline">Backup</span>
+          <span class="hidden md:inline">Backup</span>
         </button>
 
         <!-- Export CSV Button -->
-        <button id="exportCsvBtn" title="Export transactions to CSV" class="text-xs font-semibold px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1.5">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <button id="exportCsvBtn" title="Export transactions to CSV" class="hidden sm:flex text-xs font-semibold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
           <span class="hidden md:inline">CSV</span>
@@ -131,31 +170,30 @@
     </div>
 
     <!-- 🔴🟢 LIVE CURRENCY TICKER BAR (UPS & DOWNS FLUCTUATIONS) -->
-    <div class="bg-slate-900 text-white text-xs px-4 py-2 border-t border-slate-800 overflow-hidden flex items-center justify-between gap-4">
-      <div class="flex items-center gap-2 whitespace-nowrap">
-        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 font-bold text-[11px]">
+    <div class="bg-slate-900 text-white text-[11px] px-3 sm:px-4 py-1.5 border-t border-slate-800 overflow-hidden flex items-center justify-between gap-2 sm:gap-4">
+      <div class="flex items-center gap-1.5 whitespace-nowrap">
+        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-          LIVE MARKET
+          LIVE
         </span>
-        <span id="rateCountdown" class="text-[11px] text-slate-400 hidden sm:inline">Auto-refresh in 4:59</span>
+        <span id="rateCountdown" class="text-[10px] text-slate-400 hidden sm:inline">Auto 4:59</span>
       </div>
 
       <!-- Scrolling Currency Ticker -->
       <div id="liveTickerBar" class="ticker-scroll flex-1 text-[11px] font-semibold text-slate-300">
       </div>
 
-      <button onclick="fetchLiveDailyRates(true)" title="Refresh Rates Now" class="text-slate-400 hover:text-white transition flex items-center gap-1 text-[11px] font-semibold">
+      <button onclick="fetchLiveDailyRates(true)" title="Refresh Rates Now" class="text-slate-400 hover:text-white transition flex items-center gap-1 text-[10px] font-semibold">
         <svg id="tickerRefreshIcon" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
-        <span class="hidden md:inline">Refresh</span>
       </button>
     </div>
 
     <!-- Mobile Display Currency Bar -->
-    <div class="lg:hidden bg-slate-100 px-4 py-1.5 border-b border-slate-200 flex items-center justify-between text-xs">
-      <span class="text-slate-500 font-bold">Display Currencies:</span>
-      <div class="flex items-center gap-1.5">
+    <div class="lg:hidden bg-slate-100 px-3 py-1.5 border-b border-slate-200 flex items-center justify-between text-xs">
+      <span class="text-slate-500 font-bold text-[11px]">Display Currencies:</span>
+      <div class="flex items-center gap-1">
         <select id="mobilePrimaryCurrencySelect" onchange="changePrimaryCurrency(this.value)" class="font-bold text-emerald-700 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-xs">
         </select>
         <span class="text-slate-400">/</span>
@@ -166,108 +204,91 @@
   </header>
 
   <!-- Main Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
 
     <!-- ACCOUNTS & WALLETS SECTION -->
-    <section class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3.5">
+    <section class="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 shadow-xs">
+      <div class="flex items-center justify-between gap-2 mb-3">
         <div>
-          <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <h2 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
             <span>🏦 Accounts & Wallets</span>
-            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Multi-Currency Wallets</span>
+            <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">Multi-Currency</span>
           </h2>
-          <p class="text-xs text-slate-500">Each account can hold its own native currency with permanent local storage</p>
+          <p class="text-[11px] text-slate-500 hidden sm:block">Each account can hold its own native currency</p>
         </div>
         <button 
           onclick="openAccountManagerModal()" 
-          class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition self-start sm:self-auto"
+          class="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
           </svg>
-          Add / Manage Accounts
+          Manage Wallets
         </button>
       </div>
 
-      <!-- Live Account Balances Grid -->
-      <div id="accountCardsContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <!-- Live Account Balances Grid (Responsive 2-col on mobile, up to 5 on desktop) -->
+      <div id="accountCardsContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3">
       </div>
     </section>
 
-    <!-- 1. SUMMARY DASHBOARD CARDS -->
+    <!-- 1. SUMMARY DASHBOARD CARDS (Clean 2x2 Grid on Mobile, 4-col on Desktop) -->
     <section>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         
         <!-- CARD 1: Combined Initial Capital -->
-        <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden group">
-          <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-50 rounded-full opacity-60 pointer-events-none"></div>
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold tracking-wider uppercase text-slate-500">Combined Initial Capital</span>
-            <button 
-              onclick="openAccountManagerModal()" 
-              title="Edit Accounts" 
-              class="w-8 h-8 rounded-lg bg-indigo-50 group-hover:bg-indigo-100 text-indigo-600 flex items-center justify-center transition"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <div class="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] sm:text-xs font-bold tracking-wider uppercase text-slate-500">Initial Capital</span>
+            <button onclick="openAccountManagerModal()" class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
               </svg>
             </button>
           </div>
-          <p id="combinedInitialPrimary" class="text-2xl sm:text-3xl font-extrabold text-indigo-600 tracking-tight cursor-pointer" onclick="openAccountManagerModal()">0</p>
-          <p id="combinedInitialSecondary" class="text-xs font-semibold text-slate-500 mt-0.5">≈ 0</p>
-          <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-            <span>All accounts combined</span>
-            <button onclick="openAccountManagerModal()" class="text-indigo-600 hover:text-indigo-800 font-bold underline">Edit Initial</button>
-          </div>
+          <p id="combinedInitialPrimary" class="text-lg sm:text-2xl lg:text-3xl font-extrabold text-indigo-600 tracking-tight cursor-pointer" onclick="openAccountManagerModal()">0</p>
+          <p id="combinedInitialSecondary" class="text-[10px] sm:text-xs font-semibold text-slate-400 mt-0.5 truncate">≈ 0</p>
         </div>
 
         <!-- CARD 2: Total Income -->
-        <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden">
-          <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-50 rounded-full opacity-60 pointer-events-none"></div>
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold tracking-wider uppercase text-slate-500">Total Income</span>
-            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <div class="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] sm:text-xs font-bold tracking-wider uppercase text-slate-500">Total Income</span>
+            <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M7 11l5-5m0 0l5 5m-5-5v12" />
               </svg>
             </div>
           </div>
-          <p id="totalIncomePrimary" class="text-2xl sm:text-3xl font-extrabold text-emerald-600 tracking-tight">0</p>
-          <p id="totalIncomeSecondary" class="text-xs font-semibold text-slate-500 mt-0.5">≈ 0</p>
-          <div class="mt-3 pt-2 border-t border-slate-100 text-[11px] text-slate-500">
-            <span id="incomeCount" class="font-semibold text-slate-700">0</span> earnings recorded
-          </div>
+          <p id="totalIncomePrimary" class="text-lg sm:text-2xl lg:text-3xl font-extrabold text-emerald-600 tracking-tight">0</p>
+          <p id="totalIncomeSecondary" class="text-[10px] sm:text-xs font-semibold text-slate-400 mt-0.5 truncate">≈ 0</p>
         </div>
 
         <!-- CARD 3: Total Expenses -->
-        <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden">
-          <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-rose-50 rounded-full opacity-60 pointer-events-none"></div>
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold tracking-wider uppercase text-slate-500">Total Expenses</span>
-            <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <div class="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] sm:text-xs font-bold tracking-wider uppercase text-slate-500">Total Expenses</span>
+            <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 13l-5 5m0 0l-5-5m5 5V6" />
               </svg>
             </div>
           </div>
-          <p id="totalExpensePrimary" class="text-2xl sm:text-3xl font-extrabold text-rose-600 tracking-tight">0</p>
-          <p id="totalExpenseSecondary" class="text-xs font-semibold text-slate-500 mt-0.5">≈ 0</p>
-          <div class="mt-3 pt-2 border-t border-slate-100 text-[11px] text-slate-500">
-            <span id="expenseCount" class="font-semibold text-slate-700">0</span> expenses recorded
-          </div>
+          <p id="totalExpensePrimary" class="text-lg sm:text-2xl lg:text-3xl font-extrabold text-rose-600 tracking-tight">0</p>
+          <p id="totalExpenseSecondary" class="text-[10px] sm:text-xs font-semibold text-slate-400 mt-0.5 truncate">≈ 0</p>
         </div>
 
         <!-- CARD 4: Combined Current Cash Balance & Net Profit -->
-        <div id="netProfitCard" class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold tracking-wider uppercase text-slate-500">Combined Current Balance</span>
-            <span id="profitBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600">Break-Even</span>
+        <div id="netProfitCard" class="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] sm:text-xs font-bold tracking-wider uppercase text-slate-500">Current Balance</span>
+            <span id="profitBadge" class="px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold bg-slate-100 text-slate-600">Break-Even</span>
           </div>
-          <p id="combinedCurrentPrimary" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">0</p>
-          <p id="combinedCurrentSecondary" class="text-xs font-semibold text-slate-500 mt-0.5">≈ 0</p>
-          <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-            <span class="text-slate-500">Net Profit:</span>
-            <span id="netProfitSideBySide" class="font-bold text-emerald-600">0</span>
+          <p id="combinedCurrentPrimary" class="text-lg sm:text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">0</p>
+          <p id="combinedCurrentSecondary" class="text-[10px] sm:text-xs font-semibold text-slate-400 mt-0.5 truncate">≈ 0</p>
+          <div class="mt-1 sm:mt-2 pt-1 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-xs">
+            <span class="text-slate-400">Net:</span>
+            <span id="netProfitSideBySide" class="font-bold text-emerald-600 truncate">0</span>
           </div>
         </div>
 
@@ -275,25 +296,25 @@
     </section>
 
     <!-- 2. ADD FORM & DATA TABLE -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
       
       <!-- Input Form -->
-      <section class="lg:col-span-5 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs">
-        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+      <section id="addTransactionSection" class="lg:col-span-5 bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/80 shadow-xs">
+        <div class="flex items-center justify-between mb-3 pb-2.5 border-b border-slate-100">
           <div>
-            <h2 class="text-base font-bold text-slate-900">Add Transaction</h2>
-            <p class="text-xs text-slate-500">Input in any currency with live fluctuation tracking</p>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900">Add Transaction</h2>
+            <p class="text-[11px] sm:text-xs text-slate-500">Input in any currency with live conversion</p>
           </div>
           <button onclick="openRateModal()" class="text-xs text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-md font-semibold transition flex items-center gap-1">
             💱 Rates
           </button>
         </div>
 
-        <form id="transactionForm" class="space-y-4">
+        <form id="transactionForm" class="space-y-3.5 sm:space-y-4">
           
           <!-- Transaction Type Toggle -->
           <div>
-            <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5 tracking-wider">Transaction Type</label>
+            <label class="block text-[11px] font-bold uppercase text-slate-600 mb-1 tracking-wider">Transaction Type</label>
             <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
               <label class="cursor-pointer">
                 <input type="radio" name="type" value="Income" class="peer sr-only" checked />
@@ -312,8 +333,8 @@
 
           <!-- Account / Wallet Selector -->
           <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <label for="transactionAccount" class="text-xs font-bold uppercase text-slate-600 tracking-wider">
+            <div class="flex items-center justify-between mb-1">
+              <label for="transactionAccount" class="text-[11px] font-bold uppercase text-slate-600 tracking-wider">
                 Select Account / Wallet
               </label>
               <button type="button" onclick="openAccountManagerModal()" class="text-[11px] font-bold text-indigo-600 hover:underline">
@@ -323,26 +344,26 @@
             <select 
               id="transactionAccount" 
               required 
-              class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
+              class="w-full px-3 py-2 sm:py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
             >
             </select>
           </div>
 
           <!-- Date -->
           <div>
-            <label for="date" class="block text-xs font-bold uppercase text-slate-600 mb-1.5 tracking-wider">Date</label>
+            <label for="date" class="block text-[11px] font-bold uppercase text-slate-600 mb-1 tracking-wider">Date</label>
             <input 
               type="date" 
               id="date" 
               name="date" 
               required 
-              class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-slate-800 transition" 
+              class="w-full px-3 py-2 sm:py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-slate-800 transition" 
             />
           </div>
 
           <!-- Description -->
           <div>
-            <label for="description" class="block text-xs font-bold uppercase text-slate-600 mb-1.5 tracking-wider">Description</label>
+            <label for="description" class="block text-[11px] font-bold uppercase text-slate-600 mb-1 tracking-wider">Description</label>
             <input 
               type="text" 
               id="description" 
@@ -350,19 +371,19 @@
               placeholder="e.g., Client Payment, Software, Office Expense" 
               required 
               maxlength="100"
-              class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-slate-800 placeholder-slate-400 transition" 
+              class="w-full px-3 py-2 sm:py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-slate-800 placeholder-slate-400 transition" 
             />
           </div>
 
           <!-- Currency & Amount Input with Universal Dropdown -->
           <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <label for="amount" class="text-xs font-bold uppercase text-slate-600 tracking-wider">Amount & Currency</label>
+            <div class="flex items-center justify-between mb-1">
+              <label for="amount" class="text-[11px] font-bold uppercase text-slate-600 tracking-wider">Amount & Currency</label>
               
               <select 
                 id="transactionCurrency" 
                 onchange="handleTransactionCurrencyChange()" 
-                class="text-xs font-bold bg-slate-100 border border-slate-300 rounded-lg px-2 py-1 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 max-w-[180px]"
+                class="text-xs font-bold bg-slate-100 border border-slate-300 rounded-lg px-2 py-0.5 sm:py-1 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 max-w-[170px]"
               >
               </select>
             </div>
@@ -380,29 +401,29 @@
                 placeholder="0.00" 
                 required 
                 oninput="updateInputLiveConversion()"
-                class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-slate-800 placeholder-slate-400 transition" 
+                class="w-full pl-9 pr-3.5 py-2 sm:py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-slate-800 placeholder-slate-400 transition" 
               />
             </div>
 
             <!-- Optional Custom Conversion Rate for this entry -->
-            <div id="customRateRow" class="hidden mt-2 p-2.5 bg-amber-50/70 border border-amber-200/80 rounded-xl">
+            <div id="customRateRow" class="hidden mt-2 p-2 bg-amber-50/70 border border-amber-200/80 rounded-xl">
               <div class="flex items-center justify-between gap-2">
-                <label for="txCustomRate" class="text-[11px] font-bold text-amber-900">
-                  Rate used: 1 <span id="txRateCurCode">USD</span> = <span id="txRateBaseSymbol">৳</span>
+                <label for="txCustomRate" class="text-[10px] sm:text-[11px] font-bold text-amber-900">
+                  Rate: 1 <span id="txRateCurCode">USD</span> = <span id="txRateBaseSymbol">৳</span>
                 </label>
                 <input 
                   type="number" 
                   id="txCustomRate" 
                   step="0.0001" 
                   min="0.00001" 
-                  class="w-28 px-2 py-1 text-xs font-bold bg-white border border-amber-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-amber-500" 
+                  class="w-24 px-2 py-1 text-xs font-bold bg-white border border-amber-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-amber-500" 
                   oninput="updateInputLiveConversion()"
                 />
               </div>
             </div>
 
             <!-- Live Multi-Currency Conversion Preview Box -->
-            <div class="mt-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
+            <div class="mt-2 p-2 sm:p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
               <div class="flex items-center justify-between font-semibold text-slate-700">
                 <span>In <span id="previewPrimaryName">Primary</span>:</span>
                 <span id="previewPrimaryValue" class="font-bold text-slate-900">0</span>
@@ -417,7 +438,7 @@
           <!-- Submit Button -->
           <button 
             type="submit" 
-            class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl shadow-md shadow-emerald-600/20 hover:shadow-lg transition flex items-center justify-center gap-2 text-sm mt-2"
+            class="w-full py-2.5 sm:py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl shadow-md shadow-emerald-600/20 hover:shadow-lg transition flex items-center justify-center gap-2 text-xs sm:text-sm mt-2"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -427,38 +448,43 @@
         </form>
       </section>
 
-      <!-- 3. DATA TABLE -->
+      <!-- 3. DATA TABLE & MOBILE CARD LIST -->
       <section class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex flex-col overflow-hidden">
         
-        <div class="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+        <div class="p-3.5 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-slate-50/50">
           <div>
-            <h2 class="text-base font-bold text-slate-900">Transaction History</h2>
-            <p class="text-xs text-slate-500">Amounts displayed in chosen primary & counter currencies</p>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900">Transaction History</h2>
+            <p class="text-[11px] sm:text-xs text-slate-500">Amounts displayed in primary & counter currencies</p>
           </div>
 
           <!-- Filters -->
-          <div class="flex items-center gap-2">
-            <select id="filterAccount" onchange="renderTable()" class="text-xs font-semibold bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          <div class="flex items-center gap-1.5">
+            <select id="filterAccount" onchange="renderTable()" class="text-xs font-semibold bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
               <option value="ALL">All Accounts</option>
             </select>
 
-            <select id="filterType" onchange="renderTable()" class="text-xs font-semibold bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <select id="filterType" onchange="renderTable()" class="text-xs font-semibold bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
               <option value="ALL">All Types</option>
-              <option value="Income">Income Only</option>
-              <option value="Expense">Expense Only</option>
+              <option value="Income">Income</option>
+              <option value="Expense">Expense</option>
             </select>
 
             <button 
               id="clearAllBtn" 
               title="Delete all transactions" 
-              class="text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 px-2.5 py-1.5 rounded-lg transition"
+              class="text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 px-2.5 py-1 rounded-lg transition"
             >
               Clear
             </button>
           </div>
         </div>
 
-        <div class="overflow-x-auto min-h-[320px] max-h-[520px] flex-1">
+        <!-- MOBILE TRANSACTION CARDS VIEW (Displayed on screens < md) -->
+        <div id="mobileTransactionList" class="block md:hidden divide-y divide-slate-100 max-h-[500px] overflow-y-auto p-2 space-y-2">
+        </div>
+
+        <!-- DESKTOP TABLE VIEW (Displayed on screens >= md) -->
+        <div class="hidden md:block overflow-x-auto min-h-[320px] max-h-[520px] flex-1">
           <table class="w-full text-left border-collapse">
             <thead class="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500 sticky top-0 border-b border-slate-200 z-10">
               <tr>
@@ -473,30 +499,28 @@
             <tbody id="transactionTableBody" class="divide-y divide-slate-100 text-sm">
             </tbody>
           </table>
+        </div>
 
-          <!-- Empty State -->
-          <div id="emptyState" class="hidden flex flex-col items-center justify-center py-16 px-4 text-center">
-            <div class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mb-3">
-              <span class="text-2xl font-bold">🌐</span>
-            </div>
-            <p class="text-sm font-semibold text-slate-700">No transactions recorded yet</p>
-            <p class="text-xs text-slate-400 max-w-xs mt-1">Configure your wallets in any currency and record your first transaction.</p>
-            <div class="flex items-center justify-center gap-2 mt-4">
-              <button onclick="openAccountManagerModal()" class="text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3.5 py-2 rounded-xl transition">
-                Set Account Balances
-              </button>
-              <button id="seedDataBtn" class="text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-2 rounded-xl transition">
-                Load Sample Data
-              </button>
-            </div>
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-12 px-4 text-center">
+          <img src="icon.svg" class="w-12 h-12 rounded-xl opacity-40 mb-2" alt="Empty" />
+          <p class="text-sm font-semibold text-slate-700">No transactions recorded yet</p>
+          <p class="text-xs text-slate-400 max-w-xs mt-1">Configure your wallets in any currency and record your first transaction.</p>
+          <div class="flex items-center justify-center gap-2 mt-3">
+            <button onclick="openAccountManagerModal()" class="text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-xl transition">
+              Set Accounts
+            </button>
+            <button id="seedDataBtn" class="text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl transition">
+              Load Sample Data
+            </button>
           </div>
         </div>
 
-        <div class="p-3.5 px-5 bg-slate-50 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-500">
-          <span id="footerCount">Showing 0 transactions</span>
+        <div class="p-3 px-4 bg-slate-50 border-t border-slate-200/80 flex items-center justify-between text-[11px] sm:text-xs text-slate-500">
+          <span id="footerCount">0 transactions</span>
           <span class="text-slate-400 flex items-center gap-1">
             <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span id="footerRateDisplay">Live exchange rates active for 160+ world currencies</span>
+            <span id="footerRateDisplay">Live exchange rates active</span>
           </span>
         </div>
 
@@ -505,9 +529,33 @@
     </div>
   </main>
 
-  <!-- MODAL: DATA BACKUP & RESTORE (100% Peace of Mind) -->
+  <!-- MOBILE BOTTOM FLOATING NAVIGATION BAR (Native App Feel on Android/iOS) -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-40 px-3 py-1.5 flex items-center justify-around text-center shadow-lg">
+    <button onclick="scrollToAddTransaction()" class="flex flex-col items-center justify-center text-emerald-600 py-1 px-2">
+      <span class="text-lg leading-none">➕</span>
+      <span class="text-[10px] font-bold mt-0.5">Add</span>
+    </button>
+    <button onclick="openAccountManagerModal()" class="flex flex-col items-center justify-center text-slate-600 hover:text-indigo-600 py-1 px-2">
+      <span class="text-lg leading-none">🏦</span>
+      <span class="text-[10px] font-bold mt-0.5">Wallets</span>
+    </button>
+    <button onclick="openRateModal()" class="flex flex-col items-center justify-center text-slate-600 hover:text-amber-600 py-1 px-2">
+      <span class="text-lg leading-none">💱</span>
+      <span class="text-[10px] font-bold mt-0.5">Rates</span>
+    </button>
+    <button onclick="openBackupModal()" class="flex flex-col items-center justify-center text-slate-600 hover:text-indigo-600 py-1 px-2">
+      <span class="text-lg leading-none">🛡️</span>
+      <span class="text-[10px] font-bold mt-0.5">Backup</span>
+    </button>
+    <button onclick="triggerPwaInstall()" class="flex flex-col items-center justify-center text-slate-600 hover:text-emerald-600 py-1 px-2">
+      <span class="text-lg leading-none">📲</span>
+      <span class="text-[10px] font-bold mt-0.5">Install</span>
+    </button>
+  </nav>
+
+  <!-- MODAL: DATA BACKUP & RESTORE -->
   <div id="backupModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 animate-in fade-in zoom-in-95 duration-150">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-xl border border-slate-100 animate-in fade-in zoom-in-95 duration-150">
       
       <div class="flex items-center justify-between pb-3 border-b border-slate-100">
         <div class="flex items-center gap-2">
@@ -515,8 +563,8 @@
             🛡️
           </div>
           <div>
-            <h3 class="text-base font-bold text-slate-900">Backup & Restore Data</h3>
-            <p class="text-xs text-slate-500">Save a copy to your computer or restore anytime</p>
+            <h3 class="text-base font-bold text-slate-900">Backup & Restore</h3>
+            <p class="text-xs text-slate-500">Save a copy to your phone/PC or restore</p>
           </div>
         </div>
         <button onclick="closeBackupModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold p-1">
@@ -524,21 +572,21 @@
         </button>
       </div>
 
-      <div class="space-y-4 py-4">
+      <div class="space-y-3.5 py-4">
         
         <!-- Download Backup -->
-        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-          <h4 class="text-xs font-bold text-slate-800 mb-1">📥 Export Backup File (.json)</h4>
-          <p class="text-[11px] text-slate-500 mb-3">Download a complete copy of all your accounts, balances, and transaction history.</p>
+        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+          <h4 class="text-xs font-bold text-slate-800 mb-1">📥 Export Backup (.json)</h4>
+          <p class="text-[11px] text-slate-500 mb-2.5">Download a complete copy of all your accounts, balances, and history.</p>
           <button onclick="downloadJsonBackup()" class="w-full py-2.5 px-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2">
-            Download Complete Backup File
+            Download Backup File
           </button>
         </div>
 
         <!-- Restore Backup -->
-        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-          <h4 class="text-xs font-bold text-slate-800 mb-1">📤 Restore from Backup File</h4>
-          <p class="text-[11px] text-slate-500 mb-3">Upload a previously saved backup file to restore all your balances and records.</p>
+        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+          <h4 class="text-xs font-bold text-slate-800 mb-1">📤 Restore from Backup</h4>
+          <p class="text-[11px] text-slate-500 mb-2.5">Upload a previously saved backup file to restore all balances instantly.</p>
           <input type="file" id="restoreFileInput" accept=".json" class="hidden" onchange="handleRestoreFile(event)" />
           <button onclick="document.getElementById('restoreFileInput').click()" class="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2">
             Upload & Restore File (.json)
@@ -548,378 +596,260 @@
       </div>
 
       <div class="pt-3 border-t border-slate-100 flex items-center justify-end">
-        <button onclick="closeBackupModal()" class="px-5 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 transition">
-          Close
+        <button onclick="closeBackupModal()" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition">
+          Done
         </button>
       </div>
 
     </div>
   </div>
 
-  <!-- MODAL 1: ACCOUNT & MULTI-CURRENCY WALLET MANAGER -->
-  <div id="accountModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-100 max-h-[90vh] flex flex-col animate-in fade-in zoom-in-95 duration-150">
+  <!-- MODAL: ACCOUNT & WALLET MANAGER -->
+  <div id="accountModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-4 sm:p-6 shadow-xl border border-slate-100 max-h-[90vh] flex flex-col">
       
       <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg">
-            🏦
-          </div>
-          <div>
-            <h3 class="text-base font-bold text-slate-900">Manage Accounts & Starting Balances</h3>
-            <p class="text-xs text-slate-500">Assign any currency to each wallet (Bank, bKash, Cash, Upwork USD, etc.)</p>
-          </div>
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Manage Accounts & Wallets</h3>
+          <p class="text-xs text-slate-500">Edit initial balances or add custom accounts</p>
         </div>
         <button onclick="closeAccountManagerModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold p-1">
           &times;
         </button>
       </div>
 
-      <!-- Combined Total Banner inside Modal -->
-      <div class="my-4 p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100 flex items-center justify-between">
-        <div>
-          <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-700 block">Combined Total Initial Capital</span>
-          <span id="modalCombinedTotalPrimary" class="text-xl sm:text-2xl font-extrabold text-indigo-950">0</span>
-        </div>
-        <div class="text-right">
-          <span id="modalCombinedSecondaryLabel" class="text-[11px] font-semibold text-indigo-600 block">Secondary Equivalent</span>
-          <span id="modalCombinedTotalSecondary" class="text-sm font-bold text-indigo-900">≈ 0</span>
-        </div>
-      </div>
-
-      <!-- Account List -->
-      <div class="space-y-3 overflow-y-auto flex-1 pr-1" id="accountModalList">
-      </div>
-
-      <!-- Add New Account Section -->
-      <div class="mt-4 pt-3 border-t border-slate-100">
-        <div class="text-xs font-bold text-slate-700 mb-2">+ Add New Wallet / Account</div>
-        <div class="grid grid-cols-12 gap-2">
-          <input 
-            type="text" 
-            id="newAccountName" 
-            placeholder="Account Name (e.g. City Bank, PayPal, Upwork)" 
-            class="col-span-5 px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 focus:bg-white"
-          />
-          <select 
-            id="newAccountCurrency" 
-            class="col-span-3 px-2 py-2 text-xs font-bold border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 focus:bg-white"
-          >
-          </select>
-          <input 
-            type="number" 
-            id="newAccountInitial" 
-            placeholder="Initial Bal" 
-            min="0"
-            step="0.01"
-            class="col-span-3 px-2.5 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 focus:bg-white text-right"
-          />
-          <button 
-            type="button" 
-            onclick="addNewAccountFromModal()" 
-            class="col-span-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center"
-            title="Add Account"
-          >
-            +
-          </button>
-        </div>
-      </div>
-
-      <div class="pt-4 mt-3 border-t border-slate-100 flex items-center justify-end gap-2">
-        <button type="button" onclick="closeAccountManagerModal()" class="px-5 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-slate-800 transition">
-          Done & Save
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- MODAL 2: UNIVERSAL LIVE EXCHANGE RATE & CONVERTER TOOL WITH LIVE TRENDS (UPS & DOWNS) -->
-  <div id="rateModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-100 max-h-[90vh] flex flex-col">
-      
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center text-base font-bold">
-            📈
-          </div>
-          <div>
-            <h3 class="text-base font-bold text-slate-900 leading-tight">Live Currency Ups & Downs</h3>
-            <p id="rateModalSubtitle" class="text-[11px] text-slate-500">Live market trends & automatic fluctuation tracking</p>
-          </div>
-        </div>
-        <button onclick="fetchLiveDailyRates(true)" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-800 px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1">
-          <svg id="refreshModalIcon" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          Update Now
-        </button>
-      </div>
-
-      <div class="space-y-4 py-4 overflow-y-auto flex-1">
+      <div class="overflow-y-auto flex-1 py-3 space-y-4">
         
-        <!-- Live Instant Interactive Currency Converter -->
-        <div class="bg-gradient-to-br from-amber-50/80 to-orange-50/50 p-4 rounded-xl border border-amber-200/80">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-amber-900 mb-2.5 flex items-center gap-1.5">
-            <span>⚡ Quick Currency Calculator</span>
-          </h4>
-          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
-            
-            <div class="sm:col-span-4">
-              <input 
-                type="number" 
-                id="calcAmount" 
-                value="100" 
-                min="0.01" 
-                step="any" 
-                oninput="runQuickConverter()"
-                class="w-full px-2.5 py-1.5 text-xs font-bold bg-white border border-amber-300 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500" 
-              />
-            </div>
-
-            <div class="sm:col-span-3">
-              <select 
-                id="calcFromCurrency" 
-                onchange="runQuickConverter()"
-                class="w-full px-2 py-1.5 text-xs font-bold bg-white border border-amber-300 rounded-lg text-slate-800 focus:outline-none"
-              >
-              </select>
-            </div>
-
-            <div class="sm:col-span-1 text-center font-bold text-amber-800">
-              =
-            </div>
-
-            <div class="sm:col-span-4">
-              <select 
-                id="calcToCurrency" 
-                onchange="runQuickConverter()"
-                class="w-full px-2 py-1.5 text-xs font-bold bg-white border border-amber-300 rounded-lg text-slate-800 focus:outline-none"
-              >
-              </select>
-            </div>
-
-          </div>
-
-          <!-- Converter Result Display -->
-          <div class="mt-3 pt-2.5 border-t border-amber-200/60 flex items-center justify-between">
-            <span class="text-xs text-amber-900">Converted Value:</span>
-            <span id="calcResultDisplay" class="text-base font-extrabold text-amber-950">৳12,225.00</span>
+        <!-- Account list -->
+        <div>
+          <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider mb-2">Existing Wallets</h4>
+          <div id="modalAccountList" class="space-y-2">
           </div>
         </div>
 
-        <!-- Global Exchange Rates Table with LIVE UPS & DOWNS TRENDS -->
-        <div>
-          <div class="flex items-center justify-between mb-2">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600">Live Currency Rates & Daily Fluctuations</h4>
-            <span class="text-[11px] text-slate-400">Green = Up ▲ | Red = Down ▼</span>
+        <!-- Add New Account Form -->
+        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+          <h4 class="text-xs font-bold text-slate-800 mb-2">➕ Add New Account</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <input 
+              type="text" 
+              id="newAccountName" 
+              placeholder="e.g. Wise USD, Cash" 
+              class="col-span-1 sm:col-span-2 px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-semibold"
+            />
+            <select 
+              id="newAccountCurrency" 
+              class="px-2 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold"
+            >
+            </select>
           </div>
-          <div class="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100 text-xs" id="worldRatesTableContainer">
+          <div class="flex items-center gap-2 mt-2">
+            <input 
+              type="number" 
+              id="newAccountInitial" 
+              step="0.01" 
+              placeholder="Initial Balance (optional)" 
+              class="flex-1 px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <button 
+              onclick="addNewAccountFromModal()" 
+              class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg shadow-xs transition"
+            >
+              Add Wallet
+            </button>
           </div>
         </div>
 
       </div>
 
       <div class="pt-3 border-t border-slate-100 flex items-center justify-end">
-        <button type="button" onclick="closeRateModal()" class="px-5 py-2 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-slate-800 transition">
+        <button onclick="closeAccountManagerModal()" class="px-4 py-2 text-xs font-bold text-white bg-slate-800 hover:bg-slate-900 rounded-xl transition">
+          Save & Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: LIVE RATES & UNIVERSAL CALCULATOR -->
+  <div id="rateModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-4 sm:p-6 shadow-xl border border-slate-100 max-h-[90vh] flex flex-col">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-bold">
+            💱
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Live Currency Rates & Trends</h3>
+            <p class="text-xs text-slate-500">Live market rates with ups & downs indicators</p>
+          </div>
+        </div>
+        <button onclick="closeRateModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold p-1">
+          &times;
+        </button>
+      </div>
+
+      <div class="overflow-y-auto flex-1 py-3 space-y-4">
+        
+        <!-- Live Quick Converter -->
+        <div class="p-3.5 rounded-xl bg-amber-50/60 border border-amber-200/80">
+          <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wide mb-2 flex items-center justify-between">
+            <span>Universal Currency Converter</span>
+            <button onclick="fetchLiveDailyRates(true)" class="text-[11px] font-bold text-amber-700 hover:underline flex items-center gap-1">
+              <svg id="refreshModalIcon" xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Refresh Rates
+            </button>
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-7 gap-2 items-center">
+            <div class="sm:col-span-2">
+              <input 
+                type="number" 
+                id="calcAmount" 
+                value="100" 
+                step="any" 
+                oninput="runQuickConverter()" 
+                class="w-full px-2.5 py-1.5 text-xs font-bold bg-white border border-amber-300 rounded-lg text-slate-800"
+              />
+            </div>
+            <div class="sm:col-span-2">
+              <select 
+                id="calcFromCurrency" 
+                onchange="runQuickConverter()" 
+                class="w-full px-2 py-1.5 text-xs font-bold bg-white border border-amber-300 rounded-lg text-slate-800"
+              >
+              </select>
+            </div>
+            <div class="text-center text-xs font-bold text-amber-600 sm:col-span-1">
+              ➔
+            </div>
+            <div class="sm:col-span-2">
+              <select 
+                id="calcToCurrency" 
+                onchange="runQuickConverter()" 
+                class="w-full px-2 py-1.5 text-xs font-bold bg-white border border-amber-300 rounded-lg text-slate-800"
+              >
+              </select>
+            </div>
+          </div>
+          <div class="mt-2.5 pt-2 border-t border-amber-200/60 flex items-center justify-between text-xs">
+            <span class="text-amber-800 font-medium">Result:</span>
+            <span id="calcResultDisplay" class="font-extrabold text-slate-900 text-sm">৳12,225.00</span>
+          </div>
+        </div>
+
+        <!-- Major Currencies Table -->
+        <div>
+          <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider mb-2">Major Currencies vs BDT & USD</h4>
+          <div id="worldRatesTableContainer" class="border border-slate-200 rounded-xl divide-y divide-slate-100 text-xs">
+          </div>
+        </div>
+
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 flex items-center justify-end">
+        <button onclick="closeRateModal()" class="px-4 py-2 text-xs font-bold text-white bg-slate-800 hover:bg-slate-900 rounded-xl transition">
           Close
         </button>
       </div>
+
     </div>
   </div>
 
-  <!-- Delete Modal -->
+  <!-- CONFIRM DELETE MODAL -->
   <div id="deleteModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-100">
-      <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-        </svg>
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-xl border border-slate-100">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-slate-900">Confirm Deletion</h3>
+          <p class="text-xs text-slate-500">This action cannot be undone.</p>
+        </div>
       </div>
-      <h3 id="modalTitle" class="text-base font-bold text-center text-slate-900">Delete Transaction?</h3>
-      <p id="modalDesc" class="text-xs text-center text-slate-500 mt-1 mb-5">This action will return funds to the account.</p>
-      <div class="flex items-center gap-3">
-        <button id="modalCancelBtn" class="flex-1 py-2.5 rounded-xl border border-slate-200 font-semibold text-xs text-slate-700 hover:bg-slate-50 transition">
+      <div class="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-slate-100">
+        <button id="modalCancelBtn" class="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition">
           Cancel
         </button>
-        <button id="modalConfirmBtn" class="flex-1 py-2.5 rounded-xl bg-rose-600 font-semibold text-xs text-white hover:bg-rose-700 shadow-sm transition">
-          Yes, Delete
+        <button id="modalConfirmBtn" class="px-3 py-1.5 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow-xs transition">
+          Delete
         </button>
       </div>
     </div>
   </div>
 
-  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    // PERMANENT STORAGE KEYS - LOCKED FOREVER (No more version bumping so data is NEVER lost!)
-    const STORAGE_KEY = 'bizledger_data_transactions';
-    const SETTINGS_KEY = 'bizledger_data_settings';
-    const ACCOUNTS_KEY = 'bizledger_data_accounts';
-    const RATES_CACHE_KEY = 'bizledger_data_rates';
-    const PREV_RATES_KEY = 'bizledger_data_prev_rates';
-
-    // 35+ Major World Currencies Catalog
+    // ==========================================
+    // 🌍 UNIVERSAL WORLD CURRENCIES (35+ Major Currencies)
+    // ==========================================
     const CURRENCIES = [
-      { code: 'BDT', symbol: '৳', name: 'Bangladeshi Taka', flag: '🇧🇩' },
-      { code: 'USD', symbol: '$', name: 'US Dollar', flag: '🇺🇸' },
-      { code: 'EUR', symbol: '€', name: 'Euro', flag: '🇪🇺' },
-      { code: 'GBP', symbol: '£', name: 'British Pound', flag: '🇬🇧' },
-      { code: 'INR', symbol: '₹', name: 'Indian Rupee', flag: '🇮🇳' },
-      { code: 'SAR', symbol: '﷼', name: 'Saudi Riyal', flag: '🇸🇦' },
-      { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham', flag: '🇦🇪' },
-      { code: 'CAD', symbol: 'CA$', name: 'Canadian Dollar', flag: '🇨🇦' },
-      { code: 'AUD', symbol: 'AU$', name: 'Australian Dollar', flag: '🇦🇺' },
-      { code: 'SGD', symbol: 'SG$', name: 'Singapore Dollar', flag: '🇸🇬' },
-      { code: 'MYR', symbol: 'RM', name: 'Malaysian Ringgit', flag: '🇲🇾' },
-      { code: 'QAR', symbol: '﷼', name: 'Qatari Riyal', flag: '🇶🇦' },
-      { code: 'KWD', symbol: 'د.ك', name: 'Kuwaiti Dinar', flag: '🇰🇼' },
-      { code: 'OMR', symbol: '﷼', name: 'Omani Rial', flag: '🇴🇲' },
-      { code: 'BHD', symbol: '.د.ب', name: 'Bahraini Dinar', flag: '🇧🇭' },
-      { code: 'PKR', symbol: '₨', name: 'Pakistani Rupee', flag: '🇵🇰' },
-      { code: 'JPY', symbol: '¥', name: 'Japanese Yen', flag: '🇯🇵' },
-      { code: 'CNY', symbol: '¥', name: 'Chinese Yuan', flag: '🇨🇳' },
-      { code: 'TRY', symbol: '₺', name: 'Turkish Lira', flag: '🇹🇷' },
-      { code: 'CHF', symbol: 'Fr', name: 'Swiss Franc', flag: '🇨🇭' },
-      { code: 'THB', symbol: '฿', name: 'Thai Baht', flag: '🇹🇭' },
-      { code: 'IDR', symbol: 'Rp', name: 'Indonesian Rupiah', flag: '🇮🇩' },
-      { code: 'PHP', symbol: '₱', name: 'Philippine Peso', flag: '🇵🇭' },
-      { code: 'KRW', symbol: '₩', name: 'South Korean Won', flag: '🇰🇷' },
-      { code: 'BRL', symbol: 'R$', name: 'Brazilian Real', flag: '🇧🇷' },
-      { code: 'ZAR', symbol: 'R', name: 'South African Rand', flag: '🇿🇦' },
-      { code: 'RUB', symbol: '₽', name: 'Russian Ruble', flag: '🇷🇺' },
-      { code: 'EGP', symbol: 'E£', name: 'Egyptian Pound', flag: '🇪🇬' },
-      { code: 'NZD', symbol: 'NZ$', name: 'New Zealand Dollar', flag: '🇳🇿' },
-      { code: 'HKD', symbol: 'HK$', name: 'Hong Kong Dollar', flag: '🇭🇰' },
-      { code: 'SEK', symbol: 'kr', name: 'Swedish Krona', flag: '🇸🇪' },
-      { code: 'NOK', symbol: 'kr', name: 'Norwegian Krone', flag: '🇳🇴' },
-      { code: 'DKK', symbol: 'kr', name: 'Danish Krone', flag: '🇩🇰' },
-      { code: 'PLN', symbol: 'zł', name: 'Polish Zloty', flag: '🇵🇱' },
-      { code: 'VND', symbol: '₫', name: 'Vietnamese Dong', flag: '🇻🇳' }
+      { code: 'BDT', symbol: '৳', name: 'Bangladeshi Taka', flag: '🇧🇩', defaultRateToUSD: 122.25 },
+      { code: 'USD', symbol: '$', name: 'US Dollar', flag: '🇺🇸', defaultRateToUSD: 1.00 },
+      { code: 'EUR', symbol: '€', name: 'Euro', flag: '🇪🇺', defaultRateToUSD: 0.92 },
+      { code: 'GBP', symbol: '£', name: 'British Pound', flag: '🇬🇧', defaultRateToUSD: 0.79 },
+      { code: 'INR', symbol: '₹', name: 'Indian Rupee', flag: '🇮🇳', defaultRateToUSD: 84.40 },
+      { code: 'SAR', symbol: '﷼', name: 'Saudi Riyal', flag: '🇸🇦', defaultRateToUSD: 3.75 },
+      { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham', flag: '🇦🇪', defaultRateToUSD: 3.67 },
+      { code: 'CAD', symbol: 'CA$', name: 'Canadian Dollar', flag: '🇨🇦', defaultRateToUSD: 1.39 },
+      { code: 'AUD', symbol: 'AU$', name: 'Australian Dollar', flag: '🇦🇺', defaultRateToUSD: 1.52 },
+      { code: 'SGD', symbol: 'SG$', name: 'Singapore Dollar', flag: '🇸🇬', defaultRateToUSD: 1.34 },
+      { code: 'MYR', symbol: 'RM', name: 'Malaysian Ringgit', flag: '🇲🇾', defaultRateToUSD: 4.45 },
+      { code: 'QAR', symbol: 'QR', name: 'Qatari Riyal', flag: '🇶🇦', defaultRateToUSD: 3.64 },
+      { code: 'KWD', symbol: 'KD', name: 'Kuwaiti Dinar', flag: '🇰🇼', defaultRateToUSD: 0.31 },
+      { code: 'JPY', symbol: '¥', name: 'Japanese Yen', flag: '🇯🇵', defaultRateToUSD: 153.20 },
+      { code: 'CNY', symbol: '¥', name: 'Chinese Yuan', flag: '🇨🇳', defaultRateToUSD: 7.23 },
+      { code: 'TRY', symbol: '₺', name: 'Turkish Lira', flag: '🇹🇷', defaultRateToUSD: 34.30 },
+      { code: 'CHF', symbol: 'CHF', name: 'Swiss Franc', flag: '🇨🇭', defaultRateToUSD: 0.88 },
+      { code: 'PKR', symbol: '₨', name: 'Pakistani Rupee', flag: '🇵🇰', defaultRateToUSD: 278.50 },
+      { code: 'THB', symbol: '฿', name: 'Thai Baht', flag: '🇹🇭', defaultRateToUSD: 34.10 },
+      { code: 'BRL', symbol: 'R$', name: 'Brazilian Real', flag: '🇧🇷', defaultRateToUSD: 5.75 },
+      { code: 'ZAR', symbol: 'R', name: 'South African Rand', flag: '🇿🇦', defaultRateToUSD: 17.60 },
+      { code: 'RUB', symbol: '₽', name: 'Russian Ruble', flag: '🇷🇺', defaultRateToUSD: 98.20 },
+      { code: 'KRW', symbol: '₩', name: 'South Korean Won', flag: '🇰🇷', defaultRateToUSD: 1390.00 },
+      { code: 'NZD', symbol: 'NZ$', name: 'New Zealand Dollar', flag: '🇳🇿', defaultRateToUSD: 1.68 },
+      { code: 'OMR', symbol: 'OMR', name: 'Omani Rial', flag: '🇴🇲', defaultRateToUSD: 0.38 },
+      { code: 'BHD', symbol: 'BD', name: 'Bahraini Dinar', flag: '🇧🇭', defaultRateToUSD: 0.38 }
     ];
 
     const CURRENCY_MAP = {};
     CURRENCIES.forEach(c => CURRENCY_MAP[c.code] = c);
 
-    // Baseline Current Rates relative to 1 USD
-    let ratesFromUSD = {
-      USD: 1.0,
-      BDT: 122.25,
-      EUR: 0.921,
-      GBP: 0.789,
-      INR: 84.15,
-      SAR: 3.751,
-      AED: 3.673,
-      CAD: 1.385,
-      AUD: 1.518,
-      SGD: 1.328,
-      MYR: 4.412,
-      QAR: 3.642,
-      KWD: 0.307,
-      OMR: 0.385,
-      BHD: 0.377,
-      PKR: 278.40,
-      JPY: 152.40,
-      CNY: 7.185,
-      TRY: 34.25,
-      CHF: 0.882,
-      THB: 34.40,
-      IDR: 15650.00,
-      PHP: 58.20,
-      KRW: 1385.00,
-      BRL: 5.72,
-      ZAR: 17.75,
-      RUB: 97.40,
-      EGP: 49.15,
-      NZD: 1.662,
-      HKD: 7.778,
-      SEK: 10.68,
-      NOK: 10.95,
-      DKK: 6.87,
-      PLN: 4.02,
-      VND: 25350.00
-    };
+    // ==========================================
+    // 🛡️ PERMANENT STORAGE KEYS
+    // ==========================================
+    const STORAGE_KEY = 'bizledger_data_transactions';
+    const ACCOUNTS_KEY = 'bizledger_data_accounts';
+    const SETTINGS_KEY = 'bizledger_data_settings';
+    const RATES_CACHE_KEY = 'bizledger_data_rates';
+    const PREV_RATES_KEY = 'bizledger_data_rates_prev';
 
-    // Previous Baseline Rates for calculating live Ups & Downs
-    let previousRatesFromUSD = {
-      USD: 1.0,
-      BDT: 121.80,
-      EUR: 0.924,
-      GBP: 0.785,
-      INR: 84.20,
-      SAR: 3.750,
-      AED: 3.672,
-      CAD: 1.380,
-      AUD: 1.525,
-      SGD: 1.332,
-      MYR: 4.425,
-      QAR: 3.640,
-      KWD: 0.308,
-      OMR: 0.385,
-      BHD: 0.377,
-      PKR: 279.10,
-      JPY: 151.80,
-      CNY: 7.195,
-      TRY: 33.90,
-      CHF: 0.885,
-      THB: 34.60,
-      IDR: 15600.00,
-      PHP: 58.00,
-      KRW: 1380.00,
-      BRL: 5.68,
-      ZAR: 17.85,
-      RUB: 96.80,
-      EGP: 48.90,
-      NZD: 1.670,
-      HKD: 7.782,
-      SEK: 10.72,
-      NOK: 11.05,
-      DKK: 6.90,
-      PLN: 4.05,
-      VND: 25300.00
-    };
-
-    // Default Accounts
-    const DEFAULT_ACCOUNTS = [
-      { id: 'acc_bank', name: 'Bank Account', icon: '🏦', currency: 'BDT', initialBalance: 50000 },
-      { id: 'acc_bkash', name: 'bKash', icon: '📱', currency: 'BDT', initialBalance: 20000 },
-      { id: 'acc_cash', name: 'Cash in Hand', icon: '💵', currency: 'BDT', initialBalance: 15000 },
-      { id: 'acc_usd', name: 'Upwork / PayPal', icon: '🌐', currency: 'USD', initialBalance: 300 }
-    ];
-
-    let accounts = [];
-    let transactions = [];
+    // State Variables
     let primaryCurrency = 'BDT';
     let secondaryCurrency = 'USD';
-
-    let deleteTargetId = null;
-    let isDeletingAll = false;
-
-    // Polling interval timer
+    let transactions = [];
+    let accounts = [];
+    let ratesFromUSD = {};
+    let previousRatesFromUSD = {};
     let pollSecondsLeft = 300;
     let countdownInterval = null;
 
-    // DOM Elements
-    const form = document.getElementById('transactionForm');
-    const dateInput = document.getElementById('date');
-    const descInput = document.getElementById('description');
-    const amountInput = document.getElementById('amount');
-    const transactionAccount = document.getElementById('transactionAccount');
-    const transactionCurrency = document.getElementById('transactionCurrency');
-    const currencyPrefix = document.getElementById('currencyPrefix');
-    const customRateRow = document.getElementById('customRateRow');
-    const txCustomRate = document.getElementById('txCustomRate');
-    const txRateCurCode = document.getElementById('txRateCurCode');
-    const txRateBaseSymbol = document.getElementById('txRateBaseSymbol');
-    const tableBody = document.getElementById('transactionTableBody');
-    const emptyState = document.getElementById('emptyState');
-    const filterAccount = document.getElementById('filterAccount');
-    const filterType = document.getElementById('filterType');
-    const footerCount = document.getElementById('footerCount');
-    const exportCsvBtn = document.getElementById('exportCsvBtn');
-    const clearAllBtn = document.getElementById('clearAllBtn');
-    const seedDataBtn = document.getElementById('seedDataBtn');
+    CURRENCIES.forEach(c => ratesFromUSD[c.code] = c.defaultRateToUSD);
 
-    // Header Elements
+    // Default Wallets
+    const DEFAULT_ACCOUNTS = [
+      { id: 'acc_bank', name: 'City Bank (Dhaka)', icon: '🏦', currency: 'BDT', initialBalance: 80000 },
+      { id: 'acc_bkash', name: 'bKash Personal', icon: '📱', currency: 'BDT', initialBalance: 25000 },
+      { id: 'acc_usd', name: 'Upwork USD Wallet', icon: '🌐', currency: 'USD', initialBalance: 650 },
+      { id: 'acc_cash', name: 'Cash in Hand', icon: '💵', currency: 'BDT', initialBalance: 15000 }
+    ];
+
+    // DOM Elements
     const primaryCurrencySelect = document.getElementById('primaryCurrencySelect');
     const secondaryCurrencySelect = document.getElementById('secondaryCurrencySelect');
     const mobilePrimaryCurrencySelect = document.getElementById('mobilePrimaryCurrencySelect');
@@ -930,24 +860,10 @@
     const liveTickerBar = document.getElementById('liveTickerBar');
     const rateCountdown = document.getElementById('rateCountdown');
 
-    // Preview
-    const previewPrimaryName = document.getElementById('previewPrimaryName');
-    const previewPrimaryValue = document.getElementById('previewPrimaryValue');
-    const previewSecondaryName = document.getElementById('previewSecondaryName');
-    const previewSecondaryValue = document.getElementById('previewSecondaryValue');
-
-    // Account Elements
     const accountCardsContainer = document.getElementById('accountCardsContainer');
-    const accountModal = document.getElementById('accountModal');
-    const accountModalList = document.getElementById('accountModalList');
-    const modalCombinedTotalPrimary = document.getElementById('modalCombinedTotalPrimary');
-    const modalCombinedTotalSecondary = document.getElementById('modalCombinedTotalSecondary');
-    const modalCombinedSecondaryLabel = document.getElementById('modalCombinedSecondaryLabel');
-    const newAccountName = document.getElementById('newAccountName');
-    const newAccountCurrency = document.getElementById('newAccountCurrency');
-    const newAccountInitial = document.getElementById('newAccountInitial');
+    const transactionAccount = document.getElementById('transactionAccount');
+    const filterAccount = document.getElementById('filterAccount');
 
-    // Summary Elements
     const combinedInitialPrimary = document.getElementById('combinedInitialPrimary');
     const combinedInitialSecondary = document.getElementById('combinedInitialSecondary');
     const totalIncomePrimary = document.getElementById('totalIncomePrimary');
@@ -957,152 +873,186 @@
     const combinedCurrentPrimary = document.getElementById('combinedCurrentPrimary');
     const combinedCurrentSecondary = document.getElementById('combinedCurrentSecondary');
     const netProfitSideBySide = document.getElementById('netProfitSideBySide');
-    const incomeCountEl = document.getElementById('incomeCount');
-    const expenseCountEl = document.getElementById('expenseCount');
     const profitBadgeEl = document.getElementById('profitBadge');
 
-    // Converter Elements
+    const form = document.getElementById('transactionForm');
+    const dateInput = document.getElementById('date');
+    const descInput = document.getElementById('description');
+    const amountInput = document.getElementById('amount');
+    const transactionCurrency = document.getElementById('transactionCurrency');
+    const currencyPrefix = document.getElementById('currencyPrefix');
+    const customRateRow = document.getElementById('customRateRow');
+    const txRateCurCode = document.getElementById('txRateCurCode');
+    const txRateBaseSymbol = document.getElementById('txRateBaseSymbol');
+    const txCustomRate = document.getElementById('txCustomRate');
+
+    const previewPrimaryName = document.getElementById('previewPrimaryName');
+    const previewPrimaryValue = document.getElementById('previewPrimaryValue');
+    const previewSecondaryName = document.getElementById('previewSecondaryName');
+    const previewSecondaryValue = document.getElementById('previewSecondaryValue');
+
+    const tableBody = document.getElementById('transactionTableBody');
+    const mobileTransactionList = document.getElementById('mobileTransactionList');
+    const emptyState = document.getElementById('emptyState');
+    const filterType = document.getElementById('filterType');
+    const footerCount = document.getElementById('footerCount');
+
+    const deleteModal = document.getElementById('deleteModal');
+    const modalCancelBtn = document.getElementById('modalCancelBtn');
+    const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+    const seedDataBtn = document.getElementById('seedDataBtn');
+
+    const accountModal = document.getElementById('accountModal');
+    const modalAccountList = document.getElementById('modalAccountList');
+    const newAccountName = document.getElementById('newAccountName');
+    const newAccountCurrency = document.getElementById('newAccountCurrency');
+    const newAccountInitial = document.getElementById('newAccountInitial');
+
     const rateModal = document.getElementById('rateModal');
+    const worldRatesTableContainer = document.getElementById('worldRatesTableContainer');
     const calcAmount = document.getElementById('calcAmount');
     const calcFromCurrency = document.getElementById('calcFromCurrency');
     const calcToCurrency = document.getElementById('calcToCurrency');
     const calcResultDisplay = document.getElementById('calcResultDisplay');
-    const worldRatesTableContainer = document.getElementById('worldRatesTableContainer');
-
-    // Backup Modal
     const backupModal = document.getElementById('backupModal');
 
-    // Delete Modal
-    const deleteModal = document.getElementById('deleteModal');
-    const modalCancelBtn = document.getElementById('modalCancelBtn');
-    const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+    let deleteTargetId = null;
+    let isDeletingAll = false;
 
     // ==========================================
-    // 📈 FLUCTUATION (UPS & DOWNS) ENGINE
+    // 📲 PWA INSTALLATION LOGIC (Chrome Android / Desktop)
     // ==========================================
-    function getCurrencyTrend(code) {
-      if (code === 'BDT') return { changePct: 0, isUp: false, isDown: false, isZero: true, text: '0.00%' };
+    let deferredPrompt = null;
 
-      const currentInBDT = convertAny(1, code, 'BDT');
-      const prevCodeRate = previousRatesFromUSD[code] || ratesFromUSD[code] || 1;
-      const prevBdtRate = previousRatesFromUSD.BDT || ratesFromUSD.BDT || 122;
-      const prevInBDT = (1 / prevCodeRate) * prevBdtRate;
-
-      if (!prevInBDT || prevInBDT === 0) {
-        return { changePct: 0, isUp: false, isDown: false, isZero: true, text: '0.00%' };
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const banner = document.getElementById('pwaBanner');
+      if (banner && !sessionStorage.getItem('pwa_banner_dismissed')) {
+        banner.classList.remove('hidden');
       }
+    });
 
-      const diff = currentInBDT - prevInBDT;
-      const pct = (diff / prevInBDT) * 100;
-
-      if (pct > 0.01) {
-        return {
-          changePct: pct,
-          isUp: true,
-          isDown: false,
-          isZero: false,
-          text: `▲ +${pct.toFixed(2)}%`,
-          badgeClass: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-        };
-      } else if (pct < -0.01) {
-        return {
-          changePct: pct,
-          isUp: false,
-          isDown: true,
-          isZero: false,
-          text: `▼ ${pct.toFixed(2)}%`,
-          badgeClass: 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-        };
+    window.triggerPwaInstall = function () {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            dismissPwaBanner();
+          }
+          deferredPrompt = null;
+        });
       } else {
-        return {
-          changePct: 0,
-          isUp: false,
-          isDown: false,
-          isZero: true,
-          text: `● 0.00%`,
-          badgeClass: 'bg-slate-700 text-slate-300'
-        };
+        alert("📲 To install BizLedger on your phone:\n\n1. Tap your browser's menu (⋮ or Share icon).\n2. Tap 'Install app' or 'Add to Home screen'.\n\nBizLedger will install like a native app with offline support!");
       }
+    };
+
+    window.dismissPwaBanner = function () {
+      const banner = document.getElementById('pwaBanner');
+      if (banner) banner.classList.add('hidden');
+      sessionStorage.setItem('pwa_banner_dismissed', 'true');
+    };
+
+    window.scrollToAddTransaction = function () {
+      const el = document.getElementById('addTransactionSection');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => descInput.focus(), 300);
+      }
+    };
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Registration error:', err));
+      });
     }
 
+    // ==========================================
+    // 💱 CURRENCY CONVERSION & TREND LOGIC
+    // ==========================================
     function convertAny(amount, fromCode, toCode) {
-      if (fromCode === toCode) return amount;
-      const rateFrom = ratesFromUSD[fromCode] || 1.0;
-      const rateTo = ratesFromUSD[toCode] || 1.0;
-      const inUSD = amount / rateFrom;
-      return inUSD * rateTo;
+      if (fromCode === toCode || amount === 0) return amount;
+      const fromRate = ratesFromUSD[fromCode] || CURRENCY_MAP[fromCode]?.defaultRateToUSD || 1.0;
+      const toRate = ratesFromUSD[toCode] || CURRENCY_MAP[toCode]?.defaultRateToUSD || 1.0;
+      const inUSD = amount / fromRate;
+      return inUSD * toRate;
     }
 
-    function formatCurrencyAny(amount, code) {
-      const meta = CURRENCY_MAP[code] || { symbol: code, name: code };
-      const absVal = Math.abs(amount || 0);
-      const isZeroDec = (absVal % 1 === 0 && (code === 'BDT' || code === 'JPY' || code === 'KRW' || code === 'VND' || code === 'IDR'));
-
-      const formattedNum = new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: isZeroDec ? 0 : 2,
-        maximumFractionDigits: 2
-      }).format(amount || 0);
-
-      return `${meta.symbol}${formattedNum}`;
+    function formatCurrencyAny(val, code) {
+      const meta = CURRENCY_MAP[code] || { symbol: code };
+      const decimals = (code === 'JPY' || code === 'KRW') ? 0 : 2;
+      return `${meta.symbol}${val.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
     }
 
-    function getDualFormat(amountInUSD) {
-      const pAmt = convertAny(amountInUSD, 'USD', primaryCurrency);
-      const sAmt = convertAny(amountInUSD, 'USD', secondaryCurrency);
+    function getDualFormat(valInUSD) {
+      const primVal = convertAny(valInUSD, 'USD', primaryCurrency);
+      const secVal = convertAny(valInUSD, 'USD', secondaryCurrency);
       return {
-        primary: formatCurrencyAny(pAmt, primaryCurrency),
-        secondary: `≈ ${formatCurrencyAny(sAmt, secondaryCurrency)} ${secondaryCurrency}`
+        primary: formatCurrencyAny(primVal, primaryCurrency),
+        secondary: `≈ ${formatCurrencyAny(secVal, secondaryCurrency)} ${secondaryCurrency}`
       };
     }
 
-    function formatDate(dateStr) {
-      if (!dateStr) return '';
-      const parts = dateStr.split('-');
-      if (parts.length === 3) {
-        const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
-        return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      }
-      return dateStr;
-    }
+    function getCurrencyTrend(code) {
+      const current = ratesFromUSD[code] || 1;
+      const prev = previousRatesFromUSD[code] || current;
+      const diff = current - prev;
+      const pct = prev > 0 ? (diff / prev) * 100 : 0;
 
-    function initDefaultDate() {
-      const today = new Date().toISOString().split('T')[0];
-      dateInput.value = today;
+      if (Math.abs(pct) < 0.01) {
+        return { isUp: false, isDown: false, text: '● 0.00%', pct: 0 };
+      } else if (pct > 0) {
+        return { isUp: true, isDown: false, text: `▲ +${pct.toFixed(2)}%`, pct };
+      } else {
+        return { isUp: false, isDown: true, text: `▼ ${pct.toFixed(2)}%`, pct };
+      }
     }
 
     function renderLiveTicker() {
-      const tickerCurrencies = ['USD', 'EUR', 'GBP', 'SAR', 'AED', 'INR', 'CAD', 'AUD', 'SGD', 'MYR', 'QAR', 'KWD', 'JPY', 'CNY', 'TRY'];
       liveTickerBar.innerHTML = '';
-
-      tickerCurrencies.forEach(code => {
+      const tickerList = ['USD', 'EUR', 'GBP', 'INR', 'SAR', 'AED', 'CAD', 'AUD', 'SGD', 'MYR'];
+      
+      tickerList.forEach(code => {
         const meta = CURRENCY_MAP[code];
         if (!meta) return;
 
-        const rateInBdt = convertAny(1, code, 'BDT');
-        const trend = getCurrencyTrend(code);
+        let inPrimary = 0;
+        let trend = { isUp: false, isDown: false, text: '● 0.00%' };
+
+        if (primaryCurrency === 'BDT') {
+          inPrimary = convertAny(1, code, 'BDT');
+          trend = getCurrencyTrend(code);
+        } else {
+          inPrimary = convertAny(1, code, primaryCurrency);
+          trend = getCurrencyTrend(code);
+        }
+
+        const colorClass = trend.isUp ? 'text-emerald-400' : (trend.isDown ? 'text-rose-400' : 'text-slate-400');
+        const primSymbol = (CURRENCY_MAP[primaryCurrency] || {}).symbol || primaryCurrency;
 
         const item = document.createElement('div');
-        item.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 whitespace-nowrap';
-
-        const colorClass = trend.isUp ? 'text-emerald-400 font-bold' : (trend.isDown ? 'text-rose-400 font-bold' : 'text-slate-400');
-
+        item.className = 'flex items-center gap-1.5 whitespace-nowrap cursor-pointer hover:text-white transition';
+        item.onclick = () => openRateModal();
         item.innerHTML = `
           <span>${meta.flag}</span>
-          <span class="text-slate-200">${code}:</span>
-          <span class="text-white font-extrabold">৳${rateInBdt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-          <span class="text-[10px] ${colorClass}">${trend.text}</span>
+          <span class="font-bold text-white">1 ${code}</span>
+          <span>= ${primSymbol}${inPrimary.toFixed(2)}</span>
+          <span class="text-[10px] font-extrabold ${colorClass}">${trend.text}</span>
         `;
         liveTickerBar.appendChild(item);
       });
 
-      const usdTrend = getCurrencyTrend('USD');
+      const usdTrend = getCurrencyTrend('BDT');
       headerUsdTrendBadge.textContent = usdTrend.text;
       if (usdTrend.isUp) {
-        headerUsdTrendBadge.className = 'text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800';
+        headerUsdTrendBadge.className = 'text-[9px] sm:text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800';
       } else if (usdTrend.isDown) {
-        headerUsdTrendBadge.className = 'text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-rose-100 text-rose-800';
+        headerUsdTrendBadge.className = 'text-[9px] sm:text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-rose-100 text-rose-800';
       } else {
-        headerUsdTrendBadge.className = 'text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700';
+        headerUsdTrendBadge.className = 'text-[9px] sm:text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700';
       }
     }
 
@@ -1167,7 +1117,7 @@
       updateInputLiveConversion();
       refreshAll();
 
-      if (userTriggered) showToast('Live rates and ups/downs fluctuations refreshed!');
+      if (userTriggered) showToast('Live currency rates refreshed!');
     }
 
     function saveRatesToStorage() {
@@ -1187,19 +1137,19 @@
         }
         const mins = Math.floor(pollSecondsLeft / 60);
         const secs = pollSecondsLeft % 60;
-        rateCountdown.textContent = `Auto-refresh in ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        rateCountdown.textContent = `Auto ${mins}:${secs < 10 ? '0' : ''}${secs}`;
       }, 1000);
     }
 
     function updateHeaderAndRateDisplays() {
       const bdtRate = ratesFromUSD.BDT || 122.25;
       headerQuickRateDisplay.textContent = `৳${bdtRate.toFixed(2)}`;
-      footerRateDisplay.textContent = `Live rates active (1 USD = ৳${bdtRate.toFixed(2)} BDT | 1 EUR = ৳${convertAny(1, 'EUR', 'BDT').toFixed(2)} BDT)`;
+      footerRateDisplay.textContent = `Live rates active (1 USD = ৳${bdtRate.toFixed(2)})`;
     }
 
     function showToast(msg) {
       const banner = document.createElement('div');
-      banner.className = 'fixed bottom-5 right-5 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-xl z-50 animate-in fade-in slide-in-from-bottom-2';
+      banner.className = 'fixed bottom-16 md:bottom-5 right-4 bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xl z-50 animate-in fade-in slide-in-from-bottom-2';
       banner.textContent = msg;
       document.body.appendChild(banner);
       setTimeout(() => banner.remove(), 2500);
@@ -1218,7 +1168,7 @@
         const trend = getCurrencyTrend(code);
 
         const row = document.createElement('div');
-        row.className = 'flex items-center justify-between p-2.5 hover:bg-slate-50 transition';
+        row.className = 'flex items-center justify-between p-2 hover:bg-slate-50 transition';
 
         const colorClass = trend.isUp ? 'text-emerald-700 bg-emerald-100' : (trend.isDown ? 'text-rose-700 bg-rose-100' : 'text-slate-600 bg-slate-100');
 
@@ -1230,13 +1180,13 @@
               <span class="text-[10px] text-slate-400 block">${meta.name}</span>
             </div>
           </div>
-          <div class="flex items-center gap-3">
-            <span class="px-2 py-0.5 rounded text-[11px] font-extrabold ${colorClass}">
+          <div class="flex items-center gap-2">
+            <span class="px-1.5 py-0.5 rounded text-[10px] font-extrabold ${colorClass}">
               ${trend.text}
             </span>
             <div class="text-right">
               <span class="font-extrabold text-slate-900 block">৳${inBDT.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-              <span class="text-[10px] text-slate-400 block">≈ $${inUSD.toFixed(3)} USD</span>
+              <span class="text-[10px] text-slate-400 block">≈ $${inUSD.toFixed(3)}</span>
             </div>
           </div>
         `;
@@ -1366,37 +1316,40 @@
     }
 
     function renderAccountPillsAndSelects() {
-      const accBalances = calculateAccountBalances();
+      const balMap = calculateAccountBalances();
 
+      // Render cards
       accountCardsContainer.innerHTML = '';
       accounts.forEach(acc => {
-        const bal = accBalances[acc.id] || { initial: 0, current: 0, currency: acc.currency || 'BDT' };
+        const bal = balMap[acc.id] || { initial: 0, current: 0, currency: acc.currency || 'BDT' };
+        const curMeta = CURRENCY_MAP[bal.currency] || { symbol: bal.currency };
+
         const card = document.createElement('div');
-        card.className = 'bg-slate-50 hover:bg-slate-100/80 p-3 rounded-xl border border-slate-200/90 transition flex flex-col justify-between';
-
-        const isPositive = bal.current >= 0;
-        const cur = bal.currency;
-        const currentNative = formatCurrencyAny(bal.current, cur);
-        const initialNative = formatCurrencyAny(bal.initial, cur);
-
+        card.className = 'p-2.5 sm:p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/90 transition flex flex-col justify-between';
         card.innerHTML = `
           <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-bold text-slate-700 truncate">${acc.icon || '💼'} ${escapeHtml(acc.name)}</span>
-            <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-slate-200/80 text-slate-700">${cur}</span>
+            <span class="text-xs font-bold text-slate-800 truncate flex items-center gap-1">
+              <span>${acc.icon || '💼'}</span>
+              <span class="truncate">${acc.name}</span>
+            </span>
+            <span class="text-[9px] font-extrabold px-1.5 py-0.2 rounded bg-slate-200 text-slate-700">
+              ${bal.currency}
+            </span>
           </div>
-          <div class="my-1">
-            <div class="text-sm sm:text-base font-extrabold ${isPositive ? 'text-slate-900' : 'text-rose-600'}">
-              ${currentNative}
+          <div class="mt-1">
+            <div class="text-xs sm:text-sm font-extrabold text-slate-900">
+              ${curMeta.symbol}${bal.current.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <div class="text-[10px] text-slate-400">
-              Initial: ${initialNative}
+              Initial: ${curMeta.symbol}${bal.initial.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
           </div>
         `;
         accountCardsContainer.appendChild(card);
       });
 
-      const currentSelected = transactionAccount.value;
+      // Update Selects
+      const prevSelected = transactionAccount.value;
       transactionAccount.innerHTML = '';
       accounts.forEach(acc => {
         const opt = document.createElement('option');
@@ -1404,11 +1357,11 @@
         opt.textContent = `${acc.icon || '💼'} ${acc.name} (${acc.currency || 'BDT'})`;
         transactionAccount.appendChild(opt);
       });
-      if (currentSelected && accounts.some(a => a.id === currentSelected)) {
-        transactionAccount.value = currentSelected;
+      if (prevSelected && accounts.some(a => a.id === prevSelected)) {
+        transactionAccount.value = prevSelected;
       }
 
-      const currentFilter = filterAccount.value;
+      const prevFilter = filterAccount.value;
       filterAccount.innerHTML = '<option value="ALL">All Accounts</option>';
       accounts.forEach(acc => {
         const opt = document.createElement('option');
@@ -1416,7 +1369,7 @@
         opt.textContent = `${acc.icon || '💼'} ${acc.name}`;
         filterAccount.appendChild(opt);
       });
-      if (currentFilter) filterAccount.value = currentFilter;
+      if (prevFilter) filterAccount.value = prevFilter;
     }
 
     window.openAccountManagerModal = function () {
@@ -1426,76 +1379,47 @@
 
     window.closeAccountManagerModal = function () {
       accountModal.classList.add('hidden');
-      saveData();
       refreshAll();
     };
 
     function renderAccountModalList() {
-      accountModalList.innerHTML = '';
-      let combinedInitialUSD = 0;
-
+      modalAccountList.innerHTML = '';
       accounts.forEach(acc => {
-        const cur = acc.currency || 'BDT';
-        const init = acc.initialBalance || 0;
-        combinedInitialUSD += convertAny(init, cur, 'USD');
-
-        const meta = CURRENCY_MAP[cur] || { symbol: cur, flag: '🌐' };
-
         const row = document.createElement('div');
-        row.className = 'p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-3';
-
+        row.className = 'flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200 gap-2';
         row.innerHTML = `
           <div class="flex items-center gap-2 flex-1">
-            <span class="text-lg">${acc.icon || '💼'}</span>
-            <input 
-              type="text" 
-              value="${escapeHtml(acc.name)}" 
-              onchange="updateAccountName('${acc.id}', this.value)"
-              class="font-bold text-xs bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-500 focus:bg-white px-1 py-0.5 rounded text-slate-800"
-            />
+            <span class="text-base">${acc.icon || '💼'}</span>
+            <div>
+              <span class="text-xs font-bold text-slate-800 block">${acc.name}</span>
+              <span class="text-[10px] font-semibold text-slate-400">Native: ${acc.currency}</span>
+            </div>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-xs font-bold px-2 py-1 rounded bg-white border border-slate-200 text-slate-700">
-              ${meta.flag} ${cur}
-            </span>
-            <div class="relative">
-              <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400 font-bold text-xs">${meta.symbol}</span>
-              <input 
-                type="number" 
-                min="0"
-                step="any"
-                value="${init}" 
-                onchange="updateAccountInitial('${acc.id}', this.value)"
-                class="w-28 pl-6 pr-2 py-1.5 text-xs font-bold border border-slate-200 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
-              />
-            </div>
-            ${accounts.length > 1 ? `
-              <button onclick="deleteAccount('${acc.id}')" title="Delete Account" class="text-slate-400 hover:text-rose-600 p-1 font-bold text-lg">
-                &times;
-              </button>
-            ` : ''}
+            <input 
+              type="number" 
+              step="0.01" 
+              value="${acc.initialBalance || 0}" 
+              onchange="updateAccountInitialBalance('${acc.id}', this.value)"
+              class="w-24 px-2 py-1 text-xs font-bold bg-white border border-slate-300 rounded-lg text-right"
+              title="Initial Balance"
+            />
+            <button 
+              onclick="deleteAccount('${acc.id}')" 
+              class="p-1 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50"
+              title="Delete account"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
           </div>
         `;
-        accountModalList.appendChild(row);
+        modalAccountList.appendChild(row);
       });
-
-      const primaryVal = convertAny(combinedInitialUSD, 'USD', primaryCurrency);
-      const secondaryVal = convertAny(combinedInitialUSD, 'USD', secondaryCurrency);
-
-      modalCombinedTotalPrimary.textContent = formatCurrencyAny(primaryVal, primaryCurrency);
-      modalCombinedSecondaryLabel.textContent = `${secondaryCurrency} Equivalent`;
-      modalCombinedTotalSecondary.textContent = `≈ ${formatCurrencyAny(secondaryVal, secondaryCurrency)}`;
     }
 
-    window.updateAccountName = function (id, name) {
-      const acc = accounts.find(a => a.id === id);
-      if (acc && name.trim()) {
-        acc.name = name.trim();
-        saveData();
-      }
-    };
-
-    window.updateAccountInitial = function (id, val) {
+    window.updateAccountInitialBalance = function (id, val) {
       const acc = accounts.find(a => a.id === id);
       const parsed = parseFloat(val);
       if (acc) {
@@ -1656,13 +1580,10 @@
       refreshAll();
     };
 
-    // Robust Loader: Migrates legacy version keys so user NEVER loses data again!
     function loadData() {
       try {
-        // 1. Load Accounts
         let storedAccounts = localStorage.getItem(ACCOUNTS_KEY);
         if (!storedAccounts) {
-          // Check all previous legacy keys
           const LEGACY_ACC_KEYS = [
             'bizledger_global_accounts_v8',
             'bizledger_global_accounts_v7',
@@ -1678,10 +1599,8 @@
         }
         accounts = storedAccounts ? JSON.parse(storedAccounts) : DEFAULT_ACCOUNTS;
 
-        // 2. Load Transactions
         let storedTx = localStorage.getItem(STORAGE_KEY);
         if (!storedTx) {
-          // Check all previous legacy keys
           const LEGACY_TX_KEYS = [
             'bizledger_global_tx_v8',
             'bizledger_global_tx_v7',
@@ -1708,7 +1627,6 @@
         }
         transactions = storedTx ? JSON.parse(storedTx) : [];
 
-        // 3. Load Settings
         let storedSettings = localStorage.getItem(SETTINGS_KEY);
         if (!storedSettings) {
           const LEGACY_SETTING_KEYS = [
@@ -1733,7 +1651,6 @@
           if (s.secondaryCurrency && CURRENCY_MAP[s.secondaryCurrency]) secondaryCurrency = s.secondaryCurrency;
         }
 
-        // 4. Load Cached Rates
         const cachedRates = localStorage.getItem(RATES_CACHE_KEY) || localStorage.getItem('bizledger_global_rates_v8');
         if (cachedRates) {
           const cr = JSON.parse(cachedRates);
@@ -1746,7 +1663,6 @@
           if (cp) previousRatesFromUSD = cp;
         }
 
-        // Save immediately into permanent keys to seal migration
         saveData();
 
       } catch (err) {
@@ -1769,7 +1685,6 @@
       } catch (err) {}
     }
 
-    // Request persistent storage from browser
     function requestPersistentStorage() {
       if (navigator.storage && navigator.storage.persist) {
         navigator.storage.persist().catch(() => {});
@@ -1788,8 +1703,6 @@
 
       let incomeSumUSD = 0;
       let expenseSumUSD = 0;
-      let incomeCount = 0;
-      let expenseCount = 0;
 
       transactions.forEach(t => {
         let amtUSD = 0;
@@ -1801,10 +1714,8 @@
 
         if (t.type === 'Income') {
           incomeSumUSD += amtUSD;
-          incomeCount++;
         } else if (t.type === 'Expense') {
           expenseSumUSD += amtUSD;
-          expenseCount++;
         }
       });
 
@@ -1828,30 +1739,26 @@
       combinedCurrentSecondary.textContent = curDual.secondary;
 
       const netP = convertAny(netProfitUSD, 'USD', primaryCurrency);
-      const netS = convertAny(netProfitUSD, 'USD', secondaryCurrency);
       const sign = netProfitUSD >= 0 ? '+' : '';
-      netProfitSideBySide.textContent = `${sign}${formatCurrencyAny(netP, primaryCurrency)} (${sign}${formatCurrencyAny(netS, secondaryCurrency)})`;
-
-      incomeCountEl.textContent = incomeCount;
-      expenseCountEl.textContent = expenseCount;
+      netProfitSideBySide.textContent = `${sign}${formatCurrencyAny(netP, primaryCurrency)}`;
 
       if (netProfitUSD > 0) {
-        netProfitSideBySide.className = 'font-bold text-emerald-600';
-        profitBadgeEl.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700';
-        profitBadgeEl.textContent = 'Profitable';
+        netProfitSideBySide.className = 'font-bold text-emerald-600 truncate';
+        profitBadgeEl.className = 'px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold bg-emerald-100 text-emerald-700';
+        profitBadgeEl.textContent = 'Profit';
       } else if (netProfitUSD < 0) {
-        netProfitSideBySide.className = 'font-bold text-rose-600';
-        profitBadgeEl.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700';
-        profitBadgeEl.textContent = 'Net Loss';
+        netProfitSideBySide.className = 'font-bold text-rose-600 truncate';
+        profitBadgeEl.className = 'px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold bg-rose-100 text-rose-700';
+        profitBadgeEl.textContent = 'Loss';
       } else {
-        netProfitSideBySide.className = 'font-bold text-slate-600';
-        profitBadgeEl.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600';
-        profitBadgeEl.textContent = 'Break-Even';
+        netProfitSideBySide.className = 'font-bold text-slate-600 truncate';
+        profitBadgeEl.className = 'px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold bg-slate-100 text-slate-600';
+        profitBadgeEl.textContent = 'Even';
       }
     }
 
     // ==========================================
-    // RENDER DATA TABLE
+    // RENDER DATA TABLE & MOBILE CARDS
     // ==========================================
     function renderTable() {
       const selectedType = filterType.value;
@@ -1870,18 +1777,16 @@
       });
 
       tableBody.innerHTML = '';
+      mobileTransactionList.innerHTML = '';
 
       if (displayed.length === 0) {
         emptyState.classList.remove('hidden');
-        footerCount.textContent = 'Showing 0 transactions';
+        footerCount.textContent = '0 transactions';
       } else {
         emptyState.classList.add('hidden');
-        footerCount.textContent = `Showing ${displayed.length} of ${transactions.length} transaction${transactions.length === 1 ? '' : 's'}`;
+        footerCount.textContent = `${displayed.length} of ${transactions.length} record${transactions.length === 1 ? '' : 's'}`;
 
         displayed.forEach(t => {
-          const row = document.createElement('tr');
-          row.className = 'hover:bg-slate-50/80 transition-colors group';
-
           const isIncome = t.type === 'Income';
           const badgeClass = isIncome 
             ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
@@ -1898,6 +1803,53 @@
           const accountObj = accounts.find(a => a.id === t.accountId);
           const accountName = accountObj ? `${accountObj.icon || '💼'} ${accountObj.name}` : 'Default';
 
+          // 1. Mobile Card (Clean native app feel)
+          const mobileCard = document.createElement('div');
+          mobileCard.className = 'p-3 bg-white border border-slate-200/80 rounded-xl shadow-xs space-y-2';
+          mobileCard.innerHTML = `
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0 flex-1">
+                <span class="font-bold text-slate-900 text-xs sm:text-sm block leading-snug truncate" title="${escapeHtml(t.description)}">
+                  ${escapeHtml(t.description)}
+                </span>
+                <span class="text-[10px] text-slate-400 block mt-0.5">
+                  ${formatDate(t.date)} • Entered: ${enteredDisplay} (${t.currency})
+                </span>
+              </div>
+              <div class="text-right whitespace-nowrap">
+                <div class="font-extrabold text-xs sm:text-sm ${amountClass}">
+                  ${prefix} ${formatCurrencyAny(primaryVal, primaryCurrency)}
+                </div>
+                <div class="text-[9px] text-slate-400">
+                  ≈ ${formatCurrencyAny(secondaryVal, secondaryCurrency)}
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between pt-1.5 border-t border-slate-100 text-[11px]">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold border ${badgeClass}">
+                  ${t.type}
+                </span>
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 truncate max-w-[120px]">
+                  ${escapeHtml(accountName)}
+                </span>
+              </div>
+              <button 
+                onclick="openDeleteModal('${t.id}')" 
+                class="text-rose-500 hover:text-rose-700 text-[11px] font-semibold px-2 py-0.5 rounded bg-rose-50 flex items-center gap-1 transition"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Delete
+              </button>
+            </div>
+          `;
+          mobileTransactionList.appendChild(mobileCard);
+
+          // 2. Desktop Table Row
+          const row = document.createElement('tr');
+          row.className = 'hover:bg-slate-50/80 transition-colors group';
           row.innerHTML = `
             <td class="py-3.5 px-4 whitespace-nowrap text-xs font-medium text-slate-600">
               ${formatDate(t.date)}
@@ -1938,7 +1890,6 @@
               </button>
             </td>
           `;
-
           tableBody.appendChild(row);
         });
       }
@@ -1951,6 +1902,17 @@
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr + 'T00:00:00');
+      return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function initDefaultDate() {
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.value = today;
     }
 
     function refreshAll() {
