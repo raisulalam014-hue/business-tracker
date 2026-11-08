@@ -1,42 +1,40 @@
-# BizLedger - Daily Business Tracker
+# BizLedger - Universal Multi-Currency Business Tracker
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Demo-brightgreen.svg)](https://raisulalam014-hue.github.io/business-tracker/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue.svg)](CONTRIBUTING.md)
 
-A modern, responsive, single-page web application for tracking daily business income, expenses, profit, and multi-wallet account balances (Bank, bKash, Cash, Nagad) with dual-currency support (BDT ৳ & USD $) and live exchange rate auto-updates.
+A modern, responsive single-page web application for tracking daily business income, expenses, profit, and multi-wallet account balances (Bank, bKash, Cash, Upwork USD, etc.) with support for **35+ world currencies** and daily auto-updated exchange rates.
 
 ---
 
 ## 🌟 Key Features
 
-### 🏦 Multi-Account & Wallet System
-- Track separate balances across **Bank Account**, **bKash**, **Cash in Hand**, **Nagad**, or custom accounts.
-- View **Combined Initial Capital** and **Combined Current Balance** in real time.
-- Routing: Expenses deduct specifically from the chosen account and the combined total, leaving other wallets unaffected.
+### 💱 35+ Global Currencies & Universal Converter
+- Supports conversions across major world currencies: **BDT (৳)**, **USD ($)**, **EUR (€)**, **GBP (£)**, **INR (₹)**, **SAR (﷼)**, **AED (د.إ)**, **CAD (CA$)**, **AUD (AU$)**, **SGD (SG$)**, **MYR (RM)**, **QAR (﷼)**, **KWD (د.ك)**, **JPY (¥)**, **CNY (¥)**, **TRY (₺)**, and more.
+- **Interactive Quick Converter Tool**: Convert any amount on the spot between any two world currencies.
+- **Daily Auto-Updated Exchange Rates**: Automatically fetches fresh market rates from open web APIs in the background.
 
-### 🌐 Dual-Currency & Live Exchange Rates
-- Daily auto-fetching of live exchange rates from open web APIs (USD, BDT, EUR, GBP, SAR, AED, INR).
-- One-click live rate refresh + manual custom override option.
-- Automatic side-by-side conversion for all figures in **BDT (৳)** and **USD ($)**.
-- **Historical Rate Locking**: Each transaction permanently locks its date's exact exchange rate to preserve accurate financial history.
+### 🏦 Multi-Currency Wallets & Accounts
+- Assign native currencies to each account (e.g. Bank in BDT, Upwork / PayPal in USD, European Client in EUR).
+- Automatically calculates **Combined Initial Capital** and **Combined Current Cash Balance** in your preferred currency.
+- When an expense is recorded, it deducts from that specific account and your combined total.
 
-### 📊 Summary Dashboard
-- Three-level financial view: **Initial Capital**, **Income & Expenses**, and **Net Profit / Cash Available**.
-- Dynamic visual indicators for Profitable, Net Loss, or Break-Even status.
+### 🔄 Customizable Primary & Secondary Display
+- Switch your primary business view currency (e.g., BDT or USD) with one click.
+- Choose a secondary counter-currency for side-by-side conversion previews on all summary cards and table rows.
 
-### 📝 History & Export
-- Formatted transaction table displaying account badges, currency pills, and formatted dates.
-- Filter by Account (e.g. Bank only, bKash only) or by Transaction Type.
-- One-click CSV export containing full multi-currency breakdowns.
-- Secure, 100% private client-side data persistence via browser `localStorage`.
+### 📝 History & Data Privacy
+- Filter history by Account or Transaction Type.
+- One-click CSV export with detailed multi-currency breakdowns.
+- 100% private, client-side persistence using `localStorage`.
 
 ---
 
 ## 🚀 Live Demo & Usage
 
-1. Open `index.html` directly in any modern web browser.
-2. Or use GitHub Pages if deployed: [Live Demo](https://raisulalam014-hue.github.io/business-tracker/)
-3. Click **"Add / Manage Accounts"** to configure your starting wallet balances, and you are ready to record transactions!
+- **Live Web App**: [https://raisulalam014-hue.github.io/business-tracker/](https://raisulalam014-hue.github.io/business-tracker/)
+- Or clone this repository and open `index.html` directly in any web browser!
 
 ---
 
@@ -49,22 +47,14 @@ business-tracker/
 │       └── deploy.yml      # Automatic GitHub Pages deployment
 ├── .gitignore              # Ignored files
 ├── CONTRIBUTING.md         # Guidelines for contributors
-├── LICENSE                 # MIT License
-├── README.md               # Project documentation
+├── LICENSE                 # MIT License (2026 Raisul Alam)
+├── README.md               # Documentation
 ├── SECURITY.md             # Security policy
 └── index.html              # Complete application code (HTML, CSS, JS)
 ```
 
 ---
 
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/raisulalam014-hue/business-tracker/issues) or read [CONTRIBUTING.md](CONTRIBUTING.md).
-
----
-
 ## 📜 License
 
-This project is licensed under the [MIT License](LICENSE) - see the [LICENSE](LICENSE) file for details.
-
-Copyright (c) 2026 Raisul Alam
+Licensed under the [MIT License](LICENSE) - Copyright (c) 2026 Raisul Alam.

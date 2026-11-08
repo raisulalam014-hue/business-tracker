@@ -34,3 +34,4 @@ Thank you for your interest in contributing to **BizLedger**!
 
 ## Reporting Issues
 If you encounter a bug or have a suggestion, please open an Issue on GitHub with details and steps to reproduce.
+
