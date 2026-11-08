@@ -2,16 +2,15 @@
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
-  <!-- Native Mobile App Viewport: Prevents desktop emulation and zoom glitches -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>BizLedger | Mobile Business & Finance Tracker</title>
+  <title>BizLedger — Futuristic Next-Gen Finance SaaS</title>
   
   <!-- PWA & Mobile Web App Manifest -->
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
   <link rel="alternate icon" type="image/png" href="favicon.png" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <meta name="theme-color" content="#0b0f19" />
+  <meta name="theme-color" content="#080B12" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -26,64 +25,236 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              500: '#10b981',
-              600: '#059669',
-              700: '#047857',
-            },
-            dark: {
-              bg: '#080c14',
-              surface: '#0f172a',
-              card: '#131d35',
-              border: '#1e293b',
-              input: '#0b1120',
+            futuristic: {
+              bg: 'var(--bg-main)',
+              surface: 'var(--bg-surface)',
+              card: 'var(--bg-card)',
+              input: 'var(--bg-input)',
+              border: 'var(--border-color)',
+              accent: 'var(--accent)',
+              'accent-cyan': 'var(--accent-cyan)',
+              income: 'var(--income)',
+              expense: 'var(--expense)',
             }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Manrope', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          boxShadow: {
+            glass: '0 8px 32px 0 rgba(0, 0, 0, 0.36)',
+            'glass-light': '0 8px 30px 0 rgba(0, 0, 0, 0.05)',
+            glow: '0 0 35px -5px rgba(139, 124, 255, 0.3)',
+            'glow-cyan': '0 0 35px -5px rgba(85, 200, 216, 0.3)',
+            'glow-emerald': '0 0 30px -5px rgba(53, 211, 153, 0.35)',
           }
         }
       }
     };
   </script>
   
-  <!-- Google Fonts -->
+  <!-- Premium Fonts: Inter & Manrope -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
+    /* ============================================================
+       FUTURISTIC FINTECH DESIGN TOKENS (Dark by Default)
+       ============================================================ */
+    :root {
+      /* Light Mode */
+      --bg-main: #F3F6FC;
+      --bg-surface: #FFFFFF;
+      --bg-card: rgba(255, 255, 255, 0.85);
+      --bg-card-solid: #FFFFFF;
+      --bg-input: #EDF2F9;
+      --border-color: rgba(226, 232, 240, 0.9);
+      --border-glass: rgba(255, 255, 255, 0.6);
+      --accent: #625BDB;
+      --accent-hover: #5046C7;
+      --accent-light: rgba(98, 91, 219, 0.08);
+      --accent-cyan: #0EA5E9;
+      --text-primary: #172033;
+      --text-secondary: #64748B;
+      --text-muted: #94A3B8;
+      --income: #16A36A;
+      --expense: #E05260;
+    }
+
+    .dark {
+      /* Futuristic Dark Theme */
+      --bg-main: #080B12;
+      --bg-surface: #0D1320;
+      --bg-card: rgba(17, 24, 39, 0.72);
+      --bg-card-solid: #111827;
+      --bg-input: rgba(15, 23, 42, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-glass: rgba(255, 255, 255, 0.12);
+      --accent: #8B7CFF;
+      --accent-hover: #9E91FF;
+      --accent-light: rgba(139, 124, 255, 0.12);
+      --accent-cyan: #55C8D8;
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --income: #35D399;
+      --expense: #FB7185;
+    }
+
     * {
       -webkit-tap-highlight-color: transparent;
       box-sizing: border-box;
     }
+
     html, body {
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      font-family: 'Inter', 'Manrope', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-primary);
       max-width: 100vw;
       overflow-x: hidden;
       touch-action: manipulation;
     }
-    /* Safe area padding for mobile device notch & gestures */
+
+    /* Tabular numbers for clean financial figures */
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Safe-area insets */
     .safe-top {
       padding-top: max(0.75rem, env(safe-area-inset-top));
     }
     .safe-bottom {
       padding-bottom: max(1rem, env(safe-area-inset-bottom));
     }
-    /* Hide scrollbars for slick app feel */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
+
+    /* Glassmorphism Classes */
+    .glass-panel {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glass);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.25);
     }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
+
+    .glass-input {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
-    /* Mobile drawer slide-up */
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
+    .glass-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(139, 124, 255, 0.2);
+    }
+
+    /* Gradient Text */
+    .gradient-text-hero {
+      background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 50%, #8B7CFF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .dark .gradient-text-hero {
+      background: linear-gradient(135deg, #FFFFFF 20%, #C7D2FE 60%, #55C8D8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gradient-text-accent {
+      background: linear-gradient(135deg, #8B7CFF 0%, #55C8D8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Animated Atmospheric Background */
+    .ambient-orb-1 {
+      position: absolute;
+      top: -120px;
+      left: 10%;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139, 124, 255, 0.16) 0%, rgba(98, 91, 219, 0.05) 50%, transparent 70%);
+      filter: blur(60px);
+      pointer-events: none;
+      animation: floatOrb 18s ease-in-out infinite alternate;
+    }
+
+    .ambient-orb-2 {
+      position: absolute;
+      top: 150px;
+      right: 5%;
+      width: 480px;
+      height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(85, 200, 216, 0.14) 0%, rgba(53, 211, 153, 0.04) 50%, transparent 70%);
+      filter: blur(60px);
+      pointer-events: none;
+      animation: floatOrb2 22s ease-in-out infinite alternate;
+    }
+
+    .ambient-orb-3 {
+      position: absolute;
+      top: 600px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(251, 113, 133, 0.08) 0%, transparent 70%);
+      filter: blur(50px);
+      pointer-events: none;
+    }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(60px, 40px) scale(1.1); }
+    }
+    @keyframes floatOrb2 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-50px, 60px) scale(1.08); }
+    }
+
+    /* 3D Glass Card Sheen */
+    .card-sheen {
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .card-sheen::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.25) 50%, transparent 100%);
+      pointer-events: none;
+    }
+    .card-sheen:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Button Press Micro-interaction */
+    .btn-press:active {
+      transform: scale(0.97);
+    }
+
+    /* Drawer Animation */
+    @keyframes slideUpDrawer {
+      from { transform: translateY(100%); opacity: 0.6; }
+      to { transform: translateY(0); opacity: 1; }
     }
     .drawer-animate {
-      animation: slideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: slideUpDrawer 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation: none !important;
+        transition: none !important;
+      }
     }
   </style>
 
@@ -99,64 +270,118 @@
     })();
   </script>
 </head>
-<body class="bg-slate-100 dark:bg-dark-bg text-slate-800 dark:text-slate-100 min-h-screen flex flex-col antialiased select-none transition-colors duration-200">
+<body class="min-h-screen flex flex-col antialiased relative transition-colors duration-200">
 
   <!-- ============================================================
-       TOP APP BAR (Native Mobile Software Look)
+       ATMOSPHERIC LIGHTING & 3D ORBITAL LINES
        ============================================================ -->
-  <header class="sticky top-0 z-40 bg-white/95 dark:bg-dark-surface/95 backdrop-blur-md border-b border-slate-200 dark:border-dark-border px-3 sm:px-6 safe-top transition-colors">
-    <div class="max-w-6xl mx-auto h-14 flex items-center justify-between gap-2">
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div class="ambient-orb-1"></div>
+    <div class="ambient-orb-2"></div>
+    <div class="ambient-orb-3"></div>
+    
+    <!-- Futuristic Geometric Wireframe Grid (Subtle CSS) -->
+    <svg class="absolute inset-0 w-full h-full opacity-[0.03] dark:opacity-[0.06]" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+          <path d="M 48 0 L 0 0 0 48" fill="none" stroke="currentColor" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)" />
+    </svg>
+  </div>
+
+  <!-- ============================================================
+       FUTURISTIC HEADER
+       ============================================================ -->
+  <header class="sticky top-0 z-40 bg-[var(--bg-main)]/80 backdrop-blur-xl border-b border-[var(--border-color)] px-4 sm:px-6 lg:px-8 safe-top transition-colors">
+    <div class="max-w-7xl mx-auto h-16 flex items-center justify-between gap-3">
       
-      <!-- Brand & Status -->
-      <div class="flex items-center gap-2.5">
-        <img src="icon.svg" alt="BizLedger" class="w-8 h-8 rounded-xl shadow-xs ring-1 ring-emerald-500/20 object-contain" />
+      <!-- Brand & Orbital Badge -->
+      <div class="flex items-center gap-3 cursor-pointer select-none" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <div class="relative flex items-center justify-center">
+          <img src="icon.svg" alt="BizLedger Logo" class="w-9 h-9 rounded-2xl shadow-glow object-contain ring-1 ring-[var(--accent)]/30" />
+          <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[var(--bg-main)]" title="System synchronized"></span>
+        </div>
         <div>
-          <span class="text-base font-black tracking-tight text-slate-900 dark:text-white leading-none block">
-            BizLedger
-          </span>
-          <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 leading-none mt-0.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span id="appStatusText">Synced</span>
+          <div class="flex items-center gap-2">
+            <span class="text-base sm:text-lg font-black tracking-tight text-[var(--text-primary)] leading-none">
+              BizLedger
+            </span>
+            <span class="text-[9px] font-black px-2 py-0.5 rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-cyan)] text-white uppercase tracking-wider shadow-xs">
+              Futuristic
+            </span>
+          </div>
+          <span class="text-[10px] font-semibold text-[var(--text-secondary)] hidden sm:inline-block leading-none mt-1">
+            Immersive Multi-Currency Treasury & Ledger
           </span>
         </div>
       </div>
 
-      <!-- Quick Actions (Header Right) -->
-      <div class="flex items-center gap-1.5 sm:gap-2">
+      <!-- Quick Actions Header Right -->
+      <div class="flex items-center gap-2 sm:gap-2.5">
         
-        <!-- Discreet Live Rate Button -->
+        <!-- Live Exchange Rate Indicator Pill (Click opens converter) -->
         <button 
           onclick="openRateModal()" 
-          class="flex items-center gap-1 bg-slate-100 hover:bg-slate-200 dark:bg-dark-card dark:hover:bg-slate-800 border border-slate-200 dark:border-dark-border rounded-xl px-2.5 py-1 text-xs font-bold text-slate-700 dark:text-slate-200 transition"
-          title="Live currency converter"
+          class="flex items-center gap-1.5 glass-panel hover:border-[var(--accent)] rounded-xl px-2.5 py-1.5 text-xs font-bold text-[var(--text-primary)] transition btn-press"
+          title="Live exchange rates active. Click to open currency converter."
         >
-          <span id="headerQuickRateDisplay">$1 = ৳122.25</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-[var(--income)] animate-ping"></span>
+          <span id="headerQuickRateDisplay" class="tabular-nums font-black">$1 = ৳122.25</span>
+          <span class="text-[11px] text-[var(--text-muted)] hidden md:inline">💱</span>
         </button>
 
-        <!-- Primary Currency Selector -->
-        <select 
-          id="primaryCurrencySelect" 
-          onchange="changePrimaryCurrency(this.value)" 
-          class="bg-slate-100 dark:bg-dark-card border border-slate-200 dark:border-dark-border text-xs font-black text-emerald-600 dark:text-emerald-400 rounded-xl px-2 py-1 focus:outline-none cursor-pointer"
-        >
-        </select>
+        <!-- Primary View Currency Pill -->
+        <div class="flex items-center glass-panel rounded-xl px-2 py-1 text-xs">
+          <span class="text-[10px] font-black text-[var(--text-muted)] mr-1 hidden lg:inline">CURRENCY:</span>
+          <select 
+            id="primaryCurrencySelect" 
+            onchange="changePrimaryCurrency(this.value)" 
+            class="bg-transparent font-black text-[var(--accent)] focus:outline-none cursor-pointer"
+            title="Switch Primary Currency"
+          >
+          </select>
+        </div>
 
-        <!-- Theme Toggle (Dark/Light) -->
+        <!-- Privacy Eye Mask Button (Hide/Show Balance) -->
+        <button 
+          onclick="toggleBalancePrivacy()" 
+          id="privacyToggleBtn" 
+          class="w-9 h-9 rounded-xl glass-panel hover:border-[var(--accent)] flex items-center justify-center text-sm transition btn-press"
+          title="Toggle balance privacy mask"
+          aria-label="Toggle Balance Visibility"
+        >
+          <span id="privacyIcon">👁️</span>
+        </button>
+
+        <!-- Theme Switcher (Dark / Light) -->
         <button 
           onclick="toggleTheme()" 
           id="themeBtn"
-          class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-dark-card hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-dark-border flex items-center justify-center text-sm transition"
-          title="Toggle Dark Mode"
+          class="w-9 h-9 rounded-xl glass-panel hover:border-[var(--accent)] flex items-center justify-center text-sm transition btn-press"
+          title="Toggle Dark / Light Theme"
+          aria-label="Toggle Theme"
         >
           <span id="themeIcon">🌙</span>
         </button>
 
-        <!-- Backup Data Button (Desktop only, mobile accesses via bottom bar) -->
+        <!-- Backup & Restore Button (Desktop) -->
         <button 
           onclick="openBackupModal()" 
-          class="hidden sm:flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-dark-card hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-dark-border text-slate-700 dark:text-slate-200 transition"
+          class="hidden sm:flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl glass-panel hover:border-[var(--accent)] text-[var(--text-primary)] transition btn-press"
         >
-          🛡️ Backup
+          <span class="text-[var(--accent)]">🛡️</span>
+          <span>Backup</span>
+        </button>
+
+        <!-- CSV Export (Desktop) -->
+        <button 
+          onclick="exportCsv()" 
+          class="hidden md:flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-xl glass-panel hover:border-[var(--accent)] text-[var(--text-secondary)] transition btn-press"
+          title="Export CSV spreadsheet"
+        >
+          <span>CSV</span>
         </button>
 
       </div>
@@ -164,274 +389,570 @@
   </header>
 
   <!-- ============================================================
-       MAIN NATIVE APP VIEWPORT
+       MAIN DASHBOARD CONTAINER
        ============================================================ -->
-  <main class="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-3 sm:py-6 space-y-3.5 sm:space-y-6 pb-24 md:pb-8">
+  <main class="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-6 pb-24 md:pb-12">
 
-    <!-- 1. HERO BALANCE CARD (Revolut / Cash App Style) -->
-    <section class="bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950 dark:from-dark-card dark:via-dark-surface dark:to-emerald-950 text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-slate-800/80 relative overflow-hidden">
-      <!-- Glow decoration -->
-      <div class="absolute -right-10 -bottom-10 w-44 h-44 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
-
-      <div class="flex items-center justify-between text-xs text-slate-400 font-semibold mb-1">
-        <span>Combined Cash Balance</span>
-        <span id="profitBadge" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-          Live
-        </span>
-      </div>
-
-      <!-- Big Primary Amount -->
-      <div class="my-1">
-        <h2 id="combinedCurrentPrimary" class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-          0
-        </h2>
-        <p id="combinedCurrentSecondary" class="text-xs sm:text-sm font-semibold text-slate-400 mt-0.5">
-          ≈ 0 USD
-        </p>
-      </div>
-
-      <!-- Financial Split Strip (Income vs Expense vs Capital) -->
-      <div class="grid grid-cols-3 gap-2 mt-4 pt-3.5 border-t border-white/10 text-center">
-        <div class="bg-white/5 rounded-2xl p-2">
-          <span class="text-[10px] uppercase font-bold text-slate-400 block">Initial</span>
-          <span id="combinedInitialPrimary" class="text-xs sm:text-sm font-extrabold text-indigo-300 block truncate">0</span>
+    <!-- 1. HERO SECTION: PERSONALIZED HEADER + 3D BALANCE CENTERPIECE -->
+    <section class="relative">
+      
+      <!-- Top Welcome Strip -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-3 px-1">
+        <div>
+          <h2 id="greetingText" class="text-xs sm:text-sm font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+            Good Evening, Founder
+          </h2>
+          <p id="currentDateText" class="text-xs font-semibold text-[var(--text-muted)]">
+            Loading date...
+          </p>
         </div>
-        <div class="bg-white/5 rounded-2xl p-2">
-          <span class="text-[10px] uppercase font-bold text-emerald-400 block">Income</span>
-          <span id="totalIncomePrimary" class="text-xs sm:text-sm font-extrabold text-emerald-300 block truncate">0</span>
-        </div>
-        <div class="bg-white/5 rounded-2xl p-2">
-          <span class="text-[10px] uppercase font-bold text-rose-400 block">Expense</span>
-          <span id="totalExpensePrimary" class="text-xs sm:text-sm font-extrabold text-rose-300 block truncate">0</span>
+        <div class="flex items-center gap-2 text-xs font-bold text-[var(--accent-cyan)]">
+          <span class="w-2 h-2 rounded-full bg-[var(--accent-cyan)] animate-pulse"></span>
+          <span>Live Financial Telemetry Active</span>
         </div>
       </div>
 
-      <!-- Mobile Quick Action Buttons (Native Circle Pills) -->
-      <div class="flex items-center justify-around gap-2 mt-4 pt-2">
-        <button onclick="openTransactionModal('Income')" class="flex flex-col items-center gap-1 group">
-          <div class="w-11 h-11 rounded-2xl bg-emerald-600 group-active:scale-95 text-white flex items-center justify-center text-lg font-bold shadow-md shadow-emerald-900/40 transition">
-            ＋
-          </div>
-          <span class="text-[11px] font-bold text-slate-200">Income</span>
-        </button>
+      <!-- MAIN FLOATING HERO BALANCE CARD -->
+      <div class="glass-panel card-sheen rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-glass border-[var(--border-glass)]">
+        
+        <!-- Subtle 3D Sphere SVG accent inside card -->
+        <div class="absolute -right-8 -bottom-8 w-48 h-48 opacity-10 dark:opacity-25 pointer-events-none">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="80" fill="none" stroke="url(#sphereGrad)" stroke-width="1.5" />
+            <ellipse cx="100" cy="100" rx="80" ry="25" fill="none" stroke="url(#sphereGrad)" stroke-width="1" />
+            <ellipse cx="100" cy="100" rx="25" ry="80" fill="none" stroke="url(#sphereGrad)" stroke-width="1" />
+            <defs>
+              <linearGradient id="sphereGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#8B7CFF" />
+                <stop offset="100%" stop-color="#55C8D8" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
 
-        <button onclick="openTransactionModal('Expense')" class="flex flex-col items-center gap-1 group">
-          <div class="w-11 h-11 rounded-2xl bg-rose-600 group-active:scale-95 text-white flex items-center justify-center text-lg font-bold shadow-md shadow-rose-900/40 transition">
-            －
-          </div>
-          <span class="text-[11px] font-bold text-slate-200">Expense</span>
-        </button>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-5">
+          <div>
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+                Total Combined Treasury
+              </span>
+              <span id="profitBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/15 text-[var(--income)] border border-emerald-500/30">
+                Live
+              </span>
+            </div>
 
-        <button onclick="openAccountManagerModal()" class="flex flex-col items-center gap-1 group">
-          <div class="w-11 h-11 rounded-2xl bg-white/10 group-active:scale-95 text-white flex items-center justify-center text-base font-bold transition">
-            🏦
-          </div>
-          <span class="text-[11px] font-bold text-slate-200">Wallets</span>
-        </button>
+            <!-- Big Glowing Main Balance Display -->
+            <div class="flex items-baseline gap-2">
+              <h1 id="combinedCurrentPrimary" class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[var(--text-primary)] tabular-nums">
+                0
+              </h1>
+            </div>
 
-        <button onclick="openRateModal()" class="flex flex-col items-center gap-1 group">
-          <div class="w-11 h-11 rounded-2xl bg-white/10 group-active:scale-95 text-white flex items-center justify-center text-base font-bold transition">
-            💱
+            <!-- Counter Currency & Net Margin -->
+            <div class="flex items-center gap-3 mt-1.5 text-xs sm:text-sm font-semibold text-[var(--text-secondary)]">
+              <span id="combinedCurrentSecondary" class="tabular-nums">≈ 0 USD</span>
+              <span class="text-[var(--text-muted)]">•</span>
+              <span class="flex items-center gap-1">
+                <span>Net Margin:</span>
+                <span id="netProfitSideBySide" class="font-extrabold text-[var(--income)] tabular-nums">0</span>
+              </span>
+            </div>
           </div>
-          <span class="text-[11px] font-bold text-slate-200">Convert</span>
-        </button>
+
+          <!-- Quick Action Buttons Row -->
+          <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+            <button 
+              onclick="openTransactionModal('Income')" 
+              class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-black text-xs shadow-glow-emerald transition btn-press flex items-center gap-1.5"
+            >
+              <span>＋</span>
+              <span>Record Income</span>
+            </button>
+            <button 
+              onclick="openTransactionModal('Expense')" 
+              class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-rose-600 to-pink-500 hover:from-rose-500 hover:to-pink-400 text-white font-black text-xs shadow-xs transition btn-press flex items-center gap-1.5"
+            >
+              <span>－</span>
+              <span>Record Expense</span>
+            </button>
+            <button 
+              onclick="openAccountManagerModal()" 
+              class="px-3.5 py-2.5 rounded-2xl glass-panel hover:border-[var(--accent)] font-bold text-xs text-[var(--text-primary)] transition btn-press flex items-center gap-1.5"
+            >
+              <span>🏦</span>
+              <span class="hidden sm:inline">Wallets</span>
+            </button>
+            <button 
+              onclick="openRateModal()" 
+              class="px-3.5 py-2.5 rounded-2xl glass-panel hover:border-[var(--accent)] font-bold text-xs text-[var(--text-primary)] transition btn-press flex items-center gap-1.5"
+            >
+              <span>💱</span>
+              <span class="hidden sm:inline">Converter</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2. FINANCIAL SUMMARY METRIC CARDS (3 Secondary Panels) -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 mt-4">
+        
+        <!-- CARD 1: Initial Capital -->
+        <div class="glass-panel card-sheen rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">Initial Capital</span>
+            <button onclick="openAccountManagerModal()" class="text-xs font-bold text-[var(--accent)] hover:underline">Edit</button>
+          </div>
+          <div>
+            <span id="combinedInitialPrimary" class="text-xl sm:text-2xl font-black text-[var(--text-primary)] tabular-nums block cursor-pointer" onclick="openAccountManagerModal()">
+              0
+            </span>
+            <span id="combinedInitialSecondary" class="text-xs text-[var(--text-secondary)] tabular-nums block mt-0.5">
+              ≈ 0 USD
+            </span>
+          </div>
+        </div>
+
+        <!-- CARD 2: Total Income -->
+        <div class="glass-panel card-sheen rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">Total Inflow</span>
+            <span class="w-6 h-6 rounded-lg bg-emerald-500/15 text-[var(--income)] flex items-center justify-center text-xs font-black">↗</span>
+          </div>
+          <div>
+            <span id="totalIncomePrimary" class="text-xl sm:text-2xl font-black text-[var(--income)] tabular-nums block">
+              0
+            </span>
+            <span id="totalIncomeSecondary" class="text-xs text-[var(--text-secondary)] tabular-nums block mt-0.5">
+              ≈ 0 USD
+            </span>
+          </div>
+          <span class="text-[11px] text-[var(--text-secondary)] mt-2 pt-2 border-t border-[var(--border-color)]">
+            <b id="incomeCount" class="text-[var(--text-primary)]">0</b> revenue entries
+          </span>
+        </div>
+
+        <!-- CARD 3: Total Expenses -->
+        <div class="glass-panel card-sheen rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">Total Outflow</span>
+            <span class="w-6 h-6 rounded-lg bg-rose-500/15 text-[var(--expense)] flex items-center justify-center text-xs font-black">↘</span>
+          </div>
+          <div>
+            <span id="totalExpensePrimary" class="text-xl sm:text-2xl font-black text-[var(--expense)] tabular-nums block">
+              0
+            </span>
+            <span id="totalExpenseSecondary" class="text-xs text-[var(--text-secondary)] tabular-nums block mt-0.5">
+              ≈ 0 USD
+            </span>
+          </div>
+          <span class="text-[11px] text-[var(--text-secondary)] mt-2 pt-2 border-t border-[var(--border-color)]">
+            <b id="expenseCount" class="text-[var(--text-primary)]">0</b> expense entries
+          </span>
+        </div>
+
+      </div>
+
+      <!-- VISUAL CASH FLOW TELEMETRY RATIO -->
+      <div class="glass-panel rounded-2xl p-4 mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div class="flex items-center gap-2">
+          <span class="font-extrabold text-[var(--text-primary)]">Inflow vs Outflow Ratio:</span>
+          <span id="cashFlowRatioText" class="text-[var(--text-secondary)] font-semibold">0% Income vs 0% Expense</span>
+        </div>
+        <div class="flex-1 max-w-md h-2 rounded-full bg-[var(--bg-input)] overflow-hidden flex border border-[var(--border-color)]">
+          <div id="cashFlowIncomeBar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-300" style="width: 50%;"></div>
+          <div id="cashFlowExpenseBar" class="h-full bg-gradient-to-r from-rose-500 to-pink-500 transition-all duration-300" style="width: 50%;"></div>
+        </div>
+        <div class="flex items-center gap-3 text-[11px] font-bold">
+          <span class="flex items-center gap-1 text-[var(--income)]"><span class="w-2 h-2 rounded-full bg-[var(--income)]"></span> Inflow</span>
+          <span class="flex items-center gap-1 text-[var(--expense)]"><span class="w-2 h-2 rounded-full bg-[var(--expense)]"></span> Outflow</span>
+        </div>
       </div>
     </section>
 
-    <!-- 2. HORIZONTAL WALLETS CAROUSEL (Touch-Friendly Native Row) -->
-    <section>
-      <div class="flex items-center justify-between mb-2 px-1">
-        <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-          My Wallets & Accounts
-        </h3>
-        <button onclick="openAccountManagerModal()" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
-          Manage
+    <!-- 3. WALLETS AS FUTURISTIC LUXURY DIGITAL CARDS -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between px-1">
+        <div class="flex items-center gap-2">
+          <h3 class="text-sm font-extrabold text-[var(--text-primary)] uppercase tracking-wider">
+            Connected Wallets
+          </h3>
+          <span id="walletCountBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full glass-panel text-[var(--text-secondary)]">
+            0 Wallets
+          </span>
+        </div>
+        <button 
+          onclick="openAccountManagerModal()" 
+          class="text-xs font-bold text-[var(--accent)] hover:underline flex items-center gap-1"
+        >
+          <span>＋ Manage Wallets</span>
         </button>
       </div>
 
-      <!-- Horizontal Scroll Cards on Mobile, Responsive Grid on Desktop -->
-      <div id="accountCardsContainer" class="flex md:grid md:grid-cols-4 gap-2.5 overflow-x-auto no-scrollbar pb-1">
+      <!-- Horizontal Carousel on Mobile, Responsive 4-col Grid on Desktop -->
+      <div id="accountCardsContainer" class="flex md:grid md:grid-cols-4 gap-3.5 overflow-x-auto no-scrollbar pb-1">
       </div>
     </section>
 
-    <!-- 3. DESKTOP ONLY: INLINE TRANSACTION FORM -->
-    <div class="hidden md:grid md:grid-cols-12 gap-6 items-start">
-      <section class="md:col-span-5 bg-white dark:bg-dark-card rounded-3xl p-5 border border-slate-200 dark:border-dark-border shadow-xs">
-        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-3 pb-2 border-b border-slate-100 dark:border-dark-border">
-          Add Transaction
-        </h3>
-        <div id="desktopFormContainer">
-          <!-- Form is mirrored here for desktop -->
+    <!-- 4. OPERATIONS: RECORD TRANSACTION & REAL-TIME LEDGER -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
+      
+      <!-- FORM: Record Transaction -->
+      <section id="addTransactionSection" class="lg:col-span-5 glass-panel card-sheen rounded-3xl p-5 sm:p-6 space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+          <div>
+            <h3 class="text-sm sm:text-base font-extrabold text-[var(--text-primary)]">
+              Record Transaction
+            </h3>
+            <p class="text-xs text-[var(--text-secondary)]">Multi-currency entry with instant conversion</p>
+          </div>
+          <button 
+            onclick="openRateModal()" 
+            class="text-xs font-bold text-[var(--accent)] glass-panel hover:border-[var(--accent)] px-2.5 py-1 rounded-xl transition btn-press flex items-center gap-1"
+          >
+            💱 Rates
+          </button>
         </div>
+
+        <form id="transactionForm" class="space-y-3.5">
+          
+          <!-- Income / Expense Segment Toggle -->
+          <div>
+            <label class="block text-[11px] font-bold uppercase text-[var(--text-secondary)] mb-1.5 tracking-wider">
+              Type
+            </label>
+            <div class="grid grid-cols-2 gap-1.5 p-1 glass-input rounded-2xl">
+              <label class="cursor-pointer">
+                <input type="radio" name="type" value="Income" class="peer sr-only" checked />
+                <div class="text-center py-2 text-xs font-bold rounded-xl text-[var(--text-secondary)] transition peer-checked:bg-[var(--income)] peer-checked:text-white peer-checked:shadow-xs">
+                  ＋ Income (আয়)
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="type" value="Expense" class="peer sr-only" />
+                <div class="text-center py-2 text-xs font-bold rounded-xl text-[var(--text-secondary)] transition peer-checked:bg-[var(--expense)] peer-checked:text-white peer-checked:shadow-xs">
+                  － Expense (ব্যয়)
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Target Wallet -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label for="transactionAccount" class="text-[11px] font-bold uppercase text-[var(--text-secondary)] tracking-wider">
+                Target Wallet
+              </label>
+              <button type="button" onclick="openAccountManagerModal()" class="text-[11px] font-bold text-[var(--accent)] hover:underline">
+                ＋ New Wallet
+              </button>
+            </div>
+            <select 
+              id="transactionAccount" 
+              required 
+              class="w-full px-3.5 py-2.5 glass-input rounded-xl text-xs sm:text-sm font-bold text-[var(--text-primary)] focus:outline-none transition"
+            >
+            </select>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label for="description" class="block text-[11px] font-bold uppercase text-[var(--text-secondary)] mb-1 tracking-wider">
+              Description
+            </label>
+            <input 
+              type="text" 
+              id="description" 
+              name="description" 
+              placeholder="e.g. Client Payment, Office Lease, Server Infrastructure" 
+              required 
+              maxlength="100" 
+              class="w-full px-3.5 py-2.5 glass-input rounded-xl text-xs sm:text-sm font-semibold text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none transition" 
+            />
+          </div>
+
+          <!-- Amount & Currency Input -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label for="amount" class="text-[11px] font-bold uppercase text-[var(--text-secondary)] tracking-wider">
+                Amount & Currency
+              </label>
+              <select 
+                id="transactionCurrency" 
+                onchange="handleTransactionCurrencyChange()" 
+                class="text-xs font-bold glass-input rounded-lg px-2 py-0.5 text-[var(--text-primary)] focus:outline-none"
+              >
+              </select>
+            </div>
+            <div class="relative">
+              <span id="currencyPrefix" class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[var(--text-muted)] font-black text-sm">
+                ৳
+              </span>
+              <input 
+                type="number" 
+                id="amount" 
+                name="amount" 
+                step="0.01" 
+                min="0.01" 
+                placeholder="0.00" 
+                required 
+                oninput="updateInputLiveConversion()" 
+                class="w-full pl-9 pr-3.5 py-2.5 glass-input rounded-xl text-sm font-extrabold text-[var(--text-primary)] placeholder-[var(--text-muted)] tabular-nums focus:outline-none transition" 
+              />
+            </div>
+
+            <!-- Optional Custom Conversion Rate Row -->
+            <div id="customRateRow" class="hidden mt-2 p-2 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+              <div class="flex items-center justify-between gap-2">
+                <label for="txCustomRate" class="text-[10px] font-bold text-amber-500">
+                  Rate: 1 <span id="txRateCurCode">USD</span> = <span id="txRateBaseSymbol">৳</span>
+                </label>
+                <input 
+                  type="number" 
+                  id="txCustomRate" 
+                  step="0.0001" 
+                  min="0.00001" 
+                  class="w-24 px-2 py-1 text-xs font-bold glass-input rounded-lg text-right text-[var(--text-primary)] focus:outline-none" 
+                  oninput="updateInputLiveConversion()" 
+                />
+              </div>
+            </div>
+
+            <!-- Live Conversion Preview -->
+            <div class="mt-2 p-2.5 glass-input rounded-xl text-xs space-y-1">
+              <div class="flex items-center justify-between font-bold text-[var(--text-primary)]">
+                <span class="text-[var(--text-secondary)]">In <span id="previewPrimaryName">Primary</span>:</span>
+                <span id="previewPrimaryValue" class="tabular-nums">0</span>
+              </div>
+              <div class="flex items-center justify-between text-[11px] text-[var(--text-secondary)]">
+                <span>In <span id="previewSecondaryName">Secondary</span>:</span>
+                <span id="previewSecondaryValue" class="tabular-nums">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date -->
+          <div>
+            <label for="date" class="block text-[11px] font-bold uppercase text-[var(--text-secondary)] mb-1 tracking-wider">
+              Date
+            </label>
+            <input 
+              type="date" 
+              id="date" 
+              name="date" 
+              required 
+              class="w-full px-3.5 py-2 glass-input rounded-xl text-xs sm:text-sm font-semibold text-[var(--text-primary)] focus:outline-none transition" 
+            />
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit" 
+            id="submitTxBtn"
+            class="w-full py-3 px-4 bg-gradient-to-r from-[var(--accent)] to-[var(--accent-cyan)] hover:opacity-95 text-white font-extrabold rounded-xl shadow-glow transition btn-press flex items-center justify-center gap-2 text-xs sm:text-sm"
+          >
+            <span>💾 Save Transaction</span>
+          </button>
+        </form>
       </section>
 
-      <section class="md:col-span-7 bg-white dark:bg-dark-card rounded-3xl border border-slate-200 dark:border-dark-border shadow-xs overflow-hidden flex flex-col">
-        <div class="p-4 border-b border-slate-100 dark:border-dark-border flex items-center justify-between">
-          <h3 class="text-base font-bold text-slate-900 dark:text-white">Transaction History</h3>
-          <div class="flex items-center gap-2">
-            <select id="desktopFilterAccount" onchange="applyFilters(this.value, document.getElementById('desktopFilterType').value)" class="text-xs font-semibold bg-slate-100 dark:bg-dark-input rounded-lg px-2 py-1 border border-slate-200 dark:border-slate-700">
+      <!-- TABLE / FEED: Transactions Ledger -->
+      <section class="lg:col-span-7 glass-panel card-sheen rounded-3xl border border-[var(--border-color)] shadow-glass flex flex-col overflow-hidden">
+        
+        <!-- Header, Live Search & Filters -->
+        <div class="p-4 border-b border-[var(--border-color)] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--bg-input)]/40">
+          <div>
+            <h3 class="text-sm sm:text-base font-extrabold text-[var(--text-primary)]">
+              Treasury Audit Ledger
+            </h3>
+            <p class="text-xs text-[var(--text-secondary)]">All multi-currency records synchronized</p>
+          </div>
+
+          <!-- Filter Controls -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <input 
+              type="text" 
+              id="txSearchInput" 
+              oninput="renderTable()" 
+              placeholder="Search description..." 
+              class="px-2.5 py-1 text-xs glass-input rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none max-w-[130px] sm:max-w-[150px]"
+            />
+
+            <select 
+              id="filterAccount" 
+              onchange="renderTable()" 
+              class="text-xs font-bold glass-input rounded-lg px-2 py-1 text-[var(--text-primary)] focus:outline-none"
+            >
               <option value="ALL">All Wallets</option>
             </select>
-            <select id="desktopFilterType" onchange="applyFilters(document.getElementById('desktopFilterAccount').value, this.value)" class="text-xs font-semibold bg-slate-100 dark:bg-dark-input rounded-lg px-2 py-1 border border-slate-200 dark:border-slate-700">
+
+            <select 
+              id="filterType" 
+              onchange="renderTable()" 
+              class="text-xs font-bold glass-input rounded-lg px-2 py-1 text-[var(--text-primary)] focus:outline-none"
+            >
               <option value="ALL">All Types</option>
               <option value="Income">Income</option>
               <option value="Expense">Expense</option>
             </select>
+
+            <button 
+              onclick="clearAllTransactionsPrompt()" 
+              class="text-xs font-bold px-2 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-[var(--expense)] transition btn-press"
+              title="Clear all transactions"
+            >
+              Clear
+            </button>
           </div>
         </div>
-        <div class="overflow-x-auto max-h-[500px]">
-          <table class="w-full text-left text-sm border-collapse">
-            <thead class="bg-slate-50 dark:bg-dark-input text-[11px] uppercase font-bold text-slate-400 sticky top-0">
+
+        <!-- MOBILE TRANSACTIONS CARDS FEED (Screen < md) -->
+        <div id="mobileTransactionList" class="block md:hidden divide-y divide-[var(--border-color)] max-h-[540px] overflow-y-auto p-3 space-y-2.5">
+        </div>
+
+        <!-- DESKTOP TABLE VIEW (Screen >= md) -->
+        <div class="hidden md:block overflow-x-auto min-h-[320px] max-h-[540px]">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse">
+            <thead class="bg-[var(--bg-input)] text-[11px] uppercase font-bold text-[var(--text-secondary)] sticky top-0 border-b border-[var(--border-color)] z-10 backdrop-blur-md">
               <tr>
                 <th class="py-3 px-4">Date</th>
                 <th class="py-3 px-4">Description</th>
                 <th class="py-3 px-3 text-center">Wallet</th>
-                <th class="py-3 px-4 text-right">Amount</th>
+                <th class="py-3 px-3 text-center">Type</th>
+                <th class="py-3 px-4 text-right">Amount (Side by Side)</th>
                 <th class="py-3 px-3 text-center">Action</th>
               </tr>
             </thead>
-            <tbody id="desktopTableBody" class="divide-y divide-slate-100 dark:divide-dark-border">
+            <tbody id="transactionTableBody" class="divide-y divide-[var(--border-color)]">
             </tbody>
           </table>
         </div>
-      </section>
-    </div>
 
-    <!-- 4. MOBILE TRANSACTIONS FEED (Native List Style) -->
-    <section class="md:hidden bg-white dark:bg-dark-card rounded-3xl p-4 border border-slate-200 dark:border-dark-border shadow-xs space-y-3">
-      <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-dark-border">
-        <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-          Recent Activity
-        </h3>
-        <div class="flex items-center gap-1.5">
-          <select id="mobileFilterType" onchange="renderTable()" class="text-xs font-bold bg-slate-100 dark:bg-dark-input rounded-lg px-2 py-1 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200">
-            <option value="ALL">All</option>
-            <option value="Income">Income</option>
-            <option value="Expense">Expense</option>
-          </select>
-          <button onclick="exportCsv()" class="text-xs font-bold px-2 py-1 rounded-lg bg-slate-100 dark:bg-dark-input text-slate-700 dark:text-slate-200">
-            CSV
-          </button>
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden py-14 px-4 text-center">
+          <span class="text-3xl block mb-2 opacity-50">💳</span>
+          <p class="text-xs sm:text-sm font-bold text-[var(--text-primary)]">No transactions recorded yet</p>
+          <p class="text-xs text-[var(--text-secondary)] max-w-xs mx-auto mt-0.5">Start by recording an income or expense in any currency.</p>
+          <div class="mt-4 flex items-center justify-center gap-2">
+            <button onclick="openAccountManagerModal()" class="text-xs font-bold px-3 py-1.5 rounded-xl glass-panel text-[var(--accent)] hover:border-[var(--accent)] transition">
+              Set Wallets
+            </button>
+            <button onclick="loadSampleData()" class="text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-500/15 text-[var(--income)] hover:bg-emerald-500 hover:text-white transition">
+              Load Demo Data
+            </button>
+          </div>
         </div>
-      </div>
 
-      <!-- Feed list -->
-      <div id="mobileTransactionList" class="divide-y divide-slate-100 dark:divide-dark-border space-y-2">
-      </div>
+        <!-- Footer Count & Status -->
+        <div class="p-3 px-4 bg-[var(--bg-input)]/50 border-t border-[var(--border-color)] flex items-center justify-between text-xs text-[var(--text-secondary)]">
+          <span id="footerCount">0 transactions</span>
+          <span class="flex items-center gap-1.5 text-[var(--income)] font-bold">
+            <span class="w-1.5 h-1.5 rounded-full bg-[var(--income)] animate-pulse"></span>
+            <span>Live background rates active</span>
+          </span>
+        </div>
 
-      <!-- Empty State -->
-      <div id="emptyState" class="hidden py-10 text-center">
-        <span class="text-3xl block mb-2">💳</span>
-        <p class="text-xs font-bold text-slate-600 dark:text-slate-300">No transactions recorded yet</p>
-        <p class="text-[11px] text-slate-400 mt-0.5">Tap + Income or - Expense to add your first record</p>
-      </div>
-    </section>
+      </section>
 
+    </div>
   </main>
 
   <!-- ============================================================
-       MOBILE DOCKED BOTTOM NAVIGATION (Native App Bar)
+       MOBILE DOCKED BOTTOM NAVIGATION (Fintech SaaS Native Bar)
        ============================================================ -->
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-dark-surface/95 backdrop-blur-md border-t border-slate-200 dark:border-dark-border px-4 py-2 safe-bottom flex items-center justify-around shadow-2xl transition-colors">
-    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center justify-center text-slate-700 dark:text-slate-300 hover:text-emerald-600 py-1">
-      <span class="text-xl">🏠</span>
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--bg-main)]/90 backdrop-blur-xl border-t border-[var(--border-color)] px-4 py-2 safe-bottom flex items-center justify-around shadow-glass transition-colors">
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center justify-center text-[var(--text-secondary)] hover:text-[var(--accent)] py-1">
+      <span class="text-lg">🏠</span>
       <span class="text-[10px] font-bold mt-0.5">Home</span>
     </button>
-    <button onclick="openAccountManagerModal()" class="flex flex-col items-center justify-center text-slate-700 dark:text-slate-300 hover:text-indigo-600 py-1">
-      <span class="text-xl">🏦</span>
+    <button onclick="openAccountManagerModal()" class="flex flex-col items-center justify-center text-[var(--text-secondary)] hover:text-[var(--accent)] py-1">
+      <span class="text-lg">🏦</span>
       <span class="text-[10px] font-bold mt-0.5">Wallets</span>
     </button>
     
-    <!-- Big Center Add Button -->
-    <button onclick="openTransactionModal('Income')" class="relative -top-3 w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-2xl font-bold shadow-lg shadow-emerald-600/40 active:scale-90 transition">
+    <!-- Floating Center Add Button -->
+    <button onclick="openTransactionModal('Income')" class="relative -top-3 w-12 h-12 rounded-2xl bg-gradient-to-tr from-[var(--accent)] to-[var(--accent-cyan)] text-white flex items-center justify-center text-2xl font-black shadow-glow active:scale-95 transition">
       ＋
     </button>
 
-    <button onclick="openRateModal()" class="flex flex-col items-center justify-center text-slate-700 dark:text-slate-300 hover:text-amber-500 py-1">
-      <span class="text-xl">💱</span>
+    <button onclick="openRateModal()" class="flex flex-col items-center justify-center text-[var(--text-secondary)] hover:text-amber-400 py-1">
+      <span class="text-lg">💱</span>
       <span class="text-[10px] font-bold mt-0.5">Rates</span>
     </button>
-    <button onclick="openBackupModal()" class="flex flex-col items-center justify-center text-slate-700 dark:text-slate-300 hover:text-indigo-600 py-1">
-      <span class="text-xl">🛡️</span>
+    <button onclick="openBackupModal()" class="flex flex-col items-center justify-center text-[var(--text-secondary)] hover:text-[var(--accent)] py-1">
+      <span class="text-lg">🛡️</span>
       <span class="text-[10px] font-bold mt-0.5">Backup</span>
     </button>
   </nav>
 
   <!-- ============================================================
-       MOBILE NATIVE BOTTOM DRAWER / MODAL: ADD TRANSACTION
+       MODAL: MOBILE QUICK ADD TRANSACTION DRAWER
        ============================================================ -->
-  <div id="txModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
-    <div class="bg-white dark:bg-dark-surface rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[92vh] overflow-y-auto drawer-animate p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-dark-border">
+  <div id="txModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+    <div class="glass-panel rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[92vh] overflow-y-auto drawer-animate p-5 sm:p-6 shadow-glass border border-[var(--border-glass)]">
       
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-dark-border">
-        <h3 id="txModalTitle" class="text-base font-black text-slate-900 dark:text-white">
-          Add Transaction
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+        <h3 id="txModalTitle" class="text-base font-extrabold text-[var(--text-primary)]">
+          Record Transaction
         </h3>
-        <button onclick="closeTransactionModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-dark-card text-slate-500 dark:text-slate-300 text-lg font-bold flex items-center justify-center">
+        <button onclick="closeTransactionModal()" class="w-8 h-8 rounded-full glass-panel text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-lg font-bold flex items-center justify-center transition">
           &times;
         </button>
       </div>
 
-      <form id="txForm" class="space-y-3.5 pt-3">
-        
-        <!-- Income vs Expense Segment -->
-        <div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 dark:bg-dark-input rounded-2xl border border-slate-200 dark:border-slate-800">
+      <form id="modalTxForm" class="space-y-3.5 pt-3">
+        <!-- Segment Control -->
+        <div class="grid grid-cols-2 gap-1.5 p-1 glass-input rounded-2xl">
           <label class="cursor-pointer">
-            <input type="radio" name="txType" value="Income" class="peer sr-only" checked onchange="updateFormTypeStyling()" />
-            <div id="typeIncomePill" class="text-center py-2.5 text-xs font-black rounded-xl text-slate-600 dark:text-slate-400 transition peer-checked:bg-emerald-600 peer-checked:text-white">
+            <input type="radio" name="modalType" value="Income" class="peer sr-only" checked />
+            <div class="text-center py-2.5 text-xs font-bold rounded-xl text-[var(--text-secondary)] transition peer-checked:bg-[var(--income)] peer-checked:text-white">
               ＋ Income (আয়)
             </div>
           </label>
           <label class="cursor-pointer">
-            <input type="radio" name="txType" value="Expense" class="peer sr-only" onchange="updateFormTypeStyling()" />
-            <div id="typeExpensePill" class="text-center py-2.5 text-xs font-black rounded-xl text-slate-600 dark:text-slate-400 transition peer-checked:bg-rose-600 peer-checked:text-white">
+            <input type="radio" name="modalType" value="Expense" class="peer sr-only" />
+            <div class="text-center py-2.5 text-xs font-bold rounded-xl text-[var(--text-secondary)] transition peer-checked:bg-[var(--expense)] peer-checked:text-white">
               － Expense (ব্যয়)
             </div>
           </label>
         </div>
 
-        <!-- Wallet / Account -->
         <div>
-          <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Target Wallet</label>
-          <select id="modalTxAccount" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-dark-input border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          <label class="block text-[11px] font-bold uppercase text-[var(--text-secondary)] mb-1">Target Wallet</label>
+          <select id="modalTxAccount" required class="w-full px-3.5 py-2.5 glass-input rounded-xl text-xs sm:text-sm font-bold text-[var(--text-primary)] focus:outline-none">
           </select>
         </div>
 
-        <!-- Description -->
         <div>
-          <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Description</label>
-          <input type="text" id="modalTxDesc" placeholder="e.g. Client Project, Office Rent, Hosting" required maxlength="100" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-dark-input border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+          <label class="block text-[11px] font-bold uppercase text-[var(--text-secondary)] mb-1">Description</label>
+          <input type="text" id="modalTxDesc" placeholder="e.g. Client Payment, Office Lease" required maxlength="100" class="w-full px-3.5 py-2.5 glass-input rounded-xl text-xs sm:text-sm font-semibold text-[var(--text-primary)] focus:outline-none" />
         </div>
 
-        <!-- Amount & Currency -->
         <div>
           <div class="flex items-center justify-between mb-1">
-            <label class="text-[11px] font-bold uppercase text-slate-400">Amount & Currency</label>
-            <select id="modalTxCurrency" onchange="handleModalCurrencyChange()" class="text-xs font-black bg-slate-100 dark:bg-dark-input border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-0.5 text-slate-800 dark:text-white">
+            <label class="text-[11px] font-bold uppercase text-[var(--text-secondary)]">Amount & Currency</label>
+            <select id="modalTxCurrency" onchange="handleModalCurrencyChange()" class="text-xs font-bold glass-input rounded-lg px-2 py-0.5 text-[var(--text-primary)]">
             </select>
           </div>
           <div class="relative">
-            <span id="modalPrefix" class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-black text-sm">
+            <span id="modalPrefix" class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[var(--text-muted)] font-black text-sm">
               ৳
             </span>
-            <input type="number" id="modalTxAmount" step="0.01" min="0.01" placeholder="0.00" required oninput="updateModalPreview()" class="w-full pl-9 pr-3.5 py-3 bg-slate-50 dark:bg-dark-input border border-slate-200 dark:border-slate-700 rounded-xl text-lg font-black text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+            <input type="number" id="modalTxAmount" step="0.01" min="0.01" placeholder="0.00" required oninput="updateModalPreview()" class="w-full pl-9 pr-3.5 py-3 glass-input rounded-xl text-lg font-black text-[var(--text-primary)] tabular-nums focus:outline-none" />
           </div>
         </div>
 
-        <!-- Date -->
         <div>
-          <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Date</label>
-          <input type="date" id="modalTxDate" required class="w-full px-3.5 py-2 bg-slate-50 dark:bg-dark-input border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none" />
+          <label class="block text-[11px] font-bold uppercase text-[var(--text-secondary)] mb-1">Date</label>
+          <input type="date" id="modalTxDate" required class="w-full px-3.5 py-2 glass-input rounded-xl text-xs font-bold text-[var(--text-primary)] focus:outline-none" />
         </div>
 
-        <!-- Live Conversion Preview -->
-        <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-dark-input border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
-          <span class="text-slate-400 font-semibold">Value in Primary:</span>
-          <span id="modalPreviewPrimary" class="font-black text-slate-900 dark:text-white text-sm">0</span>
+        <div class="p-2.5 rounded-xl glass-input flex items-center justify-between text-xs">
+          <span class="text-[var(--text-secondary)]">In Primary:</span>
+          <span id="modalPreviewPrimary" class="font-extrabold text-[var(--text-primary)] tabular-nums">0</span>
         </div>
 
-        <!-- Submit Button -->
-        <button type="submit" id="saveTxBtn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-black rounded-2xl shadow-lg shadow-emerald-600/30 text-sm transition">
+        <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-[var(--accent)] to-[var(--accent-cyan)] text-white font-extrabold rounded-2xl shadow-glow transition btn-press text-xs sm:text-sm">
           Save Record
         </button>
       </form>
@@ -439,92 +960,115 @@
   </div>
 
   <!-- ============================================================
-       MODAL: MANAGE WALLETS
+       MODAL: WALLET & ACCOUNT MANAGER
        ============================================================ -->
-  <div id="accountModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 hidden">
-    <div class="bg-white dark:bg-dark-surface rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-5 shadow-2xl border border-slate-200 dark:border-dark-border">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-dark-border">
-        <h3 class="text-base font-black text-slate-900 dark:text-white">Wallets & Accounts</h3>
-        <button onclick="closeAccountManagerModal()" class="text-slate-400 text-xl font-bold">&times;</button>
+  <div id="accountModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="glass-panel rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-5 sm:p-6 shadow-glass border border-[var(--border-glass)]">
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+        <div>
+          <h3 class="text-base font-extrabold text-[var(--text-primary)]">Wallets & Accounts</h3>
+          <p class="text-xs text-[var(--text-secondary)]">Each wallet can hold its own native currency</p>
+        </div>
+        <button onclick="closeAccountManagerModal()" class="w-8 h-8 rounded-full glass-panel text-[var(--text-secondary)] text-lg font-bold flex items-center justify-center">
+          &times;
+        </button>
       </div>
 
-      <div class="space-y-3 py-3">
-        <div id="modalAccountList" class="space-y-2"></div>
+      <div class="space-y-4 py-3">
+        <div>
+          <h4 class="text-xs font-bold uppercase text-[var(--text-secondary)] tracking-wider mb-2">Configured Wallets</h4>
+          <div id="modalAccountList" class="space-y-2"></div>
+        </div>
 
-        <div class="p-3 rounded-2xl bg-slate-50 dark:bg-dark-input border border-slate-200 dark:border-slate-800">
-          <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 mb-2">➕ Add New Wallet</h4>
+        <div class="p-3.5 rounded-2xl glass-input">
+          <h4 class="text-xs font-bold text-[var(--text-primary)] mb-2">➕ Add New Wallet</h4>
           <div class="grid grid-cols-3 gap-2">
-            <input type="text" id="newAccountName" placeholder="Wallet Name" class="col-span-2 px-3 py-1.5 text-xs bg-white dark:bg-dark-card border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white" />
-            <select id="newAccountCurrency" class="px-2 py-1.5 text-xs bg-white dark:bg-dark-card border border-slate-300 dark:border-slate-700 rounded-xl font-bold text-slate-900 dark:text-white"></select>
+            <input type="text" id="newAccountName" placeholder="e.g. Wise USD, Cash" class="col-span-2 px-3 py-1.5 text-xs glass-input rounded-xl font-bold text-[var(--text-primary)] focus:outline-none" />
+            <select id="newAccountCurrency" class="px-2 py-1.5 text-xs glass-input rounded-xl font-bold text-[var(--text-primary)] focus:outline-none"></select>
           </div>
           <div class="flex gap-2 mt-2">
-            <input type="number" id="newAccountInitial" step="0.01" placeholder="Initial Balance" class="flex-1 px-3 py-1.5 text-xs bg-white dark:bg-dark-card border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white" />
-            <button onclick="addNewAccountFromModal()" class="px-3 py-1.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">Add</button>
+            <input type="number" id="newAccountInitial" step="0.01" placeholder="Initial Balance (optional)" class="flex-1 px-3 py-1.5 text-xs glass-input rounded-xl text-[var(--text-primary)] focus:outline-none" />
+            <button onclick="addNewAccountFromModal()" class="px-3.5 py-1.5 bg-gradient-to-r from-[var(--accent)] to-[var(--accent-cyan)] text-white font-bold text-xs rounded-xl shadow-xs transition btn-press">
+              Add Wallet
+            </button>
           </div>
         </div>
       </div>
 
-      <div class="pt-3 border-t border-slate-100 dark:border-dark-border text-right">
-        <button onclick="closeAccountManagerModal()" class="px-4 py-2 bg-slate-800 text-white font-bold text-xs rounded-xl">Done</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================
-       MODAL: CONVERTER & RATES
-       ============================================================ -->
-  <div id="rateModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 hidden">
-    <div class="bg-white dark:bg-dark-surface rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto p-5 shadow-2xl border border-slate-200 dark:border-dark-border">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-dark-border">
-        <h3 class="text-base font-black text-slate-900 dark:text-white">💱 Currency Converter</h3>
-        <button onclick="closeRateModal()" class="text-slate-400 text-xl font-bold">&times;</button>
-      </div>
-
-      <div class="space-y-3 py-3">
-        <div class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-2xl">
-          <div class="grid grid-cols-7 gap-1.5 items-center">
-            <input type="number" id="calcAmount" value="100" oninput="runQuickConverter()" class="col-span-3 px-2.5 py-1.5 text-xs font-black bg-white dark:bg-dark-card border border-amber-300 dark:border-amber-700 rounded-xl" />
-            <select id="calcFromCurrency" onchange="runQuickConverter()" class="col-span-3 px-2 py-1.5 text-xs font-bold bg-white dark:bg-dark-card border border-amber-300 dark:border-amber-700 rounded-xl"></select>
-            <span class="text-center font-bold text-amber-600 col-span-1">➔</span>
-          </div>
-          <div class="mt-2">
-            <select id="calcToCurrency" onchange="runQuickConverter()" class="w-full px-2 py-1.5 text-xs font-bold bg-white dark:bg-dark-card border border-amber-300 dark:border-amber-700 rounded-xl"></select>
-          </div>
-          <div class="mt-2 pt-2 border-t border-amber-500/20 flex justify-between items-center text-xs">
-            <span class="text-amber-700 dark:text-amber-400 font-bold">Converted:</span>
-            <span id="calcResultDisplay" class="text-base font-black text-slate-900 dark:text-white">৳12,225.00</span>
-          </div>
-        </div>
-
-        <button onclick="fetchLiveDailyRates(true)" class="w-full py-2 bg-slate-100 dark:bg-dark-input hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl transition">
-          🔄 Sync Fresh Market Rates Now
+      <div class="pt-3 border-t border-[var(--border-color)] flex justify-end">
+        <button onclick="closeAccountManagerModal()" class="px-4 py-2 bg-[var(--accent)] text-white font-bold text-xs rounded-xl transition btn-press">
+          Save & Close
         </button>
       </div>
     </div>
   </div>
 
   <!-- ============================================================
-       MODAL: BACKUP & RESTORE
+       MODAL: CURRENCY CONVERTER & LIVE RATES
        ============================================================ -->
-  <div id="backupModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 hidden">
-    <div class="bg-white dark:bg-dark-surface rounded-3xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 dark:border-dark-border">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-dark-border">
-        <h3 class="text-base font-black text-slate-900 dark:text-white">🛡️ Backup & Restore</h3>
-        <button onclick="closeBackupModal()" class="text-slate-400 text-xl font-bold">&times;</button>
+  <div id="rateModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="glass-panel rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-5 sm:p-6 shadow-glass border border-[var(--border-glass)]">
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+        <div>
+          <h3 class="text-base font-extrabold text-[var(--text-primary)]">💱 Currency Converter</h3>
+          <p class="text-xs text-[var(--text-secondary)]">Silent background rate engine (35+ Currencies)</p>
+        </div>
+        <button onclick="closeRateModal()" class="w-8 h-8 rounded-full glass-panel text-[var(--text-secondary)] text-lg font-bold flex items-center justify-center">
+          &times;
+        </button>
+      </div>
+
+      <div class="space-y-4 py-3">
+        <div class="p-4 glass-input rounded-2xl space-y-2.5">
+          <div class="grid grid-cols-7 gap-2 items-center">
+            <input type="number" id="calcAmount" value="100" oninput="runQuickConverter()" class="col-span-3 px-2.5 py-1.5 text-xs font-black glass-input rounded-xl tabular-nums text-[var(--text-primary)]" />
+            <select id="calcFromCurrency" onchange="runQuickConverter()" class="col-span-3 px-2 py-1.5 text-xs font-bold glass-input rounded-xl text-[var(--text-primary)]"></select>
+            <span class="text-center font-bold text-[var(--accent)] col-span-1">➔</span>
+          </div>
+          <div>
+            <select id="calcToCurrency" onchange="runQuickConverter()" class="w-full px-2 py-1.5 text-xs font-bold glass-input rounded-xl text-[var(--text-primary)]"></select>
+          </div>
+          <div class="pt-2.5 border-t border-[var(--border-color)] flex justify-between items-center text-xs">
+            <span class="text-[var(--text-secondary)] font-bold">Calculated Amount:</span>
+            <span id="calcResultDisplay" class="text-lg font-black text-[var(--text-primary)] tabular-nums">৳12,225.00</span>
+          </div>
+        </div>
+
+        <button onclick="fetchLiveDailyRates(true)" class="w-full py-2.5 glass-panel hover:border-[var(--accent)] text-[var(--text-primary)] font-bold text-xs rounded-xl transition btn-press flex items-center justify-center gap-1.5">
+          <span>🔄</span>
+          <span>Sync Real-Time Market Rates</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: DATA BACKUP & RESTORE
+       ============================================================ -->
+  <div id="backupModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="glass-panel rounded-3xl max-w-sm w-full p-5 sm:p-6 shadow-glass border border-[var(--border-glass)]">
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+        <div>
+          <h3 class="text-base font-extrabold text-[var(--text-primary)]">🛡️ Backup & Restore</h3>
+          <p class="text-xs text-[var(--text-secondary)]">Client-side JSON portability</p>
+        </div>
+        <button onclick="closeBackupModal()" class="w-8 h-8 rounded-full glass-panel text-[var(--text-secondary)] text-lg font-bold flex items-center justify-center">
+          &times;
+        </button>
       </div>
 
       <div class="space-y-3 py-3">
-        <div class="p-3 bg-slate-50 dark:bg-dark-input border border-slate-200 dark:border-slate-800 rounded-2xl">
-          <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Save a copy of your records to your phone storage.</p>
-          <button onclick="downloadJsonBackup()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition">
+        <div class="p-3.5 glass-input rounded-2xl">
+          <p class="text-xs text-[var(--text-secondary)] mb-2.5">Save all your wallets, balances, and records to your device.</p>
+          <button onclick="downloadJsonBackup()" class="w-full py-2.5 bg-gradient-to-r from-[var(--accent)] to-[var(--accent-cyan)] text-white font-bold text-xs rounded-xl shadow-xs transition btn-press">
             📥 Download Backup (.json)
           </button>
         </div>
 
-        <div class="p-3 bg-slate-50 dark:bg-dark-input border border-slate-200 dark:border-slate-800 rounded-2xl">
-          <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Restore data from previously saved file.</p>
+        <div class="p-3.5 glass-input rounded-2xl">
+          <p class="text-xs text-[var(--text-secondary)] mb-2.5">Restore data from previously saved JSON backup.</p>
           <input type="file" id="restoreFileInput" accept=".json" class="hidden" onchange="handleRestoreFile(event)" />
-          <button onclick="document.getElementById('restoreFileInput').click()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl transition">
+          <button onclick="document.getElementById('restoreFileInput').click()" class="w-full py-2.5 glass-panel hover:border-[var(--accent)] text-[var(--text-primary)] font-bold text-xs rounded-xl transition btn-press">
             📤 Restore from File (.json)
           </button>
         </div>
@@ -533,10 +1077,35 @@
   </div>
 
   <!-- ============================================================
-       CORE JAVASCRIPT LOGIC
+       MODAL: CONFIRM DELETION
+       ============================================================ -->
+  <div id="deleteModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="glass-panel rounded-3xl max-w-sm w-full p-5 sm:p-6 shadow-glass border border-[var(--border-glass)]">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 rounded-2xl bg-rose-500/15 text-[var(--expense)] flex items-center justify-center text-lg">
+          🗑️
+        </div>
+        <div>
+          <h3 id="deleteModalTitle" class="text-sm font-extrabold text-[var(--text-primary)]">Confirm Deletion</h3>
+          <p class="text-xs text-[var(--text-secondary)]">This action cannot be undone.</p>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-[var(--border-color)]">
+        <button onclick="closeDeleteModal()" class="px-3.5 py-1.5 text-xs font-bold text-[var(--text-secondary)] hover:bg-[var(--bg-input)] rounded-xl transition">
+          Cancel
+        </button>
+        <button id="confirmDeleteBtn" onclick="executeConfirmedDelete()" class="px-3.5 py-1.5 text-xs font-bold text-white bg-[var(--expense)] hover:opacity-90 rounded-xl shadow-xs transition btn-press">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       100% PRESERVED CORE BUSINESS LOGIC & ENGINES
        ============================================================ -->
   <script>
-    // 1. World Currencies
+    // 1. Universal Currencies (35+ World Currencies)
     const CURRENCIES = [
       { code: 'BDT', symbol: '৳', name: 'Bangladeshi Taka', flag: '🇧🇩', defaultRateToUSD: 122.25 },
       { code: 'USD', symbol: '$', name: 'US Dollar', flag: '🇺🇸', defaultRateToUSD: 1.00 },
@@ -562,26 +1131,31 @@
     const CURRENCY_MAP = {};
     CURRENCIES.forEach(c => CURRENCY_MAP[c.code] = c);
 
-    // 2. Storage Keys
+    // 2. Storage Keys (LOCKED & PRESERVED)
     const STORAGE_KEY = 'bizledger_data_transactions';
     const ACCOUNTS_KEY = 'bizledger_data_accounts';
     const SETTINGS_KEY = 'bizledger_data_settings';
     const RATES_CACHE_KEY = 'bizledger_data_rates';
+    const PRIVACY_KEY = 'bizledger_balance_hidden';
 
     let primaryCurrency = 'BDT';
     let secondaryCurrency = 'USD';
     let transactions = [];
     let accounts = [];
     let ratesFromUSD = {};
+    let isBalanceHidden = false;
 
     CURRENCIES.forEach(c => ratesFromUSD[c.code] = c.defaultRateToUSD);
 
     const DEFAULT_ACCOUNTS = [
       { id: 'acc_bank', name: 'City Bank', icon: '🏦', currency: 'BDT', initialBalance: 80000 },
-      { id: 'acc_bkash', name: 'bKash', icon: '📱', currency: 'BDT', initialBalance: 25000 },
-      { id: 'acc_usd', name: 'Upwork USD', icon: '🌐', currency: 'USD', initialBalance: 650 },
-      { id: 'acc_cash', name: 'Cash', icon: '💵', currency: 'BDT', initialBalance: 15000 }
+      { id: 'acc_bkash', name: 'bKash Personal', icon: '📱', currency: 'BDT', initialBalance: 25000 },
+      { id: 'acc_usd', name: 'Upwork USD Wallet', icon: '🌐', currency: 'USD', initialBalance: 650 },
+      { id: 'acc_cash', name: 'Cash in Hand', icon: '💵', currency: 'BDT', initialBalance: 15000 }
     ];
+
+    let deleteTargetId = null;
+    let isDeletingAll = false;
 
     // Theme Switch
     function toggleTheme() {
@@ -591,7 +1165,22 @@
       if (icon) icon.textContent = isDark ? '☀️' : '🌙';
     }
 
-    // Currency Engine
+    // Privacy Mask Toggle
+    function toggleBalancePrivacy() {
+      isBalanceHidden = !isBalanceHidden;
+      localStorage.setItem(PRIVACY_KEY, isBalanceHidden ? 'true' : 'false');
+      updatePrivacyIcons();
+      updateSummary();
+      renderWallets();
+      renderTable();
+    }
+
+    function updatePrivacyIcons() {
+      const icon = document.getElementById('privacyIcon');
+      if (icon) icon.textContent = isBalanceHidden ? '🔒' : '👁️';
+    }
+
+    // Currency Conversion Engine
     function convertAny(amount, fromCode, toCode) {
       if (fromCode === toCode || amount === 0) return amount;
       const fromRate = ratesFromUSD[fromCode] || CURRENCY_MAP[fromCode]?.defaultRateToUSD || 1.0;
@@ -600,12 +1189,13 @@
     }
 
     function formatCurrency(val, code) {
+      if (isBalanceHidden) return '••••••';
       const meta = CURRENCY_MAP[code] || { symbol: code };
       const decimals = (code === 'JPY') ? 0 : 2;
       return `${meta.symbol} ${val.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
     }
 
-    // Silent background rate fetcher
+    // Background Exchange Rate Engine
     async function fetchLiveDailyRates(userTriggered = false) {
       try {
         const res = await fetch('https://open.er-api.com/v6/latest/USD');
@@ -623,7 +1213,7 @@
 
       updateHeaderRates();
       refreshAll();
-      if (userTriggered) showToast('Rates synchronized!');
+      if (userTriggered) showToast('Live rates synchronized!');
     }
 
     function updateHeaderRates() {
@@ -632,7 +1222,7 @@
       if (el) el.textContent = `$1 = ৳${bdtRate.toFixed(2)}`;
     }
 
-    // Accounts Balances
+    // Wallet Balances Engine
     function calculateAccountBalances() {
       const map = {};
       accounts.forEach(acc => {
@@ -663,44 +1253,80 @@
       const container = document.getElementById('accountCardsContainer');
       container.innerHTML = '';
 
-      accounts.forEach(acc => {
+      document.getElementById('walletCountBadge').textContent = `${accounts.length} Wallet${accounts.length === 1 ? '' : 's'}`;
+
+      const gradients = [
+        'from-purple-900/40 via-indigo-900/20 to-blue-900/40 border-indigo-500/30',
+        'from-emerald-900/40 via-teal-900/20 to-cyan-900/40 border-emerald-500/30',
+        'from-blue-900/40 via-cyan-900/20 to-indigo-900/40 border-cyan-500/30',
+        'from-amber-900/40 via-orange-900/20 to-rose-900/40 border-amber-500/30'
+      ];
+
+      accounts.forEach((acc, idx) => {
         const b = balMap[acc.id] || { initial: 0, current: 0, currency: acc.currency || 'BDT' };
+        const grad = gradients[idx % gradients.length];
+
         const card = document.createElement('div');
-        card.className = 'min-w-[140px] sm:min-w-0 p-3 rounded-2xl bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border shadow-xs flex-shrink-0 flex flex-col justify-between';
+        card.className = `min-w-[175px] sm:min-w-0 p-4 rounded-3xl glass-panel bg-gradient-to-br ${grad} card-sheen flex-shrink-0 flex flex-col justify-between`;
         card.innerHTML = `
-          <div class="flex items-center justify-between gap-1 mb-1">
-            <span class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate flex items-center gap-1">
+          <div class="flex items-center justify-between gap-1 mb-2">
+            <span class="text-xs font-black text-[var(--text-primary)] truncate flex items-center gap-1.5">
               <span>${acc.icon || '💼'}</span>
               <span class="truncate">${acc.name}</span>
             </span>
-            <span class="text-[9px] font-black px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+            <span class="text-[9px] font-black px-2 py-0.5 rounded-full bg-[var(--bg-input)] text-[var(--text-secondary)] border border-[var(--border-color)]">
               ${b.currency}
             </span>
           </div>
           <div>
-            <div class="text-sm font-black text-slate-900 dark:text-white">
+            <div class="text-sm sm:text-base font-black text-[var(--text-primary)] tabular-nums">
               ${formatCurrency(b.current, b.currency)}
             </div>
-            <div class="text-[10px] text-slate-400">
-              Init: ${formatCurrency(b.initial, b.currency)}
+            <div class="text-[10px] font-semibold text-[var(--text-secondary)] mt-0.5 tabular-nums">
+              Initial: ${formatCurrency(b.initial, b.currency)}
             </div>
           </div>
         `;
         container.appendChild(card);
       });
 
-      // Populate form selects
-      const sel = document.getElementById('modalTxAccount');
-      sel.innerHTML = '';
+      // Update Form Selects
+      const formSel = document.getElementById('transactionAccount');
+      const modalSel = document.getElementById('modalTxAccount');
+      const filterSel = document.getElementById('filterAccount');
+
+      const prevFormVal = formSel.value;
+      formSel.innerHTML = '';
+      if (modalSel) modalSel.innerHTML = '';
+
       accounts.forEach(a => {
         const opt = document.createElement('option');
         opt.value = a.id;
         opt.textContent = `${a.icon || '💼'} ${a.name} (${a.currency})`;
-        sel.appendChild(opt);
+        formSel.appendChild(opt);
+
+        if (modalSel) {
+          const opt2 = opt.cloneNode(true);
+          modalSel.appendChild(opt2);
+        }
       });
+
+      if (prevFormVal && accounts.some(a => a.id === prevFormVal)) {
+        formSel.value = prevFormVal;
+      }
+
+      const prevFilter = filterSel.value;
+      filterSel.innerHTML = '<option value="ALL">All Wallets</option>';
+      accounts.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a.id;
+        opt.textContent = `${a.icon || '💼'} ${a.name}`;
+        filterSel.appendChild(opt);
+      });
+      if (prevFilter) filterSel.value = prevFilter;
     }
 
-    // Summary Metrics
+    // Update Summary Metrics & Cash Flow Ratio
     function updateSummary() {
       let initUSD = 0;
       accounts.forEach(acc => {
@@ -708,107 +1334,310 @@
       });
 
       let incUSD = 0, expUSD = 0;
+      let incCount = 0, expCount = 0;
+
       transactions.forEach(t => {
         const amtUSD = t.usdEquivalent !== undefined ? t.usdEquivalent : convertAny(t.amount, t.currency, 'USD');
-        if (t.type === 'Income') incUSD += amtUSD;
-        else if (t.type === 'Expense') expUSD += amtUSD;
+        if (t.type === 'Income') {
+          incUSD += amtUSD;
+          incCount++;
+        } else if (t.type === 'Expense') {
+          expUSD += amtUSD;
+          expCount++;
+        }
       });
 
       const currentUSD = initUSD + incUSD - expUSD;
+      const netProfitUSD = incUSD - expUSD;
 
       document.getElementById('combinedCurrentPrimary').textContent = formatCurrency(convertAny(currentUSD, 'USD', primaryCurrency), primaryCurrency);
-      document.getElementById('combinedCurrentSecondary').textContent = `≈ ${formatCurrency(currentUSD, 'USD')} USD`;
+      document.getElementById('combinedCurrentSecondary').textContent = isBalanceHidden ? '≈ ••••••' : `≈ ${formatCurrency(currentUSD, 'USD')} USD`;
       document.getElementById('combinedInitialPrimary').textContent = formatCurrency(convertAny(initUSD, 'USD', primaryCurrency), primaryCurrency);
       document.getElementById('totalIncomePrimary').textContent = formatCurrency(convertAny(incUSD, 'USD', primaryCurrency), primaryCurrency);
       document.getElementById('totalExpensePrimary').textContent = formatCurrency(convertAny(expUSD, 'USD', primaryCurrency), primaryCurrency);
+
+      document.getElementById('incomeCount').textContent = incCount;
+      document.getElementById('expenseCount').textContent = expCount;
+
+      const netSign = netProfitUSD >= 0 ? '+' : '';
+      const netPrim = convertAny(netProfitUSD, 'USD', primaryCurrency);
+      const netEl = document.getElementById('netProfitSideBySide');
+      netEl.textContent = isBalanceHidden ? '••••••' : `${netSign}${formatCurrency(netPrim, primaryCurrency)}`;
+
+      const badge = document.getElementById('profitBadge');
+      if (netProfitUSD > 0) {
+        netEl.className = 'font-bold text-[var(--income)] tabular-nums';
+        badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/15 text-[var(--income)] border border-emerald-500/30';
+        badge.textContent = 'Profitable';
+      } else if (netProfitUSD < 0) {
+        netEl.className = 'font-bold text-[var(--expense)] tabular-nums';
+        badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-500/15 text-[var(--expense)] border border-rose-500/30';
+        badge.textContent = 'Net Loss';
+      } else {
+        netEl.className = 'font-bold text-[var(--text-secondary)] tabular-nums';
+        badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black glass-panel text-[var(--text-secondary)]';
+        badge.textContent = 'Even';
+      }
+
+      // Cash Flow Ratio Bar
+      const totalFlow = incUSD + expUSD;
+      const incBar = document.getElementById('cashFlowIncomeBar');
+      const expBar = document.getElementById('cashFlowExpenseBar');
+      const ratioText = document.getElementById('cashFlowRatioText');
+
+      if (totalFlow > 0) {
+        const incPct = Math.round((incUSD / totalFlow) * 100);
+        const expPct = 100 - incPct;
+        incBar.style.width = `${incPct}%`;
+        expBar.style.width = `${expPct}%`;
+        ratioText.textContent = `${incPct}% Inflow vs ${expPct}% Outflow`;
+      } else {
+        incBar.style.width = '50%';
+        expBar.style.width = '50%';
+        ratioText.textContent = 'No cash flow recorded yet';
+      }
     }
 
-    // Render Transactions
+    // Render Transactions Table & Mobile Feed
     function renderTable() {
-      const typeFilter = document.getElementById('mobileFilterType')?.value || 'ALL';
-      let displayed = transactions.filter(t => (typeFilter === 'ALL' || t.type === typeFilter));
+      const typeFilter = document.getElementById('filterType')?.value || 'ALL';
+      const accountFilter = document.getElementById('filterAccount')?.value || 'ALL';
+      const searchKeyword = (document.getElementById('txSearchInput')?.value || '').toLowerCase().trim();
+
+      let displayed = transactions.filter(t => {
+        const matchesType = (typeFilter === 'ALL' || t.type === typeFilter);
+        const matchesAccount = (accountFilter === 'ALL' || t.accountId === accountFilter);
+        const matchesSearch = !searchKeyword || (t.description && t.description.toLowerCase().includes(searchKeyword));
+        return matchesType && matchesAccount && matchesSearch;
+      });
 
       displayed.sort((a, b) => new Date(b.date) - new Date(a.date));
 
+      const tableBody = document.getElementById('transactionTableBody');
       const mobileList = document.getElementById('mobileTransactionList');
-      const desktopList = document.getElementById('desktopTableBody');
       const emptyState = document.getElementById('emptyState');
+      const footerCount = document.getElementById('footerCount');
 
+      tableBody.innerHTML = '';
       mobileList.innerHTML = '';
-      desktopList.innerHTML = '';
 
       if (displayed.length === 0) {
         emptyState.classList.remove('hidden');
+        footerCount.textContent = '0 transactions';
       } else {
         emptyState.classList.add('hidden');
+        footerCount.textContent = `${displayed.length} of ${transactions.length} record${transactions.length === 1 ? '' : 's'}`;
 
         displayed.forEach(t => {
           const isInc = t.type === 'Income';
-          const color = isInc ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
+          const colorClass = isInc ? 'text-[var(--income)]' : 'text-[var(--expense)]';
+          const badgeClass = isInc 
+            ? 'bg-emerald-500/15 text-[var(--income)] border-emerald-500/25' 
+            : 'bg-rose-500/15 text-[var(--expense)] border-rose-500/25';
           const sign = isInc ? '+' : '-';
-          const iconBg = isInc ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400';
-          const acc = accounts.find(a => a.id === t.accountId);
-          const accName = acc ? `${acc.icon || '💼'} ${acc.name}` : 'Wallet';
 
-          const primVal = convertAny(t.usdEquivalent !== undefined ? t.usdEquivalent : convertAny(t.amount, t.currency, 'USD'), 'USD', primaryCurrency);
+          const usdVal = t.usdEquivalent !== undefined ? t.usdEquivalent : convertAny(t.amount, t.currency, 'USD');
+          const primVal = convertAny(usdVal, 'USD', primaryCurrency);
+          const secVal = convertAny(usdVal, 'USD', secondaryCurrency);
 
-          // Mobile Item
-          const item = document.createElement('div');
-          item.className = 'py-2.5 flex items-center justify-between gap-3';
-          item.innerHTML = `
-            <div class="flex items-center gap-3 min-w-0">
-              <div class="w-10 h-10 rounded-2xl ${iconBg} flex items-center justify-center text-lg font-black flex-shrink-0">
-                ${isInc ? '↓' : '↑'}
+          const accObj = accounts.find(a => a.id === t.accountId);
+          const accName = accObj ? `${accObj.icon || '💼'} ${accObj.name}` : 'Wallet';
+
+          // Desktop Row
+          const row = document.createElement('tr');
+          row.className = 'hover:bg-[var(--bg-input)]/50 transition-colors group';
+          row.innerHTML = `
+            <td class="py-3.5 px-4 whitespace-nowrap text-xs text-[var(--text-secondary)] font-medium">
+              ${t.date}
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="font-bold text-[var(--text-primary)] block line-clamp-1" title="${escapeHtml(t.description)}">
+                ${escapeHtml(t.description)}
+              </span>
+              <span class="text-[10px] text-[var(--text-secondary)]">Entered: ${formatCurrency(t.amount, t.currency)} (${t.currency})</span>
+            </td>
+            <td class="py-3.5 px-3 text-center whitespace-nowrap">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold glass-panel text-[var(--text-primary)]">
+                ${escapeHtml(accName)}
+              </span>
+            </td>
+            <td class="py-3.5 px-3 text-center whitespace-nowrap">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border ${badgeClass}">
+                ${t.type}
+              </span>
+            </td>
+            <td class="py-3.5 px-4 text-right whitespace-nowrap">
+              <div class="font-black text-sm ${colorClass} tabular-nums">
+                ${sign} ${formatCurrency(primVal, primaryCurrency)}
               </div>
-              <div class="min-w-0">
-                <span class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block truncate leading-tight">
+              <div class="text-[10px] text-[var(--text-secondary)] font-medium tabular-nums">
+                ≈ ${formatCurrency(secVal, secondaryCurrency)}
+              </div>
+            </td>
+            <td class="py-3.5 px-3 text-center whitespace-nowrap">
+              <button 
+                onclick="promptDeleteTransaction('${t.id}')" 
+                class="p-1.5 text-[var(--text-muted)] hover:text-[var(--expense)] hover:bg-rose-500/10 rounded-lg transition" 
+                title="Delete transaction"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </td>
+          `;
+          tableBody.appendChild(row);
+
+          // Mobile Card
+          const card = document.createElement('div');
+          card.className = 'p-3.5 rounded-2xl glass-panel space-y-2';
+          card.innerHTML = `
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0 flex-1">
+                <span class="font-bold text-xs sm:text-sm text-[var(--text-primary)] block truncate">
                   ${escapeHtml(t.description)}
                 </span>
-                <span class="text-[10px] text-slate-400 block mt-0.5">
-                  ${t.date} • <b class="text-slate-600 dark:text-slate-300">${escapeHtml(accName)}</b>
+                <span class="text-[10px] text-[var(--text-secondary)] block mt-0.5">
+                  ${t.date} • Entered: ${formatCurrency(t.amount, t.currency)}
                 </span>
               </div>
+              <div class="text-right whitespace-nowrap">
+                <div class="font-black text-xs sm:text-sm ${colorClass} tabular-nums">
+                  ${sign} ${formatCurrency(primVal, primaryCurrency)}
+                </div>
+                <div class="text-[9px] text-[var(--text-secondary)] tabular-nums">
+                  ≈ ${formatCurrency(secVal, secondaryCurrency)}
+                </div>
+              </div>
             </div>
-            <div class="text-right flex-shrink-0">
-              <span class="text-xs sm:text-sm font-black ${color} block">
-                ${sign} ${formatCurrency(primVal, primaryCurrency)}
-              </span>
-              <button onclick="deleteTx('${t.id}')" class="text-[10px] text-rose-500 font-bold hover:underline">
+            <div class="flex items-center justify-between pt-1.5 border-t border-[var(--border-color)] text-[10px]">
+              <div class="flex items-center gap-1.5">
+                <span class="px-2 py-0.5 rounded text-[9px] font-bold border ${badgeClass}">
+                  ${t.type}
+                </span>
+                <span class="px-2 py-0.5 rounded text-[9px] font-bold glass-panel text-[var(--text-primary)] truncate max-w-[120px]">
+                  ${escapeHtml(accName)}
+                </span>
+              </div>
+              <button 
+                onclick="promptDeleteTransaction('${t.id}')" 
+                class="text-[var(--expense)] font-bold hover:underline"
+              >
                 Delete
               </button>
             </div>
           `;
-          mobileList.appendChild(item);
-
-          // Desktop Row
-          const row = document.createElement('tr');
-          row.className = 'hover:bg-slate-50 dark:hover:bg-dark-input transition';
-          row.innerHTML = `
-            <td class="py-3 px-4 text-xs text-slate-400">${t.date}</td>
-            <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">${escapeHtml(t.description)}</td>
-            <td class="py-3 px-3 text-center text-xs font-bold text-slate-600 dark:text-slate-300">${escapeHtml(accName)}</td>
-            <td class="py-3 px-4 text-right font-black ${color}">${sign} ${formatCurrency(primVal, primaryCurrency)}</td>
-            <td class="py-3 px-3 text-center">
-              <button onclick="deleteTx('${t.id}')" class="text-rose-500 hover:text-rose-700 text-xs font-bold">Delete</button>
-            </td>
-          `;
-          desktopList.appendChild(row);
+          mobileList.appendChild(card);
         });
       }
     }
 
     function escapeHtml(s) {
-      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    // Modal Add Transaction
-    window.openTransactionModal = function(type = 'Income') {
-      const radio = document.querySelector(`input[name="txType"][value="${type}"]`);
-      if (radio) {
-        radio.checked = true;
-        updateFormTypeStyling();
+    // Form Conversion Preview
+    function handleTransactionCurrencyChange() {
+      const cur = document.getElementById('transactionCurrency').value;
+      const meta = CURRENCY_MAP[cur] || { symbol: cur };
+      document.getElementById('currencyPrefix').textContent = meta.symbol;
+
+      const customRateRow = document.getElementById('customRateRow');
+      if (cur === primaryCurrency) {
+        customRateRow.classList.add('hidden');
+      } else {
+        customRateRow.classList.remove('hidden');
+        document.getElementById('txRateCurCode').textContent = cur;
+        document.getElementById('txRateBaseSymbol').textContent = (CURRENCY_MAP[primaryCurrency] || {}).symbol || primaryCurrency;
+        const rateToPrimary = convertAny(1, cur, primaryCurrency);
+        document.getElementById('txCustomRate').value = rateToPrimary.toFixed(4);
       }
+      updateInputLiveConversion();
+    }
+
+    function updateInputLiveConversion() {
+      const cur = document.getElementById('transactionCurrency').value;
+      const amt = parseFloat(document.getElementById('amount').value) || 0;
+
+      document.getElementById('previewPrimaryName').textContent = primaryCurrency;
+      document.getElementById('previewSecondaryName').textContent = secondaryCurrency;
+
+      if (amt <= 0) {
+        document.getElementById('previewPrimaryValue').textContent = formatCurrency(0, primaryCurrency);
+        document.getElementById('previewSecondaryValue').textContent = formatCurrency(0, secondaryCurrency);
+        return;
+      }
+
+      let inPrimary = 0;
+      if (cur === primaryCurrency) {
+        inPrimary = amt;
+      } else {
+        const customR = parseFloat(document.getElementById('txCustomRate').value);
+        if (!isNaN(customR) && customR > 0) {
+          inPrimary = amt * customR;
+        } else {
+          inPrimary = convertAny(amt, cur, primaryCurrency);
+        }
+      }
+
+      const inSecondary = convertAny(inPrimary, primaryCurrency, secondaryCurrency);
+      document.getElementById('previewPrimaryValue').textContent = formatCurrency(inPrimary, primaryCurrency);
+      document.getElementById('previewSecondaryValue').textContent = formatCurrency(inSecondary, secondaryCurrency);
+    }
+
+    // Submit Desktop Transaction Form
+    document.getElementById('transactionForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const type = document.querySelector('input[name="type"]:checked').value;
+      const accountId = document.getElementById('transactionAccount').value;
+      const desc = document.getElementById('description').value.trim();
+      const cur = document.getElementById('transactionCurrency').value;
+      const amt = parseFloat(document.getElementById('amount').value);
+      const date = document.getElementById('date').value;
+
+      if (!desc || isNaN(amt) || amt <= 0 || !date || !accountId) return;
+
+      let usdVal = 0;
+      if (cur === primaryCurrency) {
+        usdVal = convertAny(amt, primaryCurrency, 'USD');
+      } else {
+        const customR = parseFloat(document.getElementById('txCustomRate').value);
+        if (!isNaN(customR) && customR > 0) {
+          const inPrimary = amt * customR;
+          usdVal = convertAny(inPrimary, primaryCurrency, 'USD');
+        } else {
+          usdVal = convertAny(amt, cur, 'USD');
+        }
+      }
+
+      transactions.push({
+        id: 'tx_' + Date.now(),
+        accountId,
+        description: desc,
+        type,
+        currency: cur,
+        amount: Math.round(amt * 100) / 100,
+        usdEquivalent: usdVal,
+        date,
+        createdAt: Date.now()
+      });
+
+      saveData();
+      refreshAll();
+
+      document.getElementById('description').value = '';
+      document.getElementById('amount').value = '';
+      document.getElementById('description').focus();
+      showToast('Transaction saved successfully!');
+    });
+
+    // Mobile Drawer
+    window.openTransactionModal = function(type = 'Income') {
+      const radio = document.querySelector(`input[name="modalType"][value="${type}"]`);
+      if (radio) radio.checked = true;
       document.getElementById('modalTxDate').value = new Date().toISOString().split('T')[0];
+      handleModalCurrencyChange();
       document.getElementById('txModal').classList.remove('hidden');
       setTimeout(() => document.getElementById('modalTxDesc').focus(), 150);
     };
@@ -816,16 +1645,6 @@
     window.closeTransactionModal = function() {
       document.getElementById('txModal').classList.add('hidden');
     };
-
-    function updateFormTypeStyling() {
-      const isInc = document.querySelector('input[name="txType"]:checked').value === 'Income';
-      const btn = document.getElementById('saveTxBtn');
-      if (isInc) {
-        btn.className = 'w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-black rounded-2xl shadow-lg shadow-emerald-600/30 text-sm transition';
-      } else {
-        btn.className = 'w-full py-3.5 bg-rose-600 hover:bg-rose-700 active:scale-98 text-white font-black rounded-2xl shadow-lg shadow-rose-600/30 text-sm transition';
-      }
-    }
 
     function handleModalCurrencyChange() {
       const cur = document.getElementById('modalTxCurrency').value;
@@ -841,17 +1660,16 @@
       document.getElementById('modalPreviewPrimary').textContent = formatCurrency(inPrimary, primaryCurrency);
     }
 
-    // Form Submission
-    document.getElementById('txForm').addEventListener('submit', function(e) {
+    document.getElementById('modalTxForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const type = document.querySelector('input[name="txType"]:checked').value;
+      const type = document.querySelector('input[name="modalType"]:checked').value;
       const accountId = document.getElementById('modalTxAccount').value;
       const desc = document.getElementById('modalTxDesc').value.trim();
       const cur = document.getElementById('modalTxCurrency').value;
       const amt = parseFloat(document.getElementById('modalTxAmount').value);
       const date = document.getElementById('modalTxDate').value;
 
-      if (!desc || isNaN(amt) || amt <= 0 || !date) return;
+      if (!desc || isNaN(amt) || amt <= 0 || !date || !accountId) return;
 
       const usdVal = convertAny(amt, cur, 'USD');
 
@@ -872,14 +1690,47 @@
       closeTransactionModal();
       document.getElementById('modalTxDesc').value = '';
       document.getElementById('modalTxAmount').value = '';
-      showToast('Transaction saved!');
+      showToast('Transaction added!');
     });
 
-    function deleteTx(id) {
-      if (confirm('Delete this transaction?')) {
-        transactions = transactions.filter(t => t.id !== id);
+    // Delete Controls & Modal
+    function promptDeleteTransaction(id) {
+      deleteTargetId = id;
+      isDeletingAll = false;
+      document.getElementById('deleteModalTitle').textContent = 'Delete this transaction?';
+      document.getElementById('deleteModal').classList.remove('hidden');
+    }
+
+    function clearAllTransactionsPrompt() {
+      if (transactions.length === 0) return;
+      isDeletingAll = true;
+      deleteTargetId = null;
+      document.getElementById('deleteModalTitle').textContent = 'Clear all transactions?';
+      document.getElementById('deleteModal').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').classList.add('hidden');
+      deleteTargetId = null;
+      isDeletingAll = false;
+    }
+
+    function executeConfirmedDelete() {
+      if (isDeletingAll) {
+        transactions = [];
         saveData();
         refreshAll();
+        closeDeleteModal();
+        showToast('All transactions cleared.');
+        return;
+      }
+
+      if (deleteTargetId) {
+        transactions = transactions.filter(t => t.id !== deleteTargetId);
+        saveData();
+        refreshAll();
+        closeDeleteModal();
+        showToast('Transaction removed.');
       }
     }
 
@@ -887,10 +1738,13 @@
     function changePrimaryCurrency(code) {
       primaryCurrency = code;
       saveData();
+      populateDropdowns();
+      handleTransactionCurrencyChange();
       refreshAll();
+      showToast(`Primary currency set to ${code}`);
     }
 
-    // Wallets Modal
+    // Wallets Management Modal
     window.openAccountManagerModal = function() {
       renderAccountModalList();
       document.getElementById('accountModal').classList.remove('hidden');
@@ -905,10 +1759,19 @@
       list.innerHTML = '';
       accounts.forEach(acc => {
         const row = document.createElement('div');
-        row.className = 'flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 dark:bg-dark-input border border-slate-200 dark:border-slate-800 text-xs font-bold';
+        row.className = 'flex items-center justify-between p-3 rounded-2xl glass-input text-xs font-bold gap-2';
         row.innerHTML = `
-          <span>${acc.icon || '💼'} ${acc.name} (${acc.currency})</span>
-          <input type="number" step="0.01" value="${acc.initialBalance || 0}" onchange="updateAccountBalance('${acc.id}', this.value)" class="w-24 px-2 py-1 bg-white dark:bg-dark-card border border-slate-300 dark:border-slate-700 rounded-lg text-right" />
+          <div class="flex items-center gap-2 truncate">
+            <span>${acc.icon || '💼'}</span>
+            <span class="truncate text-[var(--text-primary)]">${acc.name} (${acc.currency})</span>
+          </div>
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            <span class="text-[10px] text-[var(--text-secondary)]">Init:</span>
+            <input type="number" step="0.01" value="${acc.initialBalance || 0}" onchange="updateAccountBalance('${acc.id}', this.value)" class="w-24 px-2 py-1 glass-input rounded-lg text-right text-[var(--text-primary)] focus:outline-none" />
+            <button onclick="deleteAccount('${acc.id}')" class="p-1 text-[var(--text-muted)] hover:text-[var(--expense)] rounded-lg" title="Delete wallet">
+              &times;
+            </button>
+          </div>
         `;
         list.appendChild(row);
       });
@@ -924,17 +1787,39 @@
       }
     }
 
+    function deleteAccount(id) {
+      if (accounts.length <= 1) {
+        alert('You must have at least one wallet.');
+        return;
+      }
+      if (confirm('Delete this wallet? Existing transaction history will remain.')) {
+        accounts = accounts.filter(a => a.id !== id);
+        saveData();
+        renderAccountModalList();
+        refreshAll();
+        showToast('Wallet removed.');
+      }
+    }
+
     function addNewAccountFromModal() {
       const name = document.getElementById('newAccountName').value.trim();
       const cur = document.getElementById('newAccountCurrency').value || 'BDT';
       const initial = parseFloat(document.getElementById('newAccountInitial').value) || 0;
       if (!name) return;
 
+      let icon = '💼';
+      const l = name.toLowerCase();
+      if (l.includes('bank') || l.includes('city') || l.includes('brac')) icon = '🏦';
+      else if (l.includes('bkash')) icon = '📱';
+      else if (l.includes('nagad') || l.includes('rocket')) icon = '⚡';
+      else if (l.includes('cash')) icon = '💵';
+      else if (l.includes('upwork') || l.includes('wise') || l.includes('paypal')) icon = '🌐';
+
       accounts.push({
         id: 'acc_' + Date.now(),
         name,
         currency: cur,
-        icon: '💼',
+        icon,
         initialBalance: initial
       });
 
@@ -943,9 +1828,10 @@
       saveData();
       renderAccountModalList();
       refreshAll();
+      showToast(`Wallet "${name}" added!`);
     }
 
-    // Converter Modal
+    // Currency Converter Modal
     window.openRateModal = function() {
       runQuickConverter();
       document.getElementById('rateModal').classList.remove('hidden');
@@ -968,15 +1854,25 @@
     window.closeBackupModal = function() {
       document.getElementById('backupModal').classList.add('hidden');
     };
+
     function downloadJsonBackup() {
-      const data = { accounts, transactions, primaryCurrency };
+      const data = {
+        version: 'bizledger_futuristic_v1',
+        exportedAt: new Date().toISOString(),
+        accounts,
+        transactions,
+        primaryCurrency,
+        secondaryCurrency,
+        ratesFromUSD
+      };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = `bizledger_backup_${new Date().toISOString().split('T')[0]}.json`;
       a.click();
-      showToast('Backup saved to phone storage!');
+      showToast('Backup saved to file!');
     }
+
     function handleRestoreFile(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -984,39 +1880,100 @@
       r.onload = function(evt) {
         try {
           const parsed = JSON.parse(evt.target.result);
-          if (parsed.accounts) accounts = parsed.accounts;
-          if (parsed.transactions) transactions = parsed.transactions;
+          if (parsed.accounts && Array.isArray(parsed.accounts)) accounts = parsed.accounts;
+          if (parsed.transactions && Array.isArray(parsed.transactions)) transactions = parsed.transactions;
           if (parsed.primaryCurrency) primaryCurrency = parsed.primaryCurrency;
           saveData();
+          populateDropdowns();
           refreshAll();
           closeBackupModal();
-          showToast('Data restored!');
-        } catch (err) { alert('Invalid file'); }
+          showToast('Data restored successfully!');
+        } catch (err) {
+          alert('Invalid backup file. Please select a valid BizLedger JSON file.');
+        }
       };
       r.readAsText(file);
     }
 
+    // CSV Export
     function exportCsv() {
-      let csv = 'Date,Description,Type,Currency,Amount,In Primary\n';
+      let csv = 'Date,Description,Wallet,Type,Input Currency,Original Amount,In Primary\n';
       transactions.forEach(t => {
-        csv += `${t.date},"${t.description.replace(/"/g, '""')}",${t.type},${t.currency},${t.amount},${convertAny(t.amount, t.currency, primaryCurrency)}\n`;
+        const accObj = accounts.find(a => a.id === t.accountId);
+        const accName = accObj ? accObj.name : '';
+        const primAmt = convertAny(t.amount, t.currency, primaryCurrency);
+        csv += `${t.date},"${t.description.replace(/"/g, '""')}","${accName}",${t.type},${t.currency},${t.amount},${primAmt.toFixed(2)}\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'transactions.csv';
+      a.download = `bizledger_transactions_${new Date().toISOString().split('T')[0]}.csv`;
       a.click();
+      showToast('CSV Exported!');
     }
 
+    // Demo Data
+    function loadSampleData() {
+      const today = new Date();
+      const formatDateOffset = (offset) => {
+        const d = new Date(today);
+        d.setDate(d.getDate() - offset);
+        return d.toISOString().split('T')[0];
+      };
+
+      accounts = [
+        { id: 'acc_bank', name: 'City Bank', icon: '🏦', currency: 'BDT', initialBalance: 80000 },
+        { id: 'acc_bkash', name: 'bKash Personal', icon: '📱', currency: 'BDT', initialBalance: 25000 },
+        { id: 'acc_usd', name: 'Upwork USD Wallet', icon: '🌐', currency: 'USD', initialBalance: 650 },
+        { id: 'acc_eur', name: 'Europe Client EUR', icon: '💶', currency: 'EUR', initialBalance: 300 },
+        { id: 'acc_cash', name: 'Cash in Hand', icon: '💵', currency: 'BDT', initialBalance: 15000 }
+      ];
+
+      transactions = [
+        { id: 'demo_1', accountId: 'acc_usd', date: formatDateOffset(0), description: 'US Client Web Development (Upwork)', type: 'Income', currency: 'USD', amount: 500.00, usdEquivalent: 500.00, createdAt: Date.now() - 1000 },
+        { id: 'demo_2', accountId: 'acc_bank', date: formatDateOffset(0), description: 'Local Business Consulting Payment', type: 'Income', currency: 'BDT', amount: 45000.00, usdEquivalent: convertAny(45000, 'BDT', 'USD'), createdAt: Date.now() - 2000 },
+        { id: 'demo_3', accountId: 'acc_eur', date: formatDateOffset(1), description: 'German Client Retainer', type: 'Income', currency: 'EUR', amount: 250.00, usdEquivalent: convertAny(250, 'EUR', 'USD'), createdAt: Date.now() - 3000 },
+        { id: 'demo_4', accountId: 'acc_bank', date: formatDateOffset(1), description: 'Office Space Rent from Bank', type: 'Expense', currency: 'BDT', amount: 22000.00, usdEquivalent: convertAny(22000, 'BDT', 'USD'), createdAt: Date.now() - 4000 },
+        { id: 'demo_5', accountId: 'acc_usd', date: formatDateOffset(2), description: 'OpenAI API & GitHub Copilot Subscription', type: 'Expense', currency: 'USD', amount: 40.00, usdEquivalent: 40.00, createdAt: Date.now() - 5000 },
+        { id: 'demo_6', accountId: 'acc_bkash', date: formatDateOffset(2), description: 'High-Speed Fiber Internet Bill', type: 'Expense', currency: 'BDT', amount: 1500.00, usdEquivalent: convertAny(1500, 'BDT', 'USD'), createdAt: Date.now() - 6000 }
+      ];
+
+      saveData();
+      refreshAll();
+      showToast('Sample financial data loaded!');
+    }
+
+    // Dynamic Greeting & Date
+    function updateGreetingAndDate() {
+      const now = new Date();
+      const hour = now.getHours();
+      let greeting = 'Good Evening, Founder';
+      if (hour < 12) greeting = 'Good Morning, Founder';
+      else if (hour < 17) greeting = 'Good Afternoon, Founder';
+
+      const greetingEl = document.getElementById('greetingText');
+      if (greetingEl) greetingEl.textContent = greeting;
+
+      const dateEl = document.getElementById('currentDateText');
+      if (dateEl) {
+        dateEl.textContent = now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
+      }
+    }
+
+    // Toast Notifications
     function showToast(msg) {
+      const existing = document.getElementById('fintechToast');
+      if (existing) existing.remove();
+
       const t = document.createElement('div');
-      t.className = 'fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-900/95 dark:bg-white text-white dark:text-slate-900 text-xs font-black px-4 py-2 rounded-full shadow-2xl z-50';
-      t.textContent = msg;
+      t.id = 'fintechToast';
+      t.className = 'fixed bottom-20 md:bottom-6 right-4 sm:right-6 glass-panel text-xs font-black px-4 py-2.5 rounded-2xl shadow-glass z-50 flex items-center gap-2 border-[var(--border-glass)] animate-in fade-in slide-in-from-bottom-2';
+      t.innerHTML = `<span class="text-[var(--accent)]">✦</span><span>${escapeHtml(msg)}</span>`;
       document.body.appendChild(t);
-      setTimeout(() => t.remove(), 2200);
+      setTimeout(() => { if (t) t.remove(); }, 2400);
     }
 
-    // Persistence
+    // Load & Save
     function loadData() {
       try {
         const acc = localStorage.getItem(ACCOUNTS_KEY);
@@ -1030,12 +1987,14 @@
         }
         const rates = localStorage.getItem(RATES_CACHE_KEY);
         if (rates) ratesFromUSD = JSON.parse(rates);
+        isBalanceHidden = localStorage.getItem(PRIVACY_KEY) === 'true';
       } catch (e) {
         accounts = DEFAULT_ACCOUNTS;
         transactions = [];
       }
       populateDropdowns();
       updateHeaderRates();
+      updatePrivacyIcons();
     }
 
     function saveData() {
@@ -1047,6 +2006,7 @@
     function populateDropdowns() {
       const selects = [
         document.getElementById('primaryCurrencySelect'),
+        document.getElementById('transactionCurrency'),
         document.getElementById('modalTxCurrency'),
         document.getElementById('newAccountCurrency'),
         document.getElementById('calcFromCurrency'),
@@ -1062,7 +2022,9 @@
           sel.appendChild(opt);
         });
       });
+
       document.getElementById('primaryCurrencySelect').value = primaryCurrency;
+      document.getElementById('transactionCurrency').value = primaryCurrency;
       document.getElementById('modalTxCurrency').value = primaryCurrency;
       document.getElementById('calcFromCurrency').value = 'USD';
       document.getElementById('calcToCurrency').value = 'BDT';
@@ -1074,14 +2036,17 @@
       renderTable();
     }
 
-    // Service Worker
+    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
 
-    // Init
+    // Initialization
     document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('date').value = new Date().toISOString().split('T')[0];
+      updateGreetingAndDate();
       loadData();
+      handleTransactionCurrencyChange();
       refreshAll();
       fetchLiveDailyRates(false);
     });
