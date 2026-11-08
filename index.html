@@ -66,7 +66,7 @@
           <h1 class="text-lg font-bold text-slate-900 leading-tight flex items-center gap-2">
             BizLedger
             <span class="hidden sm:inline-flex text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wide">
-              Live Trends 📈
+              Permanent Storage 🛡️
             </span>
           </h1>
           <p class="text-xs text-slate-500 font-medium">Real-Time Currency Fluctuations (Ups & Downs) & Ledger</p>
@@ -83,7 +83,7 @@
           title="Click to view all live currency rates or use the universal converter"
         >
           <span id="headerRatePulse" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>$1 = <b id="headerQuickRateDisplay">৳122.00</b></span>
+          <span>$1 = <b id="headerQuickRateDisplay">৳122.25</b></span>
           <span id="headerUsdTrendBadge" class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
             ▲ +0.25%
           </span>
@@ -112,12 +112,20 @@
           </select>
         </div>
 
+        <!-- Backup & Restore Data Button -->
+        <button onclick="openBackupModal()" title="Backup or Restore your data" class="text-xs font-semibold px-2.5 sm:px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+          </svg>
+          <span class="hidden sm:inline">Backup</span>
+        </button>
+
         <!-- Export CSV Button -->
         <button id="exportCsvBtn" title="Export transactions to CSV" class="text-xs font-semibold px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1.5">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
-          <span class="hidden md:inline">Export</span>
+          <span class="hidden md:inline">CSV</span>
         </button>
       </div>
     </div>
@@ -134,7 +142,6 @@
 
       <!-- Scrolling Currency Ticker -->
       <div id="liveTickerBar" class="ticker-scroll flex-1 text-[11px] font-semibold text-slate-300">
-        <!-- Rendered dynamically via JavaScript -->
       </div>
 
       <button onclick="fetchLiveDailyRates(true)" title="Refresh Rates Now" class="text-slate-400 hover:text-white transition flex items-center gap-1 text-[11px] font-semibold">
@@ -169,7 +176,7 @@
             <span>🏦 Accounts & Wallets</span>
             <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Multi-Currency Wallets</span>
           </h2>
-          <p class="text-xs text-slate-500">Each account can hold its own native currency with live converted totals</p>
+          <p class="text-xs text-slate-500">Each account can hold its own native currency with permanent local storage</p>
         </div>
         <button 
           onclick="openAccountManagerModal()" 
@@ -184,11 +191,10 @@
 
       <!-- Live Account Balances Grid -->
       <div id="accountCardsContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <!-- Rendered dynamically -->
       </div>
     </section>
 
-    <!-- 1. SUMMARY DASHBOARD CARDS (Side-by-Side Any Dual Currency) -->
+    <!-- 1. SUMMARY DASHBOARD CARDS -->
     <section>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         
@@ -499,6 +505,57 @@
     </div>
   </main>
 
+  <!-- MODAL: DATA BACKUP & RESTORE (100% Peace of Mind) -->
+  <div id="backupModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 animate-in fade-in zoom-in-95 duration-150">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-base font-bold">
+            🛡️
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Backup & Restore Data</h3>
+            <p class="text-xs text-slate-500">Save a copy to your computer or restore anytime</p>
+          </div>
+        </div>
+        <button onclick="closeBackupModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold p-1">
+          &times;
+        </button>
+      </div>
+
+      <div class="space-y-4 py-4">
+        
+        <!-- Download Backup -->
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+          <h4 class="text-xs font-bold text-slate-800 mb-1">📥 Export Backup File (.json)</h4>
+          <p class="text-[11px] text-slate-500 mb-3">Download a complete copy of all your accounts, balances, and transaction history.</p>
+          <button onclick="downloadJsonBackup()" class="w-full py-2.5 px-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2">
+            Download Complete Backup File
+          </button>
+        </div>
+
+        <!-- Restore Backup -->
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+          <h4 class="text-xs font-bold text-slate-800 mb-1">📤 Restore from Backup File</h4>
+          <p class="text-[11px] text-slate-500 mb-3">Upload a previously saved backup file to restore all your balances and records.</p>
+          <input type="file" id="restoreFileInput" accept=".json" class="hidden" onchange="handleRestoreFile(event)" />
+          <button onclick="document.getElementById('restoreFileInput').click()" class="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2">
+            Upload & Restore File (.json)
+          </button>
+        </div>
+
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 flex items-center justify-end">
+        <button onclick="closeBackupModal()" class="px-5 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 transition">
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- MODAL 1: ACCOUNT & MULTI-CURRENCY WALLET MANAGER -->
   <div id="accountModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-100 max-h-[90vh] flex flex-col animate-in fade-in zoom-in-95 duration-150">
@@ -647,7 +704,7 @@
           <!-- Converter Result Display -->
           <div class="mt-3 pt-2.5 border-t border-amber-200/60 flex items-center justify-between">
             <span class="text-xs text-amber-900">Converted Value:</span>
-            <span id="calcResultDisplay" class="text-base font-extrabold text-amber-950">৳12,200.00</span>
+            <span id="calcResultDisplay" class="text-base font-extrabold text-amber-950">৳12,225.00</span>
           </div>
         </div>
 
@@ -694,11 +751,12 @@
 
   <!-- JAVASCRIPT APPLICATION LOGIC -->
   <script>
-    const STORAGE_KEY = 'bizledger_global_tx_v8';
-    const SETTINGS_KEY = 'bizledger_global_settings_v8';
-    const ACCOUNTS_KEY = 'bizledger_global_accounts_v8';
-    const RATES_CACHE_KEY = 'bizledger_global_rates_v8';
-    const PREV_RATES_KEY = 'bizledger_prev_rates_v8';
+    // PERMANENT STORAGE KEYS - LOCKED FOREVER (No more version bumping so data is NEVER lost!)
+    const STORAGE_KEY = 'bizledger_data_transactions';
+    const SETTINGS_KEY = 'bizledger_data_settings';
+    const ACCOUNTS_KEY = 'bizledger_data_accounts';
+    const RATES_CACHE_KEY = 'bizledger_data_rates';
+    const PREV_RATES_KEY = 'bizledger_data_prev_rates';
 
     // 35+ Major World Currencies Catalog
     const CURRENCIES = [
@@ -784,7 +842,7 @@
     // Previous Baseline Rates for calculating live Ups & Downs
     let previousRatesFromUSD = {
       USD: 1.0,
-      BDT: 121.80, // BDT weakened slightly (rate rose from 121.80 to 122.25 -> USD up)
+      BDT: 121.80,
       EUR: 0.924,
       GBP: 0.785,
       INR: 84.20,
@@ -837,7 +895,7 @@
     let isDeletingAll = false;
 
     // Polling interval timer
-    let pollSecondsLeft = 300; // 5 minutes countdown
+    let pollSecondsLeft = 300;
     let countdownInterval = null;
 
     // DOM Elements
@@ -911,6 +969,9 @@
     const calcResultDisplay = document.getElementById('calcResultDisplay');
     const worldRatesTableContainer = document.getElementById('worldRatesTableContainer');
 
+    // Backup Modal
+    const backupModal = document.getElementById('backupModal');
+
     // Delete Modal
     const deleteModal = document.getElementById('deleteModal');
     const modalCancelBtn = document.getElementById('modalCancelBtn');
@@ -919,14 +980,10 @@
     // ==========================================
     // 📈 FLUCTUATION (UPS & DOWNS) ENGINE
     // ==========================================
-    // Calculate 24h change & percentage for any currency against BDT
     function getCurrencyTrend(code) {
       if (code === 'BDT') return { changePct: 0, isUp: false, isDown: false, isZero: true, text: '0.00%' };
 
-      // Rate of 1 unit of `code` in BDT
       const currentInBDT = convertAny(1, code, 'BDT');
-      
-      // Previous rate in BDT
       const prevCodeRate = previousRatesFromUSD[code] || ratesFromUSD[code] || 1;
       const prevBdtRate = previousRatesFromUSD.BDT || ratesFromUSD.BDT || 122;
       const prevInBDT = (1 / prevCodeRate) * prevBdtRate;
@@ -968,7 +1025,6 @@
       }
     }
 
-    // Convert Any Currency
     function convertAny(amount, fromCode, toCode) {
       if (fromCode === toCode) return amount;
       const rateFrom = ratesFromUSD[fromCode] || 1.0;
@@ -1014,9 +1070,6 @@
       dateInput.value = today;
     }
 
-    // ==========================================
-    // 🌐 RENDER LIVE TICKER WITH UPS & DOWNS
-    // ==========================================
     function renderLiveTicker() {
       const tickerCurrencies = ['USD', 'EUR', 'GBP', 'SAR', 'AED', 'INR', 'CAD', 'AUD', 'SGD', 'MYR', 'QAR', 'KWD', 'JPY', 'CNY', 'TRY'];
       liveTickerBar.innerHTML = '';
@@ -1042,7 +1095,6 @@
         liveTickerBar.appendChild(item);
       });
 
-      // Update Header USD Trend Pill
       const usdTrend = getCurrencyTrend('USD');
       headerUsdTrendBadge.textContent = usdTrend.text;
       if (usdTrend.isUp) {
@@ -1055,7 +1107,7 @@
     }
 
     // ==========================================
-    // 🌐 LIVE DAILY RATES FETCH (With Historical Tracking)
+    // 🌐 LIVE DAILY RATES FETCH
     // ==========================================
     async function fetchLiveDailyRates(userTriggered = false) {
       const refreshIcon = document.getElementById('refreshModalIcon');
@@ -1093,7 +1145,6 @@
       }
 
       if (newRates) {
-        // Shift previous rates to preserve exact live fluctuation
         previousRatesFromUSD = { ...ratesFromUSD };
         
         Object.keys(newRates).forEach(code => {
@@ -1107,7 +1158,6 @@
       if (refreshIcon) refreshIcon.classList.remove('spin-active');
       if (tickerIcon) tickerIcon.classList.remove('spin-active');
 
-      // Reset polling timer
       pollSecondsLeft = 300;
 
       updateHeaderAndRateDisplays();
@@ -1127,7 +1177,6 @@
       } catch (e) {}
     }
 
-    // Auto-polling timer (every 5 minutes)
     function startCountdownTimer() {
       if (countdownInterval) clearInterval(countdownInterval);
       countdownInterval = setInterval(() => {
@@ -1156,7 +1205,6 @@
       setTimeout(() => banner.remove(), 2500);
     }
 
-    // Render Table in Modal with Live Ups & Downs
     function renderWorldRatesTable() {
       worldRatesTableContainer.innerHTML = '';
       const displayCurrencies = ['BDT', 'EUR', 'GBP', 'INR', 'SAR', 'AED', 'CAD', 'AUD', 'SGD', 'MYR', 'QAR', 'KWD', 'JPY', 'CNY', 'TRY', 'CHF', 'PKR', 'THB'];
@@ -1213,6 +1261,67 @@
 
     window.closeRateModal = function () {
       rateModal.classList.add('hidden');
+    };
+
+    // ==========================================
+    // 🛡️ DATA BACKUP & RESTORE LOGIC
+    // ==========================================
+    window.openBackupModal = function () {
+      backupModal.classList.remove('hidden');
+    };
+
+    window.closeBackupModal = function () {
+      backupModal.classList.add('hidden');
+    };
+
+    window.downloadJsonBackup = function () {
+      const backupData = {
+        version: 'bizledger_backup_v1',
+        exportedAt: new Date().toISOString(),
+        primaryCurrency,
+        secondaryCurrency,
+        accounts,
+        transactions,
+        ratesFromUSD
+      };
+
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(backupData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', dataStr);
+      downloadAnchor.setAttribute('download', `bizledger_backup_${new Date().toISOString().split('T')[0]}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('Backup file downloaded successfully!');
+    };
+
+    window.handleRestoreFile = function (event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported.accounts && Array.isArray(imported.accounts)) {
+            accounts = imported.accounts;
+          }
+          if (imported.transactions && Array.isArray(imported.transactions)) {
+            transactions = imported.transactions;
+          }
+          if (imported.primaryCurrency) primaryCurrency = imported.primaryCurrency;
+          if (imported.secondaryCurrency) secondaryCurrency = imported.secondaryCurrency;
+
+          saveData();
+          populateCurrencyDropdowns();
+          refreshAll();
+          closeBackupModal();
+          showToast('Data successfully restored from backup!');
+        } catch (err) {
+          alert('Invalid backup file. Please select a valid BizLedger JSON backup file.');
+        }
+      };
+      reader.readAsText(file);
     };
 
     // ==========================================
@@ -1494,7 +1603,7 @@
     };
 
     // ==========================================
-    // DATA LOAD & SAVE
+    // 🛡️ DATA LOAD & BACKWARD COMPATIBLE RECOVERY
     // ==========================================
     function populateCurrencyDropdowns() {
       const selects = [
@@ -1547,33 +1656,101 @@
       refreshAll();
     };
 
+    // Robust Loader: Migrates legacy version keys so user NEVER loses data again!
     function loadData() {
       try {
-        const storedAccounts = localStorage.getItem(ACCOUNTS_KEY);
+        // 1. Load Accounts
+        let storedAccounts = localStorage.getItem(ACCOUNTS_KEY);
+        if (!storedAccounts) {
+          // Check all previous legacy keys
+          const LEGACY_ACC_KEYS = [
+            'bizledger_global_accounts_v8',
+            'bizledger_global_accounts_v7',
+            'bizledger_accounts_v6'
+          ];
+          for (const k of LEGACY_ACC_KEYS) {
+            const found = localStorage.getItem(k);
+            if (found) {
+              storedAccounts = found;
+              break;
+            }
+          }
+        }
         accounts = storedAccounts ? JSON.parse(storedAccounts) : DEFAULT_ACCOUNTS;
 
-        const storedTx = localStorage.getItem(STORAGE_KEY);
+        // 2. Load Transactions
+        let storedTx = localStorage.getItem(STORAGE_KEY);
+        if (!storedTx) {
+          // Check all previous legacy keys
+          const LEGACY_TX_KEYS = [
+            'bizledger_global_tx_v8',
+            'bizledger_global_tx_v7',
+            'bizledger_multiacc_tx_v6',
+            'bizledger_dual_tx_v5',
+            'bizledger_dual_tx_v4',
+            'bizledger_dual_tx_v3',
+            'bizledger_transactions_v2',
+            'bizledger_transactions_v1',
+            'bizledger_transactions'
+          ];
+          for (const k of LEGACY_TX_KEYS) {
+            const found = localStorage.getItem(k);
+            if (found) {
+              try {
+                const parsed = JSON.parse(found);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                  storedTx = found;
+                  break;
+                }
+              } catch (e) {}
+            }
+          }
+        }
         transactions = storedTx ? JSON.parse(storedTx) : [];
 
-        const storedSettings = localStorage.getItem(SETTINGS_KEY);
+        // 3. Load Settings
+        let storedSettings = localStorage.getItem(SETTINGS_KEY);
+        if (!storedSettings) {
+          const LEGACY_SETTING_KEYS = [
+            'bizledger_global_settings_v8',
+            'bizledger_global_settings_v7',
+            'bizledger_multiacc_settings_v6',
+            'bizledger_dual_settings_v5',
+            'bizledger_dual_settings_v4',
+            'bizledger_dual_settings_v3'
+          ];
+          for (const k of LEGACY_SETTING_KEYS) {
+            const found = localStorage.getItem(k);
+            if (found) {
+              storedSettings = found;
+              break;
+            }
+          }
+        }
         if (storedSettings) {
           const s = JSON.parse(storedSettings);
           if (s.primaryCurrency && CURRENCY_MAP[s.primaryCurrency]) primaryCurrency = s.primaryCurrency;
           if (s.secondaryCurrency && CURRENCY_MAP[s.secondaryCurrency]) secondaryCurrency = s.secondaryCurrency;
         }
 
-        const cachedRates = localStorage.getItem(RATES_CACHE_KEY);
+        // 4. Load Cached Rates
+        const cachedRates = localStorage.getItem(RATES_CACHE_KEY) || localStorage.getItem('bizledger_global_rates_v8');
         if (cachedRates) {
           const cr = JSON.parse(cachedRates);
           if (cr) ratesFromUSD = cr;
         }
 
-        const cachedPrev = localStorage.getItem(PREV_RATES_KEY);
+        const cachedPrev = localStorage.getItem(PREV_RATES_KEY) || localStorage.getItem('bizledger_prev_rates_v8');
         if (cachedPrev) {
           const cp = JSON.parse(cachedPrev);
           if (cp) previousRatesFromUSD = cp;
         }
+
+        // Save immediately into permanent keys to seal migration
+        saveData();
+
       } catch (err) {
+        console.error('Error during data loading/migration', err);
         accounts = DEFAULT_ACCOUNTS;
         transactions = [];
       }
@@ -1590,6 +1767,13 @@
         localStorage.setItem(RATES_CACHE_KEY, JSON.stringify(ratesFromUSD));
         localStorage.setItem(PREV_RATES_KEY, JSON.stringify(previousRatesFromUSD));
       } catch (err) {}
+    }
+
+    // Request persistent storage from browser
+    function requestPersistentStorage() {
+      if (navigator.storage && navigator.storage.persist) {
+        navigator.storage.persist().catch(() => {});
+      }
     }
 
     // ==========================================
@@ -1940,6 +2124,7 @@
       handleTransactionCurrencyChange();
       fetchLiveDailyRates(false);
       startCountdownTimer();
+      requestPersistentStorage();
     });
   </script>
 </body>
