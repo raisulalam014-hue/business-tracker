@@ -1,14 +1,15 @@
 {
-  "name": "BizLedger - Multi-Currency Business Tracker",
+  "name": "BizLedger",
   "short_name": "BizLedger",
-  "description": "Universal Multi-Currency Business Ledger, Multi-Wallet Balances & Real-Time Currency Market Fluctuations",
+  "description": "Mobile Business Finance Tracker & Multi-Wallet Ledger",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "window-controls-overlay"],
   "orientation": "portrait-primary",
-  "background_color": "#0f172a",
-  "theme_color": "#059669",
-  "categories": ["finance", "business", "productivity"],
+  "background_color": "#080c14",
+  "theme_color": "#080c14",
+  "categories": ["finance", "business"],
   "icons": [
     {
       "src": "icon-192.png",
