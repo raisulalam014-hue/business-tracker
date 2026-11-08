@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Business Tracker | Multi-Account Wallets (Bank, bKash, Cash) & Dual Currency</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+    }
+    ::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .spin-active {
+      animation: spin-slow 1s linear infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
+          <span class="text-xl font-extrabold">৳</span>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight flex items-center gap-2">
+            BizLedger
+            <span class="hidden sm:inline-flex text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wide">
+              Multi-Wallet 💼
+            </span>
+          </h1>
+          <p class="text-xs text-slate-500 font-medium">Bank, bKash, Cash & Combined Balances Tracker</p>
+        </div>
+      </div>
+      
+      <!-- Top Action Controls -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        
+        <!-- Live Exchange Rate Button -->
+        <div class="flex items-center bg-amber-50/90 border border-amber-200/80 rounded-xl p-1 text-xs font-semibold text-amber-900">
+          <button 
+            onclick="openRateModal()" 
+            class="px-2 py-1 hover:bg-amber-100 rounded-lg transition flex items-center gap-1.5"
+            title="Click to view daily exchange rate"
+          >
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>$1 = <b id="headerUsdBdtRate">৳122.00</b></span>
+          </button>
+          
+          <button 
+            onclick="fetchLiveDailyRates(true)" 
+            class="p-1 hover:bg-amber-200/70 text-amber-800 rounded-lg transition" 
+            title="Update Live Rates"
+          >
+            <svg id="refreshIcon" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Primary Display Currency Switcher -->
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold">
+          <button id="primaryBdtBtn" onclick="setPrimaryCurrency('BDT')" class="px-2.5 py-1 rounded-lg transition bg-white text-emerald-700 shadow-xs">
+            ৳ BDT
+          </button>
+          <button id="primaryUsdBtn" onclick="setPrimaryCurrency('USD')" class="px-2.5 py-1 rounded-lg transition text-slate-600 hover:text-slate-900">
+            $ USD
+          </button>
+        </div>
+
+        <!-- CSV Export -->
+        <button id="exportCsvBtn" title="Export transactions to CSV" class="hidden md:inline-flex text-xs font-semibold px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Export
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- ACCOUNTS / WALLETS CAROUSEL BAR -->
+    <section class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3.5">
+        <div>
+          <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <span>🏦 Accounts & Wallets</span>
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Individual & Combined Balances</span>
+          </h2>
+          <p class="text-xs text-slate-500">Expenses deduct from that specific account and update your combined balance</p>
+        </div>
+        <button 
+          onclick="openAccountManagerModal()" 
+          class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition self-start sm:self-auto"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          Add / Manage Accounts
+        </button>
+      </div>
+
+      <!-- Live Account Balances Grid -->
+      <div id="accountCardsContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <!-- Dynamically injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- 1. SUMMARY DASHBOARD CARDS (COMBINED TOTALS) -->
+    <section>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        
+        <!-- CARD 1: Combined Initial Capital -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-50 rounded-full opacity-60 pointer-events-none"></div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold tracking-wider uppercase text-slate-500">Combined Initial Capital</span>
+            <button 
+              onclick="openAccountManagerModal()" 
+              title="Edit Account Initial Balances" 
+              class="w-8 h-8 rounded-lg bg-indigo-50 group-hover:bg-indigo-100 text-indigo-600 flex items-center justify-center transition"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+          </div>
+          <p id="combinedInitialPrimary" class="text-2xl sm:text-3xl font-extrabold text-indigo-600 tracking-tight cursor-pointer" onclick="openAccountManagerModal()">৳0</p>
+          <p id="combinedInitialSecondary" class="text-xs font-semibold text-slate-500 mt-0.5">≈ $0.00 USD</p>
+          <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <span>All accounts combined</span>
+            <button onclick="openAccountManagerModal()" class="text-indigo-600 hover:text-indigo-800 font-bold underline">Edit Initial</button>
+          </div>
+        </div>
+
+        <!-- CARD 2: Total Income -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden">
+          <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-50 rounded-full opacity-60 pointer-events-none"></div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold tracking-wider uppercase text-slate-500">Total Income</span>
+            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7 11l5-5m0 0l5 5m-5-5v12" />
+              </svg>
+            </div>
+          </div>
+          <p id="totalIncomePrimary" class="text-2xl sm:text-3xl font-extrabold text-emerald-600 tracking-tight">৳0</p>
+          <p id="totalIncomeSecondary" class="text-xs font-semibold text-slate-500 mt-0.5">≈ $0.00 USD</p>
+          <div class="mt-3 pt-2 border-t border-slate-100 text-[11px] text-slate-500">
+            <span id="incomeCount" class="font-semibold text-slate-700">0</span> earnings recorded
+          </div>
+        </div>
+
+        <!-- CARD 3: Total Expenses -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden">
+          <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-rose-50 rounded-full opacity-60 pointer-events-none"></div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold tracking-wider uppercase text-slate-500">Total Expenses</span>
+            <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 13l-5 5m0 0l-5-5m5 5V6" />
+              </svg>
+            </div>
+          </div>
+          <p id="totalExpensePrimary" class="text-2xl sm:text-3xl font-extrabold text-rose-600 tracking-tight">৳0</p>
+          <p id="totalExpenseSecondary" class="text-xs font-semibold text-slate-500 mt-0.5">≈ $0.00 USD</p>
+          <div class="mt-3 pt-2 border-t border-slate-100 text-[11px] text-slate-500">
+            <span id="expenseCount" class="font-semibold text-slate-700">0</span> expenses recorded
+          </div>
+        </div>
+
+        <!-- CARD 4: Combined Current Cash Balance & Net Profit -->
+        <div id="netProfitCard" class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold tracking-wider uppercase text-slate-500">Combined Current Balance</span>
+            <span id="profitBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600">Break-Even</span>
+          </div>
+          <p id="combinedCurrentPrimary" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">৳0</p>
+          <p id="combinedCurrentSecondary" class="text-xs font-semibold text-slate-500 mt-0.5">≈ $0.00 USD</p>
+          <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+            <span class="text-slate-500">Net Profit:</span>
+            <span id="netProfitSideBySide" class="font-bold text-emerald-600">৳0 (~$0)</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2. ADD FORM & DATA TABLE -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- Input Form -->
+      <section class="lg:col-span-5 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Add Transaction</h2>
+            <p class="text-xs text-slate-500">Select which Bank or Wallet to spend from / add to</p>
+          </div>
+          <button onclick="openAccountManagerModal()" class="text-xs text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-md font-semibold transition">
+            ⚙️ Accounts
+          </button>
+        </div>
+
+        <form id="transactionForm" class="space-y-4">
+          
+          <!-- Transaction Type Toggle -->
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5 tracking-wider">Transaction Type</label>
+            <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
+              <label class="cursor-pointer">
+                <input type="radio" name="type" value="Income" class="peer sr-only" checked />
+                <div class="text-center py-2 text-xs font-bold rounded-lg text-slate-600 transition peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:shadow-sm">
+                  + Income (আয়)
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="type" value="Expense" class="peer sr-only" />
+                <div class="text-center py-2 text-xs font-bold rounded-lg text-slate-600 transition peer-checked:bg-rose-600 peer-checked:text-white peer-checked:shadow-sm">
+                  - Expense (ব্যয়)
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Account / Wallet Selector -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="transactionAccount" class="text-xs font-bold uppercase text-slate-600 tracking-wider">
+                Select Account / Wallet
+              </label>
+              <button type="button" onclick="openAccountManagerModal()" class="text-[11px] font-bold text-indigo-600 hover:underline">
+                + New Account
+              </button>
+            </div>
+            <select 
+              id="transactionAccount" 
+              required 
+              class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
+            >
+              <!-- Populated via JavaScript -->
+            </select>
+            <p class="text-[11px] text-slate-400 mt-1">Income will be added to this account; expenses will be deducted from it.</p>
+          </div>
+
+          <!-- Date -->
+          <div>
+            <label for="date" class="block text-xs font-bold uppercase text-slate-600 mb-1.5 tracking-wider">Date</label>
+            <input 
+              type="date" 
+              id="date" 
+              name="date" 
+              required 
+              class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-slate-800 transition" 
+            />
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label for="description" class="block text-xs font-bold uppercase text-slate-600 mb-1.5 tracking-wider">Description</label>
+            <input 
+              type="text" 
+              id="description" 
+              name="description" 
+              placeholder="e.g., Office Rent via Bank, Client Fee via bKash, Grocery Cash" 
+              required 
+              maxlength="100"
+              class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-slate-800 placeholder-slate-400 transition" 
+            />
+          </div>
+
+          <!-- Currency & Amount Input -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="amount" class="text-xs font-bold uppercase text-slate-600 tracking-wider">Amount & Currency</label>
+              
+              <select 
+                id="transactionCurrency" 
+                onchange="handleCurrencyChange()" 
+                class="text-xs font-bold bg-slate-100 border border-slate-300 rounded-lg px-2 py-1 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                <option value="BDT" selected>৳ BDT (Taka)</option>
+                <option value="USD">$ USD (US Dollar)</option>
+                <option value="EUR">€ EUR (Euro)</option>
+                <option value="GBP">£ GBP (British Pound)</option>
+                <option value="SAR">﷼ SAR (Saudi Riyal)</option>
+                <option value="AED">د.إ AED (UAE Dirham)</option>
+                <option value="INR">₹ INR (Indian Rupee)</option>
+              </select>
+            </div>
+
+            <div class="relative rounded-xl">
+              <div id="currencyPrefix" class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-bold text-sm">
+                ৳
+              </div>
+              <input 
+                type="number" 
+                id="amount" 
+                name="amount" 
+                step="0.01" 
+                min="0.01" 
+                placeholder="0.00" 
+                required 
+                oninput="updateInputLiveConversion()"
+                class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-slate-800 placeholder-slate-400 transition" 
+              />
+            </div>
+
+            <!-- Rate for non-BDT currency -->
+            <div id="customRateRow" class="hidden mt-2 p-2.5 bg-amber-50/70 border border-amber-200/80 rounded-xl">
+              <div class="flex items-center justify-between gap-2">
+                <label for="txCustomRate" class="text-[11px] font-bold text-amber-900">
+                  Rate for this entry: 1 <span id="txRateCurCode">USD</span> = ৳
+                </label>
+                <input 
+                  type="number" 
+                  id="txCustomRate" 
+                  step="0.01" 
+                  min="0.01" 
+                  class="w-24 px-2 py-1 text-xs font-bold bg-white border border-amber-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-amber-500" 
+                  oninput="updateInputLiveConversion()"
+                />
+              </div>
+            </div>
+
+            <!-- Live Conversion Preview Box -->
+            <div class="mt-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs flex items-center justify-between">
+              <span class="text-slate-500">Live Dual-Conversion:</span>
+              <span id="convertedAmountPreview" class="font-bold text-slate-800">≈ $0.00 USD</span>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit" 
+            class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl shadow-md shadow-emerald-600/20 hover:shadow-lg transition flex items-center justify-center gap-2 text-sm mt-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Save Transaction
+          </button>
+        </form>
+      </section>
+
+      <!-- 3. DATA TABLE -->
+      <section class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex flex-col overflow-hidden">
+        
+        <div class="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Transaction History</h2>
+            <p class="text-xs text-slate-500">Records indicate which account was used</p>
+          </div>
+
+          <!-- Filters -->
+          <div class="flex items-center gap-2">
+            <select id="filterAccount" onchange="renderTable()" class="text-xs font-semibold bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="ALL">All Accounts</option>
+              <!-- Populated via JS -->
+            </select>
+
+            <select id="filterType" onchange="renderTable()" class="text-xs font-semibold bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="ALL">All Types</option>
+              <option value="Income">Income Only</option>
+              <option value="Expense">Expense Only</option>
+            </select>
+
+            <button 
+              id="clearAllBtn" 
+              title="Delete all transactions" 
+              class="text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 px-2.5 py-1.5 rounded-lg transition"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto min-h-[320px] max-h-[520px] flex-1">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500 sticky top-0 border-b border-slate-200 z-10">
+              <tr>
+                <th class="py-3 px-4">Date</th>
+                <th class="py-3 px-4">Description</th>
+                <th class="py-3 px-3 text-center">Account</th>
+                <th class="py-3 px-3 text-center">Type</th>
+                <th class="py-3 px-4 text-right">Amount</th>
+                <th class="py-3 px-3 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="transactionTableBody" class="divide-y divide-slate-100 text-sm">
+            </tbody>
+          </table>
+
+          <!-- Empty State -->
+          <div id="emptyState" class="hidden flex flex-col items-center justify-center py-16 px-4 text-center">
+            <div class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mb-3">
+              <span class="text-2xl font-bold">🏦</span>
+            </div>
+            <p class="text-sm font-semibold text-slate-700">No transactions recorded yet</p>
+            <p class="text-xs text-slate-400 max-w-xs mt-1">Set initial balance in Bank, bKash, or Cash and start adding records.</p>
+            <div class="flex items-center justify-center gap-2 mt-4">
+              <button onclick="openAccountManagerModal()" class="text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3.5 py-2 rounded-xl transition">
+                Set Account Balances
+              </button>
+              <button id="seedDataBtn" class="text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-2 rounded-xl transition">
+                Load Sample Data
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3.5 px-5 bg-slate-50 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-500">
+          <span id="footerCount">Showing 0 transactions</span>
+          <span class="text-slate-400 flex items-center gap-1">
+            <span>Rate: 1 USD = <b id="footerRateDisplay">122.00</b> BDT</span>
+          </span>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- MODAL: ACCOUNT & INITIAL BALANCES MANAGER (Bank, bKash, Cash, etc.) -->
+  <div id="accountModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-100 max-h-[90vh] flex flex-col animate-in fade-in zoom-in-95 duration-150">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg">
+            🏦
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Manage Accounts & Initial Balances</h3>
+            <p class="text-xs text-slate-500">Add names like Bank, bKash, Nagad, Cash and their starting balances</p>
+          </div>
+        </div>
+        <button onclick="closeAccountManagerModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold p-1">
+          &times;
+        </button>
+      </div>
+
+      <!-- Combined Total Banner inside Modal -->
+      <div class="my-4 p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100 flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-700 block">Combined Total Initial Capital</span>
+          <span id="modalCombinedTotalBdt" class="text-xl sm:text-2xl font-extrabold text-indigo-950">৳0</span>
+        </div>
+        <div class="text-right">
+          <span class="text-[11px] font-semibold text-indigo-600 block">USD Equivalent</span>
+          <span id="modalCombinedTotalUsd" class="text-sm font-bold text-indigo-900">≈ $0.00</span>
+        </div>
+      </div>
+
+      <!-- Account List -->
+      <div class="space-y-3 overflow-y-auto flex-1 pr-1" id="accountModalList">
+        <!-- Rendered dynamically via JavaScript -->
+      </div>
+
+      <!-- Add New Account Section -->
+      <div class="mt-4 pt-3 border-t border-slate-100">
+        <div class="text-xs font-bold text-slate-700 mb-2">+ Add New Wallet / Account</div>
+        <div class="flex items-center gap-2">
+          <input 
+            type="text" 
+            id="newAccountName" 
+            placeholder="Account Name (e.g., City Bank, Nagad, Upwork USD)" 
+            class="flex-1 px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 focus:bg-white"
+          />
+          <input 
+            type="number" 
+            id="newAccountInitial" 
+            placeholder="Initial ৳" 
+            min="0"
+            step="0.01"
+            class="w-28 px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 focus:bg-white"
+          />
+          <button 
+            type="button" 
+            onclick="addNewAccountFromModal()" 
+            class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+
+      <div class="pt-4 mt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+        <button type="button" onclick="closeAccountManagerModal()" class="px-5 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-slate-800 transition">
+          Done & Save
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: EXCHANGE RATE -->
+  <div id="rateModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-100">
+      <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mx-auto mb-3 text-xl">
+        💱
+      </div>
+      <h3 class="text-base font-bold text-center text-slate-900">Today's Exchange Rate</h3>
+      <p class="text-xs text-center text-slate-500 mt-1 mb-4">
+        Set the USD to BDT conversion rate.
+      </p>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">1 USD in BDT (৳)</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-bold text-sm">৳</span>
+            <input 
+              type="number" 
+              id="rateInput" 
+              step="0.01" 
+              min="1" 
+              value="122.00" 
+              class="w-full pl-8 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500" 
+            />
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="closeRateModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 font-semibold text-xs text-slate-700 hover:bg-slate-50 transition">
+            Cancel
+          </button>
+          <button type="button" onclick="saveManualRate()" class="flex-1 py-2.5 rounded-xl bg-amber-600 font-semibold text-xs text-white hover:bg-amber-700 shadow-sm transition">
+            Save Rate
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div id="deleteModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-100">
+      <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </div>
+      <h3 id="modalTitle" class="text-base font-bold text-center text-slate-900">Delete Transaction?</h3>
+      <p id="modalDesc" class="text-xs text-center text-slate-500 mt-1 mb-5">This action will return funds to the account.</p>
+      <div class="flex items-center gap-3">
+        <button id="modalCancelBtn" class="flex-1 py-2.5 rounded-xl border border-slate-200 font-semibold text-xs text-slate-700 hover:bg-slate-50 transition">
+          Cancel
+        </button>
+        <button id="modalConfirmBtn" class="flex-1 py-2.5 rounded-xl bg-rose-600 font-semibold text-xs text-white hover:bg-rose-700 shadow-sm transition">
+          Yes, Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <script>
+    const STORAGE_KEY = 'bizledger_multiacc_tx_v6';
+    const SETTINGS_KEY = 'bizledger_multiacc_settings_v6';
+    const ACCOUNTS_KEY = 'bizledger_accounts_v6';
+    const RATES_CACHE_KEY = 'bizledger_rates_cache_v6';
+
+    const CURRENCY_SYMBOLS = {
+      BDT: '৳',
+      USD: '$',
+      EUR: '€',
+      GBP: '£',
+      SAR: '﷼',
+      AED: 'د.إ',
+      INR: '₹'
+    };
+
+    // Default Account List with Icons
+    const DEFAULT_ACCOUNTS = [
+      { id: 'acc_bank', name: 'Bank Account', icon: '🏦', initialBalance: 50000 },
+      { id: 'acc_bkash', name: 'bKash', icon: '📱', initialBalance: 20000 },
+      { id: 'acc_cash', name: 'Cash in Hand', icon: '💵', initialBalance: 15000 },
+      { id: 'acc_nagad', name: 'Nagad', icon: '⚡', initialBalance: 5000 }
+    ];
+
+    let accounts = [];
+    let transactions = [];
+    let primaryCurrency = 'BDT';
+
+    let ratesFromUSD = {
+      USD: 1.0,
+      BDT: 122.00,
+      EUR: 0.92,
+      GBP: 0.79,
+      SAR: 3.75,
+      AED: 3.67,
+      INR: 84.00
+    };
+
+    let deleteTargetId = null;
+    let isDeletingAll = false;
+
+    // DOM Elements
+    const form = document.getElementById('transactionForm');
+    const dateInput = document.getElementById('date');
+    const descInput = document.getElementById('description');
+    const amountInput = document.getElementById('amount');
+    const transactionAccount = document.getElementById('transactionAccount');
+    const transactionCurrency = document.getElementById('transactionCurrency');
+    const currencyPrefix = document.getElementById('currencyPrefix');
+    const customRateRow = document.getElementById('customRateRow');
+    const txCustomRate = document.getElementById('txCustomRate');
+    const txRateCurCode = document.getElementById('txRateCurCode');
+    const tableBody = document.getElementById('transactionTableBody');
+    const emptyState = document.getElementById('emptyState');
+    const filterAccount = document.getElementById('filterAccount');
+    const filterType = document.getElementById('filterType');
+    const footerCount = document.getElementById('footerCount');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    const seedDataBtn = document.getElementById('seedDataBtn');
+
+    // Account Containers
+    const accountCardsContainer = document.getElementById('accountCardsContainer');
+    const accountModal = document.getElementById('accountModal');
+    const accountModalList = document.getElementById('accountModalList');
+    const modalCombinedTotalBdt = document.getElementById('modalCombinedTotalBdt');
+    const modalCombinedTotalUsd = document.getElementById('modalCombinedTotalUsd');
+    const newAccountName = document.getElementById('newAccountName');
+    const newAccountInitial = document.getElementById('newAccountInitial');
+
+    // Summary Card Elements
+    const combinedInitialPrimary = document.getElementById('combinedInitialPrimary');
+    const combinedInitialSecondary = document.getElementById('combinedInitialSecondary');
+    const totalIncomePrimary = document.getElementById('totalIncomePrimary');
+    const totalIncomeSecondary = document.getElementById('totalIncomeSecondary');
+    const totalExpensePrimary = document.getElementById('totalExpensePrimary');
+    const totalExpenseSecondary = document.getElementById('totalExpenseSecondary');
+    const combinedCurrentPrimary = document.getElementById('combinedCurrentPrimary');
+    const combinedCurrentSecondary = document.getElementById('combinedCurrentSecondary');
+    const netProfitSideBySide = document.getElementById('netProfitSideBySide');
+    const incomeCountEl = document.getElementById('incomeCount');
+    const expenseCountEl = document.getElementById('expenseCount');
+    const profitBadgeEl = document.getElementById('profitBadge');
+
+    // Rate Elements
+    const headerUsdBdtRate = document.getElementById('headerUsdBdtRate');
+    const footerRateDisplay = document.getElementById('footerRateDisplay');
+    const refreshIcon = document.getElementById('refreshIcon');
+    const rateModal = document.getElementById('rateModal');
+    const rateInput = document.getElementById('rateInput');
+
+    // Delete Modal
+    const deleteModal = document.getElementById('deleteModal');
+    const modalCancelBtn = document.getElementById('modalCancelBtn');
+    const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+
+    function formatBDT(amount) {
+      return '৳' + new Intl.NumberFormat('en-IN', {
+        minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
+        maximumFractionDigits: 2
+      }).format(amount || 0);
+    }
+
+    function formatUSD(amount) {
+      return '$' + new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(amount || 0);
+    }
+
+    function getCurrencyRateToBdt(currency, customUsdRate = null) {
+      const usdBdt = customUsdRate || (ratesFromUSD.BDT || 122.00);
+      if (currency === 'BDT') return 1.0;
+      if (currency === 'USD') return usdBdt;
+      const rateFromUsd = ratesFromUSD[currency] || 1;
+      return (1.0 / rateFromUsd) * usdBdt;
+    }
+
+    function convertToBDT(amount, currency, customRate = null) {
+      if (currency === 'BDT') return amount;
+      const rateToBdt = customRate || getCurrencyRateToBdt(currency);
+      return amount * rateToBdt;
+    }
+
+    function convertFromBDT(amountBdt, toCurrency) {
+      if (toCurrency === 'BDT') return amountBdt;
+      const rateToBdt = getCurrencyRateToBdt(toCurrency);
+      return rateToBdt > 0 ? (amountBdt / rateToBdt) : 0;
+    }
+
+    function getDualFormat(amountBdt) {
+      const amountUsd = convertFromBDT(amountBdt, 'USD');
+      if (primaryCurrency === 'BDT') {
+        return {
+          primary: formatBDT(amountBdt),
+          secondary: `≈ ${formatUSD(amountUsd)} USD`
+        };
+      } else {
+        return {
+          primary: formatUSD(amountUsd),
+          secondary: `≈ ${formatBDT(amountBdt)} BDT`
+        };
+      }
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+        return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      }
+      return dateStr;
+    }
+
+    function initDefaultDate() {
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.value = today;
+    }
+
+    // ==========================================
+    // 🌐 DAILY LIVE RATE FETCH
+    // ==========================================
+    async function fetchLiveDailyRates(userTriggered = false) {
+      refreshIcon.classList.add('spin-active');
+
+      const apiEndpoints = [
+        'https://open.er-api.com/v6/latest/USD',
+        'https://api.exchangerate-api.com/v4/latest/USD',
+        'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json'
+      ];
+
+      for (const url of apiEndpoints) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 6000);
+          const response = await fetch(url, { signal: controller.signal });
+          clearTimeout(timeoutId);
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data && data.rates && data.rates.BDT) {
+              ['BDT', 'EUR', 'GBP', 'SAR', 'AED', 'INR'].forEach(code => {
+                if (data.rates[code]) ratesFromUSD[code] = parseFloat(data.rates[code]);
+              });
+              break;
+            } else if (data && data.usd && data.usd.bdt) {
+              ratesFromUSD.BDT = data.usd.bdt;
+              break;
+            }
+          }
+        } catch (e) {}
+      }
+
+      refreshIcon.classList.remove('spin-active');
+      updateRateDisplays();
+      handleCurrencyChange();
+      refreshAll();
+      if (userTriggered) showToast(`Live rate updated: 1 USD = ৳${ratesFromUSD.BDT.toFixed(2)}`);
+    }
+
+    function showToast(msg) {
+      const banner = document.createElement('div');
+      banner.className = 'fixed bottom-5 right-5 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-xl z-50 animate-in fade-in slide-in-from-bottom-2';
+      banner.textContent = msg;
+      document.body.appendChild(banner);
+      setTimeout(() => banner.remove(), 2500);
+    }
+
+    function updateRateDisplays() {
+      const bdtRate = ratesFromUSD.BDT || 122.00;
+      headerUsdBdtRate.textContent = `৳${bdtRate.toFixed(2)}`;
+      footerRateDisplay.textContent = bdtRate.toFixed(2);
+      rateInput.value = bdtRate.toFixed(2);
+    }
+
+    function setPrimaryCurrency(curr) {
+      primaryCurrency = curr;
+      updatePrimaryCurrencyUI();
+      saveData();
+      refreshAll();
+    }
+
+    function updatePrimaryCurrencyUI() {
+      const bdtBtn = document.getElementById('primaryBdtBtn');
+      const usdBtn = document.getElementById('primaryUsdBtn');
+      if (primaryCurrency === 'BDT') {
+        bdtBtn.className = 'px-2.5 py-1 rounded-lg transition bg-white text-emerald-700 shadow-xs font-bold';
+        usdBtn.className = 'px-2.5 py-1 rounded-lg transition text-slate-600 hover:text-slate-900 font-bold';
+      } else {
+        usdBtn.className = 'px-2.5 py-1 rounded-lg transition bg-white text-emerald-700 shadow-xs font-bold';
+        bdtBtn.className = 'px-2.5 py-1 rounded-lg transition text-slate-600 hover:text-slate-900 font-bold';
+      }
+    }
+
+    // ==========================================
+    // 🏦 ACCOUNTS & WALLETS LOGIC
+    // ==========================================
+    function calculateAccountBalances() {
+      const map = {};
+      accounts.forEach(acc => {
+        map[acc.id] = {
+          account: acc,
+          initial: acc.initialBalance || 0,
+          income: 0,
+          expense: 0,
+          current: acc.initialBalance || 0
+        };
+      });
+
+      transactions.forEach(t => {
+        const accId = t.accountId || (accounts[0] ? accounts[0].id : null);
+        const amtBdt = t.bdtEquivalent !== undefined ? t.bdtEquivalent : convertToBDT(t.amount, t.currency);
+
+        if (map[accId]) {
+          if (t.type === 'Income') {
+            map[accId].income += amtBdt;
+            map[accId].current += amtBdt;
+          } else if (t.type === 'Expense') {
+            map[accId].expense += amtBdt;
+            map[accId].current -= amtBdt;
+          }
+        }
+      });
+
+      return map;
+    }
+
+    function renderAccountPillsAndSelects() {
+      const accBalances = calculateAccountBalances();
+
+      // 1. Render Account Dashboard Cards
+      accountCardsContainer.innerHTML = '';
+      accounts.forEach(acc => {
+        const bal = accBalances[acc.id] || { initial: 0, current: 0 };
+        const card = document.createElement('div');
+        card.className = 'bg-slate-50 hover:bg-slate-100/80 p-3 rounded-xl border border-slate-200/90 transition flex flex-col justify-between';
+
+        const isPositive = bal.current >= 0;
+        const currentFormatted = primaryCurrency === 'BDT' ? formatBDT(bal.current) : formatUSD(convertFromBDT(bal.current, 'USD'));
+        const initialFormatted = primaryCurrency === 'BDT' ? formatBDT(bal.initial) : formatUSD(convertFromBDT(bal.initial, 'USD'));
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold text-slate-700 truncate">${acc.icon || '💼'} ${escapeHtml(acc.name)}</span>
+          </div>
+          <div class="my-1">
+            <div class="text-sm sm:text-base font-extrabold ${isPositive ? 'text-slate-900' : 'text-rose-600'}">
+              ${currentFormatted}
+            </div>
+            <div class="text-[10px] text-slate-400">
+              Initial: ${initialFormatted}
+            </div>
+          </div>
+        `;
+        accountCardsContainer.appendChild(card);
+      });
+
+      // 2. Update Transaction Form Account Select
+      const currentSelected = transactionAccount.value;
+      transactionAccount.innerHTML = '';
+      accounts.forEach(acc => {
+        const opt = document.createElement('option');
+        opt.value = acc.id;
+        opt.textContent = `${acc.icon || '💼'} ${acc.name}`;
+        transactionAccount.appendChild(opt);
+      });
+      if (currentSelected && accounts.some(a => a.id === currentSelected)) {
+        transactionAccount.value = currentSelected;
+      }
+
+      // 3. Update Table Filter by Account Select
+      const currentFilter = filterAccount.value;
+      filterAccount.innerHTML = '<option value="ALL">All Accounts</option>';
+      accounts.forEach(acc => {
+        const opt = document.createElement('option');
+        opt.value = acc.id;
+        opt.textContent = `${acc.icon || '💼'} ${acc.name}`;
+        filterAccount.appendChild(opt);
+      });
+      if (currentFilter) filterAccount.value = currentFilter;
+    }
+
+    // Account Modal Operations
+    window.openAccountManagerModal = function () {
+      renderAccountModalList();
+      accountModal.classList.remove('hidden');
+    };
+
+    window.closeAccountManagerModal = function () {
+      accountModal.classList.add('hidden');
+      saveData();
+      refreshAll();
+    };
+
+    function renderAccountModalList() {
+      accountModalList.innerHTML = '';
+      let combinedInitialBdt = 0;
+
+      accounts.forEach((acc, idx) => {
+        combinedInitialBdt += acc.initialBalance || 0;
+
+        const row = document.createElement('div');
+        row.className = 'p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-3';
+
+        row.innerHTML = `
+          <div class="flex items-center gap-2 flex-1">
+            <span class="text-lg">${acc.icon || '💼'}</span>
+            <input 
+              type="text" 
+              value="${escapeHtml(acc.name)}" 
+              onchange="updateAccountName('${acc.id}', this.value)"
+              class="font-bold text-xs bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-500 focus:bg-white px-1 py-0.5 rounded text-slate-800"
+            />
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400 font-bold text-xs">৳</span>
+              <input 
+                type="number" 
+                min="0"
+                step="0.01"
+                value="${acc.initialBalance || 0}" 
+                onchange="updateAccountInitial('${acc.id}', this.value)"
+                class="w-28 pl-6 pr-2 py-1.5 text-xs font-bold border border-slate-200 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+              />
+            </div>
+            ${accounts.length > 1 ? `
+              <button onclick="deleteAccount('${acc.id}')" title="Delete Account" class="text-slate-400 hover:text-rose-600 p-1">
+                &times;
+              </button>
+            ` : ''}
+          </div>
+        `;
+        accountModalList.appendChild(row);
+      });
+
+      // Update Combined Total in modal
+      modalCombinedTotalBdt.textContent = formatBDT(combinedInitialBdt);
+      modalCombinedTotalUsd.textContent = `≈ ${formatUSD(convertFromBDT(combinedInitialBdt, 'USD'))}`;
+    }
+
+    window.updateAccountName = function (id, name) {
+      const acc = accounts.find(a => a.id === id);
+      if (acc && name.trim()) {
+        acc.name = name.trim();
+        saveData();
+      }
+    };
+
+    window.updateAccountInitial = function (id, val) {
+      const acc = accounts.find(a => a.id === id);
+      const parsed = parseFloat(val);
+      if (acc) {
+        acc.initialBalance = isNaN(parsed) || parsed < 0 ? 0 : parsed;
+        saveData();
+        renderAccountModalList();
+      }
+    };
+
+    window.deleteAccount = function (id) {
+      if (accounts.length <= 1) {
+        alert('You must have at least one account.');
+        return;
+      }
+      if (confirm('Delete this account? Existing transactions from this account will remain in history.')) {
+        accounts = accounts.filter(a => a.id !== id);
+        saveData();
+        renderAccountModalList();
+      }
+    };
+
+    window.addNewAccountFromModal = function () {
+      const name = newAccountName.value.trim();
+      const initial = parseFloat(newAccountInitial.value) || 0;
+
+      if (!name) {
+        alert('Please enter an account name (e.g. City Bank, Dutch Bangla, bKash).');
+        return;
+      }
+
+      // Choose icon based on name
+      let icon = '💼';
+      const lower = name.toLowerCase();
+      if (lower.includes('bank') || lower.includes('city') || lower.includes('dbbl') || lower.includes('brac')) icon = '🏦';
+      else if (lower.includes('bkash')) icon = '📱';
+      else if (lower.includes('nagad') || lower.includes('rocket')) icon = '⚡';
+      else if (lower.includes('cash') || lower.includes('hand')) icon = '💵';
+
+      accounts.push({
+        id: 'acc_' + Date.now(),
+        name: name,
+        icon: icon,
+        initialBalance: initial
+      });
+
+      newAccountName.value = '';
+      newAccountInitial.value = '';
+
+      saveData();
+      renderAccountModalList();
+      showToast(`Account "${name}" added!`);
+    };
+
+    // Input Currency & Rate
+    window.handleCurrencyChange = function () {
+      const cur = transactionCurrency.value;
+      currencyPrefix.textContent = CURRENCY_SYMBOLS[cur] || '$';
+
+      if (cur === 'BDT') {
+        customRateRow.classList.add('hidden');
+      } else {
+        customRateRow.classList.remove('hidden');
+        txRateCurCode.textContent = cur;
+        const defaultRate = getCurrencyRateToBdt(cur);
+        txCustomRate.value = defaultRate.toFixed(2);
+      }
+      updateInputLiveConversion();
+    };
+
+    window.updateInputLiveConversion = function () {
+      const cur = transactionCurrency.value;
+      const amt = parseFloat(amountInput.value) || 0;
+      const preview = document.getElementById('convertedAmountPreview');
+
+      const userRate = cur !== 'BDT' ? (parseFloat(txCustomRate.value) || getCurrencyRateToBdt(cur)) : 1.0;
+      const amtInBdt = convertToBDT(amt, cur, userRate);
+      const amtInUsd = convertFromBDT(amtInBdt, 'USD');
+
+      if (amt <= 0) {
+        preview.textContent = cur === 'BDT' ? `≈ ${formatUSD(0)} USD` : `≈ ${formatBDT(0)} BDT`;
+        return;
+      }
+
+      if (cur === 'BDT') {
+        preview.textContent = `≈ ${formatUSD(amtInUsd)} USD`;
+      } else if (cur === 'USD') {
+        preview.textContent = `≈ ${formatBDT(amtInBdt)} BDT`;
+      } else {
+        preview.textContent = `≈ ${formatBDT(amtInBdt)} BDT | ${formatUSD(amtInUsd)} USD`;
+      }
+    };
+
+    // Rate Modal
+    window.openRateModal = function () {
+      rateModal.classList.remove('hidden');
+      setTimeout(() => rateInput.focus(), 100);
+    };
+
+    window.closeRateModal = function () {
+      rateModal.classList.add('hidden');
+    };
+
+    window.saveManualRate = function () {
+      const newRate = parseFloat(rateInput.value);
+      if (isNaN(newRate) || newRate <= 0) return;
+      ratesFromUSD.BDT = newRate;
+      updateRateDisplays();
+      handleCurrencyChange();
+      saveData();
+      refreshAll();
+      closeRateModal();
+      showToast(`Dollar rate set to ৳${newRate.toFixed(2)}`);
+    };
+
+    // ==========================================
+    // DATA LOAD & SAVE
+    // ==========================================
+    function loadData() {
+      try {
+        const storedAccounts = localStorage.getItem(ACCOUNTS_KEY);
+        accounts = storedAccounts ? JSON.parse(storedAccounts) : DEFAULT_ACCOUNTS;
+
+        const storedTx = localStorage.getItem(STORAGE_KEY);
+        transactions = storedTx ? JSON.parse(storedTx) : [];
+
+        const storedSettings = localStorage.getItem(SETTINGS_KEY);
+        if (storedSettings) {
+          const s = JSON.parse(storedSettings);
+          if (s.primaryCurrency) primaryCurrency = s.primaryCurrency;
+        }
+
+        const cachedRates = localStorage.getItem(RATES_CACHE_KEY);
+        if (cachedRates) {
+          const cr = JSON.parse(cachedRates);
+          if (cr.rates && cr.rates.BDT) ratesFromUSD = cr.rates;
+        }
+      } catch (err) {
+        accounts = DEFAULT_ACCOUNTS;
+        transactions = [];
+      }
+
+      updateRateDisplays();
+      updatePrimaryCurrencyUI();
+    }
+
+    function saveData() {
+      try {
+        localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify({ primaryCurrency }));
+        localStorage.setItem(RATES_CACHE_KEY, JSON.stringify({ rates: ratesFromUSD }));
+      } catch (err) {}
+    }
+
+    // ==========================================
+    // UPDATE DASHBOARD SUMMARY (Combined Balances)
+    // ==========================================
+    function updateSummary() {
+      let combinedInitialBdt = 0;
+      accounts.forEach(acc => {
+        combinedInitialBdt += acc.initialBalance || 0;
+      });
+
+      let incomeSumBdt = 0;
+      let expenseSumBdt = 0;
+      let incomeCount = 0;
+      let expenseCount = 0;
+
+      transactions.forEach(t => {
+        const amtBdt = t.bdtEquivalent !== undefined ? t.bdtEquivalent : convertToBDT(t.amount, t.currency);
+
+        if (t.type === 'Income') {
+          incomeSumBdt += amtBdt;
+          incomeCount++;
+        } else if (t.type === 'Expense') {
+          expenseSumBdt += amtBdt;
+          expenseCount++;
+        }
+      });
+
+      const netProfitBdt = incomeSumBdt - expenseSumBdt;
+      const combinedCurrentBdt = combinedInitialBdt + netProfitBdt;
+
+      // Combined Initial Capital Card
+      const initDual = getDualFormat(combinedInitialBdt);
+      combinedInitialPrimary.textContent = initDual.primary;
+      combinedInitialSecondary.textContent = initDual.secondary;
+
+      // Total Income Card
+      const incDual = getDualFormat(incomeSumBdt);
+      totalIncomePrimary.textContent = incDual.primary;
+      totalIncomeSecondary.textContent = incDual.secondary;
+
+      // Total Expense Card
+      const expDual = getDualFormat(expenseSumBdt);
+      totalExpensePrimary.textContent = expDual.primary;
+      totalExpenseSecondary.textContent = expDual.secondary;
+
+      // Combined Current Balance Card
+      const curDual = getDualFormat(combinedCurrentBdt);
+      combinedCurrentPrimary.textContent = curDual.primary;
+      combinedCurrentSecondary.textContent = curDual.secondary;
+
+      // Net profit
+      const netUsd = convertFromBDT(netProfitBdt, 'USD');
+      const sign = netProfitBdt >= 0 ? '+' : '';
+      netProfitSideBySide.textContent = `${sign}${formatBDT(netProfitBdt)} (${sign}${formatUSD(netUsd)})`;
+
+      incomeCountEl.textContent = incomeCount;
+      expenseCountEl.textContent = expenseCount;
+
+      if (netProfitBdt > 0) {
+        netProfitSideBySide.className = 'font-bold text-emerald-600';
+        profitBadgeEl.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700';
+        profitBadgeEl.textContent = 'Profitable';
+      } else if (netProfitBdt < 0) {
+        netProfitSideBySide.className = 'font-bold text-rose-600';
+        profitBadgeEl.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700';
+        profitBadgeEl.textContent = 'Net Loss';
+      } else {
+        netProfitSideBySide.className = 'font-bold text-slate-600';
+        profitBadgeEl.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600';
+        profitBadgeEl.textContent = 'Break-Even';
+      }
+    }
+
+    // ==========================================
+    // RENDER TABLE WITH ACCOUNT NAMES
+    // ==========================================
+    function renderTable() {
+      const selectedType = filterType.value;
+      const selectedAccount = filterAccount.value;
+
+      let displayed = transactions.filter(t => {
+        const matchesType = (selectedType === 'ALL' || t.type === selectedType);
+        const matchesAccount = (selectedAccount === 'ALL' || t.accountId === selectedAccount);
+        return matchesType && matchesAccount;
+      });
+
+      displayed.sort((a, b) => {
+        const dateDiff = new Date(b.date) - new Date(a.date);
+        if (dateDiff !== 0) return dateDiff;
+        return (b.createdAt || 0) - (a.createdAt || 0);
+      });
+
+      tableBody.innerHTML = '';
+
+      if (displayed.length === 0) {
+        emptyState.classList.remove('hidden');
+        footerCount.textContent = 'Showing 0 transactions';
+      } else {
+        emptyState.classList.add('hidden');
+        footerCount.textContent = `Showing ${displayed.length} of ${transactions.length} transaction${transactions.length === 1 ? '' : 's'}`;
+
+        displayed.forEach(t => {
+          const row = document.createElement('tr');
+          row.className = 'hover:bg-slate-50/80 transition-colors group';
+
+          const isIncome = t.type === 'Income';
+          const badgeClass = isIncome 
+            ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+            : 'bg-rose-50 text-rose-700 border-rose-200';
+          const amountClass = isIncome ? 'text-emerald-600' : 'text-rose-600';
+          const prefix = isIncome ? '+' : '-';
+
+          const bdtVal = t.bdtEquivalent !== undefined ? t.bdtEquivalent : convertToBDT(t.amount, t.currency);
+          const usdVal = convertFromBDT(bdtVal, 'USD');
+
+          const symbol = CURRENCY_SYMBOLS[t.currency] || t.currency;
+          const enteredDisplay = `${symbol}${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+          const primaryDisplay = primaryCurrency === 'BDT' ? formatBDT(bdtVal) : formatUSD(usdVal);
+          const secondaryDisplay = primaryCurrency === 'BDT' ? `≈ ${formatUSD(usdVal)}` : `≈ ${formatBDT(bdtVal)}`;
+
+          // Find Account Name
+          const accountObj = accounts.find(a => a.id === t.accountId);
+          const accountName = accountObj ? `${accountObj.icon || '💼'} ${accountObj.name}` : 'Default';
+
+          row.innerHTML = `
+            <td class="py-3.5 px-4 whitespace-nowrap text-xs font-medium text-slate-600">
+              ${formatDate(t.date)}
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="font-semibold text-slate-800 text-xs sm:text-sm block line-clamp-1" title="${escapeHtml(t.description)}">
+                ${escapeHtml(t.description)}
+              </span>
+              <span class="text-[10px] text-slate-400">Entered: ${enteredDisplay} (${t.currency})</span>
+            </td>
+            <td class="py-3.5 px-3 text-center whitespace-nowrap">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                ${escapeHtml(accountName)}
+              </span>
+            </td>
+            <td class="py-3.5 px-3 text-center whitespace-nowrap">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold border ${badgeClass}">
+                ${t.type}
+              </span>
+            </td>
+            <td class="py-3.5 px-4 text-right whitespace-nowrap">
+              <div class="font-bold text-sm ${amountClass}">
+                ${prefix} ${primaryDisplay}
+              </div>
+              <div class="text-[11px] text-slate-400 font-medium">
+                ${secondaryDisplay}
+              </div>
+            </td>
+            <td class="py-3.5 px-3 text-center whitespace-nowrap">
+              <button 
+                onclick="openDeleteModal('${t.id}')" 
+                class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition" 
+                title="Delete transaction"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </td>
+          `;
+
+          tableBody.appendChild(row);
+        });
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function refreshAll() {
+      renderAccountPillsAndSelects();
+      updateSummary();
+      renderTable();
+    }
+
+    // ==========================================
+    // TRANSACTION SUBMIT (With Account Deduction)
+    // ==========================================
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const selectedType = document.querySelector('input[name="type"]:checked').value;
+      const selectedAccount = transactionAccount.value;
+      const selectedCurrency = transactionCurrency.value;
+      const date = dateInput.value;
+      const description = descInput.value.trim();
+      const amount = parseFloat(amountInput.value);
+
+      if (!date || !description || isNaN(amount) || amount <= 0 || !selectedAccount) return;
+
+      let rateUsed = ratesFromUSD.BDT;
+      if (selectedCurrency !== 'BDT') {
+        const customR = parseFloat(txCustomRate.value);
+        if (!isNaN(customR) && customR > 0) rateUsed = customR;
+      }
+
+      const bdtEq = convertToBDT(amount, selectedCurrency, rateUsed);
+
+      const newTx = {
+        id: 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+        accountId: selectedAccount,
+        date: date,
+        description: description,
+        type: selectedType,
+        currency: selectedCurrency,
+        amount: Math.round(amount * 100) / 100,
+        bdtEquivalent: Math.round(bdtEq * 100) / 100,
+        rateSnapshot: rateUsed,
+        createdAt: Date.now()
+      };
+
+      transactions.push(newTx);
+      saveData();
+      refreshAll();
+
+      descInput.value = '';
+      amountInput.value = '';
+      initDefaultDate();
+      handleCurrencyChange();
+      descInput.focus();
+
+      const accObj = accounts.find(a => a.id === selectedAccount);
+      const accName = accObj ? accObj.name : 'Account';
+      showToast(`${selectedType === 'Expense' ? 'Spent from' : 'Added to'} ${accName}!`);
+    });
+
+    // Delete Controls
+    window.openDeleteModal = function (id) {
+      deleteTargetId = id;
+      isDeletingAll = false;
+      deleteModal.classList.remove('hidden');
+    };
+
+    function closeModal() {
+      deleteModal.classList.add('hidden');
+      deleteTargetId = null;
+      isDeletingAll = false;
+    }
+
+    modalCancelBtn.addEventListener('click', closeModal);
+
+    modalConfirmBtn.addEventListener('click', function () {
+      if (isDeletingAll) {
+        transactions = [];
+        saveData();
+        refreshAll();
+        closeModal();
+        return;
+      }
+
+      if (deleteTargetId) {
+        transactions = transactions.filter(t => t.id !== deleteTargetId);
+        saveData();
+        refreshAll();
+        closeModal();
+      }
+    });
+
+    clearAllBtn.addEventListener('click', function () {
+      if (transactions.length === 0) return;
+      isDeletingAll = true;
+      deleteModal.classList.remove('hidden');
+    });
+
+    // Export CSV
+    exportCsvBtn.addEventListener('click', function () {
+      let csv = `Date Exported: ${new Date().toISOString().split('T')[0]}, 1 USD = ${ratesFromUSD.BDT} BDT\n\n`;
+      csv += 'ACCOUNTS OVERVIEW:\n';
+      const balMap = calculateAccountBalances();
+      accounts.forEach(acc => {
+        const bal = balMap[acc.id] || { initial: 0, current: 0 };
+        csv += `${acc.name}, Initial: ${bal.initial}, Current: ${bal.current}\n`;
+      });
+
+      csv += '\nTRANSACTIONS:\n';
+      csv += 'Date,Description,Account,Type,Currency,Amount,BDT Equivalent,USD Equivalent\n';
+
+      const sorted = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+      sorted.forEach(t => {
+        const acc = accounts.find(a => a.id === t.accountId);
+        const accName = acc ? acc.name : '';
+        const bdt = t.bdtEquivalent !== undefined ? t.bdtEquivalent : convertToBDT(t.amount, t.currency);
+        const usd = convertFromBDT(bdt, 'USD');
+        const cleanDesc = `"${t.description.replace(/"/g, '""')}"`;
+        csv += `${t.date},${cleanDesc},"${accName}",${t.type},${t.currency},${t.amount.toFixed(2)},${bdt.toFixed(2)},${usd.toFixed(2)}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `bizledger_accounts_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    // Seed Sample Data
+    seedDataBtn.addEventListener('click', function () {
+      const today = new Date();
+      const formatDateOffset = (offset) => {
+        const d = new Date(today);
+        d.setDate(d.getDate() - offset);
+        return d.toISOString().split('T')[0];
+      };
+
+      accounts = [
+        { id: 'acc_bank', name: 'Bank (City Bank)', icon: '🏦', initialBalance: 80000 },
+        { id: 'acc_bkash', name: 'bKash Personal', icon: '📱', initialBalance: 25000 },
+        { id: 'acc_cash', name: 'Cash in Hand', icon: '💵', initialBalance: 20000 },
+        { id: 'acc_nagad', name: 'Nagad Business', icon: '⚡', initialBalance: 10000 }
+      ];
+
+      transactions = [
+        { id: 'demo_1', accountId: 'acc_bank', date: formatDateOffset(0), description: 'Client Website Payment (Bank Transfer)', type: 'Income', currency: 'BDT', amount: 35000.00, bdtEquivalent: 35000.00, createdAt: Date.now() - 1000 },
+        { id: 'demo_2', accountId: 'acc_bkash', date: formatDateOffset(0), description: 'Freelance Design Fee via bKash', type: 'Income', currency: 'BDT', amount: 8500.00, bdtEquivalent: 8500.00, createdAt: Date.now() - 2000 },
+        { id: 'demo_3', accountId: 'acc_bank', date: formatDateOffset(1), description: 'Office Space Rent from Bank', type: 'Expense', currency: 'BDT', amount: 22000.00, bdtEquivalent: 22000.00, createdAt: Date.now() - 3000 },
+        { id: 'demo_4', accountId: 'acc_bkash', date: formatDateOffset(1), description: 'Internet Bill via bKash', type: 'Expense', currency: 'BDT', amount: 1500.00, bdtEquivalent: 1500.00, createdAt: Date.now() - 4000 },
+        { id: 'demo_5', accountId: 'acc_cash', date: formatDateOffset(2), description: 'Office Snacks & Stationery (Cash)', type: 'Expense', currency: 'BDT', amount: 850.00, bdtEquivalent: 850.00, createdAt: Date.now() - 5000 },
+        { id: 'demo_6', accountId: 'acc_bank', date: formatDateOffset(2), description: 'Upwork Dollar Withdrawal to Bank', type: 'Income', currency: 'USD', amount: 300.00, bdtEquivalent: 300 * 122.00, rateSnapshot: 122.00, createdAt: Date.now() - 6000 }
+      ];
+
+      saveData();
+      refreshAll();
+      showToast('Sample data loaded with Bank, bKash & Cash balances!');
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      initDefaultDate();
+      loadData();
+      refreshAll();
+      handleCurrencyChange();
+      fetchLiveDailyRates(false);
+    });
+  </script>
+</body>
+</html>
