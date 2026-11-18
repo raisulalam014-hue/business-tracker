@@ -1980,19 +1980,24 @@
           acc.initialBalance = parseFloat(input.value) || 0;
         }
       });
+      localStorage.setItem('bizledger_custom_initial_balance_set', 'true');
       saveData();
       refreshAll();
       closeInitialBalanceModal();
-      showToast('Starting balance updated successfully');
+      showToast('Starting balance saved successfully');
     }
 
     function resetAllInitialBalancesToZero() {
       accounts.forEach(acc => {
+        acc.initialBalance = 0;
         const input = document.getElementById(`initInput_${acc.id}`);
         if (input) input.value = 0;
       });
+      localStorage.setItem('bizledger_custom_initial_balance_set', 'false');
+      saveData();
+      refreshAll();
       updateInitialBalanceModalTotal();
-      showToast('All starting balances reset to 0. Click Save to apply.');
+      showToast('All starting balances reset to 0');
     }
 
     function updateAccountBalance(accId, val) {
@@ -2189,17 +2194,19 @@
           { id: 'acc_usd', name: 'USD Reserve', currency: 'USD', initialBalance: 0, icon: '🌐' }
         ];
         saveData();
-      } else {
-        // Ensure starting balance starts at zero by default (customer can edit anytime)
-        const resetKey = 'bizledger_zero_default_v2';
-        if (!localStorage.getItem(resetKey) && transactions.length === 0) {
-          const hasLegacyDummy = accounts.some(a => (a.id === 'acc_main' && a.initialBalance === 10000) ||
-                                                   (a.id === 'acc_bank' && a.initialBalance === 25000));
-          if (hasLegacyDummy) {
-            accounts.forEach(a => { a.initialBalance = 0; });
-            saveData();
+      }
+
+      // CRITICAL: Total combined starting balance MUST be zero first unless explicitly saved by customer
+      if (localStorage.getItem('bizledger_custom_initial_balance_set') !== 'true') {
+        let changed = false;
+        accounts.forEach(a => {
+          if (a.initialBalance !== 0) {
+            a.initialBalance = 0;
+            changed = true;
           }
-          localStorage.setItem(resetKey, 'true');
+        });
+        if (changed) {
+          saveData();
         }
       }
 
@@ -2264,7 +2271,9 @@
 
     // PWA Service Worker
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
+      navigator.serviceWorker.register('./sw.js?v=4.1.0').then(reg => {
+        reg.update();
+      }).catch(() => {});
     }
 
     // Application Bootstrap
