@@ -214,6 +214,10 @@
             <span class="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse"></span>
             <span id="appStatusText">Synced</span>
           </span>
+          <span id="wasmStatusBadge" class="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-mono font-medium bg-[#1D2B40] text-cyan-300 border border-cyan-500/30" title="Calculations powered by bizledger_core.wasm (compiled from C)">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+            <span id="wasmStatusText">C Engine (WASM)</span>
+          </span>
         </div>
       </div>
 
@@ -1044,6 +1048,42 @@
     let cashFlowChartInstance = null;
     let allocationChartInstance = null;
 
+    // WebAssembly C Computational Core
+    let wasmEngine = null;
+    const WASM_FALLBACK_BASE64 = 'AGFzbQEAAAABDgJgA3x8fAF8YAJ8fAF8AwYFAAABAQEHfgUQY29udmVydF9jdXJyZW5jeQAAGWNhbGN1bGF0ZV9hY2NvdW50X2JhbGFuY2UAARdjYWxjdWxhdGVfbmV0X2Nhc2hfZmxvdwACGGNhbGN1bGF0ZV9jYXBpdGFsX2dyb3d0aAADFmNhbGN1bGF0ZV9pbmZsb3dfcmF0aW8ABApJBQoAIAAgAaMgAqILCgAgACABoCACoQsHACAAIAGhCxQAIAEgAKEgAKNEAAAAAAAAWUCiCxQAIAAgACABoKNEAAAAAAAAWUCiCw==';
+
+    async function initWebAssemblyEngine() {
+      try {
+        let wasmBytes = null;
+        try {
+          const response = await fetch('./bizledger_core.wasm');
+          if (response.ok) {
+            wasmBytes = await response.arrayBuffer();
+          }
+        } catch (e) {
+          // Local file:// protocol or fetch blocked: use embedded Wasm binary
+        }
+
+        if (!wasmBytes) {
+          const binaryString = atob(WASM_FALLBACK_BASE64);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          wasmBytes = bytes.buffer;
+        }
+
+        const wasmModule = await WebAssembly.instantiate(wasmBytes);
+        wasmEngine = wasmModule.instance.exports;
+        console.log('⚡ BizLedger C / WebAssembly Core initialized:', Object.keys(wasmEngine));
+
+        const badge = document.getElementById('wasmStatusText');
+        if (badge) badge.textContent = 'C Engine (Wasm) Active';
+      } catch (err) {
+        console.warn('WebAssembly initialization fallback to JS:', err.message);
+      }
+    }
+
     // Single Fixed Design: Permanent Liquid Dark Experience
     function toggleTheme() {
       // Kept for zero-regression backward compatibility
@@ -1070,6 +1110,11 @@
       if (fromCode === toCode) return amount;
       const rateFrom = exchangeRates[fromCode] || 1;
       const rateTo = exchangeRates[toCode] || 1;
+
+      // Execute via C / WebAssembly Core if active
+      if (wasmEngine && typeof wasmEngine.convert_currency === 'function') {
+        return wasmEngine.convert_currency(amount, rateFrom, rateTo);
+      }
       const amountInUSD = amount / rateFrom;
       return amountInUSD * rateTo;
     }
@@ -1126,7 +1171,9 @@
         balMap[a.id] = {
           initial: Number(a.initialBalance || 0),
           current: Number(a.initialBalance || 0),
-          currency: a.currency || 'BDT'
+          currency: a.currency || 'BDT',
+          totalIncome: 0,
+          totalExpense: 0
         };
       });
 
@@ -1134,9 +1181,19 @@
         if (!balMap[t.accountId]) return;
         const amt = Number(t.amount || 0);
         if (t.type === 'Income') {
-          balMap[t.accountId].current += amt;
+          balMap[t.accountId].totalIncome += amt;
         } else if (t.type === 'Expense') {
-          balMap[t.accountId].current -= amt;
+          balMap[t.accountId].totalExpense += amt;
+        }
+      });
+
+      // Compute balance via C / WebAssembly Core
+      accounts.forEach(a => {
+        const item = balMap[a.id];
+        if (wasmEngine && typeof wasmEngine.calculate_account_balance === 'function') {
+          item.current = wasmEngine.calculate_account_balance(item.initial, item.totalIncome, item.totalExpense);
+        } else {
+          item.current = item.initial + item.totalIncome - item.totalExpense;
         }
       });
 
@@ -1230,7 +1287,9 @@
         else if (t.type === 'Expense') expUSD += amtUSD;
       });
 
-      const netUSD = incUSD - expUSD;
+      const netUSD = (wasmEngine && typeof wasmEngine.calculate_net_cash_flow === 'function')
+        ? wasmEngine.calculate_net_cash_flow(incUSD, expUSD)
+        : (incUSD - expUSD);
       const currentTotalUSD = initUSD + netUSD;
 
       const currentPrimary = convertAny(currentTotalUSD, 'USD', primaryCurrency);
@@ -1303,7 +1362,10 @@
       const elGrowth = document.getElementById('netGrowthDisplay');
       if (elGrowth) {
         if (initUSD > 0) {
-          const growthPct = ((netUSD / initUSD) * 100).toFixed(1);
+          const rawGrowth = (wasmEngine && typeof wasmEngine.calculate_capital_growth === 'function')
+            ? wasmEngine.calculate_capital_growth(initUSD, currentTotalUSD)
+            : ((netUSD / initUSD) * 100);
+          const growthPct = rawGrowth.toFixed(1);
           const sign = growthPct >= 0 ? '+' : '';
           elGrowth.textContent = isHidden ? '••••••' : `${sign}${growthPct}%`;
           elGrowth.className = growthPct >= 0 
@@ -1326,7 +1388,10 @@
       if (bar && ratioLabel) {
         const totalTurnover = incUSD + expUSD;
         if (totalTurnover > 0) {
-          const incPercent = Math.min(100, Math.max(0, Math.round((incUSD / totalTurnover) * 100)));
+          const rawRatio = (wasmEngine && typeof wasmEngine.calculate_inflow_ratio === 'function')
+            ? wasmEngine.calculate_inflow_ratio(incUSD, expUSD)
+            : ((incUSD / totalTurnover) * 100);
+          const incPercent = Math.min(100, Math.max(0, Math.round(rawRatio)));
           bar.style.width = incPercent + '%';
           ratioLabel.textContent = `${incPercent}% Inflow / ${100 - incPercent}% Outflow`;
         } else {
@@ -2042,7 +2107,8 @@
     }
 
     // Application Bootstrap
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      await initWebAssemblyEngine();
       loadData();
       setFormattedDate();
       refreshAll();
