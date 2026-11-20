@@ -2153,7 +2153,16 @@
 
     // Storage Persistence & Hydration
     function loadData() {
-      // Rates
+      // 1. Settings (Primary Currency)
+      const storedSettings = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+      if (storedSettings) {
+        try {
+          const s = JSON.parse(storedSettings);
+          if (s.primaryCurrency) primaryCurrency = s.primaryCurrency;
+        } catch (e) {}
+      }
+
+      // 2. Exchange Rates
       const storedRates = localStorage.getItem(STORAGE_KEYS.RATES);
       if (storedRates) {
         try {
@@ -2168,24 +2177,46 @@
         }
       });
 
-      // Settings
-      const storedSettings = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-      if (storedSettings) {
+      // 3. Transactions FIRST (Never touch or overwrite transactions during load!)
+      const storedTx = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
+      if (storedTx) {
         try {
-          const s = JSON.parse(storedSettings);
-          if (s.primaryCurrency) primaryCurrency = s.primaryCurrency;
-        } catch (e) {}
+          const parsed = JSON.parse(storedTx);
+          if (Array.isArray(parsed)) {
+            transactions = parsed;
+          }
+        } catch (e) {
+          console.warn('Could not parse stored transactions:', e);
+        }
+      }
+      // Safety backup recovery if needed
+      if (!transactions || transactions.length === 0) {
+        const safetyTx = localStorage.getItem('bizledger_transactions_safety_copy');
+        if (safetyTx) {
+          try {
+            const parsedSafety = JSON.parse(safetyTx);
+            if (Array.isArray(parsedSafety) && parsedSafety.length > 0) {
+              transactions = parsedSafety;
+              localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
+            }
+          } catch (e) {}
+        }
       }
 
-      // Accounts
+      // 4. Accounts (Load without overwriting transactions)
       const storedAccounts = localStorage.getItem(STORAGE_KEYS.ACCOUNTS);
       if (storedAccounts) {
         try {
-          accounts = JSON.parse(storedAccounts);
+          const parsedAccs = JSON.parse(storedAccounts);
+          if (Array.isArray(parsedAccs) && parsedAccs.length > 0) {
+            accounts = parsedAccs;
+          }
         } catch (e) {
           accounts = [];
         }
       }
+
+      // If no accounts exist yet (first-time customer), initialize clean zero wallets:
       if (!accounts || accounts.length === 0) {
         accounts = [
           { id: 'acc_main', name: 'Main Cash', currency: 'BDT', initialBalance: 0, icon: '💵' },
@@ -2193,30 +2224,23 @@
           { id: 'acc_bkash', name: 'bKash Merchant', currency: 'BDT', initialBalance: 0, icon: '📱' },
           { id: 'acc_usd', name: 'USD Reserve', currency: 'USD', initialBalance: 0, icon: '🌐' }
         ];
-        saveData();
-      }
-
-      // CRITICAL: Total combined starting balance MUST be zero first unless explicitly saved by customer
-      if (localStorage.getItem('bizledger_custom_initial_balance_set') !== 'true') {
-        let changed = false;
-        accounts.forEach(a => {
-          if (a.initialBalance !== 0) {
-            a.initialBalance = 0;
-            changed = true;
+        // Only write the accounts key, NEVER call saveData() which touches transactions!
+        localStorage.setItem(STORAGE_KEYS.ACCOUNTS, JSON.stringify(accounts));
+      } else {
+        // One-time cleanup for old legacy dummy values (10000, 25000, 5000, 500):
+        const cleanupKey = 'bizledger_legacy_dummy_cleaned_v6';
+        if (!localStorage.getItem(cleanupKey)) {
+          if (transactions.length === 0) {
+            const hasExactDummyValues = accounts.some(a => 
+              (a.id === 'acc_main' && a.initialBalance === 10000) ||
+              (a.id === 'acc_bank' && a.initialBalance === 25000)
+            );
+            if (hasExactDummyValues) {
+              accounts.forEach(a => { a.initialBalance = 0; });
+              localStorage.setItem(STORAGE_KEYS.ACCOUNTS, JSON.stringify(accounts));
+            }
           }
-        });
-        if (changed) {
-          saveData();
-        }
-      }
-
-      // Transactions
-      const storedTx = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
-      if (storedTx) {
-        try {
-          transactions = JSON.parse(storedTx);
-        } catch (e) {
-          transactions = [];
+          localStorage.setItem(cleanupKey, 'true');
         }
       }
 
@@ -2228,6 +2252,9 @@
       localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
       localStorage.setItem(STORAGE_KEYS.ACCOUNTS, JSON.stringify(accounts));
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify({ primaryCurrency }));
+      if (transactions && transactions.length > 0) {
+        localStorage.setItem('bizledger_transactions_safety_copy', JSON.stringify(transactions));
+      }
     }
 
     function populateDropdowns() {
